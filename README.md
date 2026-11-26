@@ -56,9 +56,11 @@ snaglog dashboard --demo
 
 Open http://127.0.0.1:4747.
 
-## Set up a skills repo (once, by a maintainer)
+**New to snaglog?** [docs/GETTING-STARTED.md](docs/GETTING-STARTED.md) walks one project from zero to a working loop.
 
-In a local checkout of your skills repo (skills in `skills/<name>/SKILL.md`), review the plan first:
+## Set up a project or skills repo (once, by a maintainer)
+
+snaglog works with a project that keeps its skills in `.claude/skills/<name>/SKILL.md`, and with a dedicated skills repo that keeps them in `skills/<name>/SKILL.md`. In a local checkout, review the plan first:
 
 ```bash
 snaglog init --repo acme/skills --dry-run
@@ -76,8 +78,10 @@ snaglog init --repo acme/skills
 2. appends one line to every `SKILL.md`: *If this skill doesn't work as described, file a snag with the log-snag skill before working around it.*;
 3. creates the `skill-friction` and `skill:<name>` labels on GitHub (only the missing ones);
 4. copies the `log-snag` and `fix-snags` skills into the repo;
-5. creates an inactive eval skeleton in `evals/<skill>/` for skills without one;
-6. adds `evals/results/` to `.gitignore`, because full eval reports contain transcripts.
+5. creates an inactive eval skeleton for skills without one, in `.claude/evals/<skill>/` (a project) or `evals/<skill>/` (a skills repo);
+6. adds the eval results folder to `.gitignore`, because full eval reports contain transcripts.
+
+In a project with no skills yet, `log-snag` and `fix-snags` go to `.claude/skills/`, where Claude Code loads them.
 
 Running it again finds nothing to do. Review the result with `git diff` and commit it.
 
@@ -207,6 +211,7 @@ Existing skill-feedback tools file to one fixed repository, file without asking,
 
 ## Documentation
 
+- [docs/GETTING-STARTED.md](docs/GETTING-STARTED.md): add snaglog to a project, step by step.
 - [docs/E2E-TRIAL.md](docs/E2E-TRIAL.md): the end-to-end trial on a real repository, and what it changed.
 - [docs/AGENT-ADAPTERS.md](docs/AGENT-ADAPTERS.md): agent telemetry, how skill use is recognised, stored files.
 - [docs/ECOSYSTEM.md](docs/ECOSYSTEM.md): trust policy, and the standards and official tools snaglog builds on.

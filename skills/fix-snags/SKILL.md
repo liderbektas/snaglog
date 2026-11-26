@@ -67,7 +67,7 @@ For each approved group:
    node <skill dir of fix-snags>/scripts/fix-pr.mjs new-case --root . --skill <name> --issue <N> --slug "<few words>"
    ```
 
-   Replace every `TODO(fix-snags)` in the new `evals/<skill>/snag-<N>-…/` folder: write the task in general terms (never copy a user's prompt text or file contents from the report) and make `graders/no-snag.md` match only when the snag happens. Prefer free graders (`regex`, `tool_used`, `tool_order`, `file_exists`) over `llm`. Then check it:
+   Replace every `TODO(fix-snags)` in the folder it prints (`.claude/evals/<skill>/snag-<N>-…/` in a project, `evals/<skill>/snag-<N>-…/` in a skills repo): write the task in general terms (never copy a user's prompt text or file contents from the report) and make `graders/no-snag.md` match only when the snag happens. Prefer free graders (`regex`, `tool_used`, `tool_order`, `file_exists`) over `llm`. Then check it:
 
    ```bash
    node <skill dir of fix-snags>/scripts/fix-pr.mjs check-case --root . --skill <name> --issue <N>

@@ -11,9 +11,9 @@ import { parseArgs } from 'node:util';
 import { confirm } from './lib/confirm.mjs';
 import { gh, ghCheck, REPO_NAME } from './lib/gh.mjs';
 import { appendReminder, BUNDLED_SKILLS, findSkills, setMetadataKey, SKILL_NAME, skillsParent } from './lib/skills.mjs';
+import { detectLayout } from './lib/layout.mjs';
 
 const PACKAGE_SKILLS = fileURLToPath(new URL('../skills/', import.meta.url));
-const RESULTS_IGNORE = 'evals/results/';
 const LABELS = {
   friction: { color: 'D93F0B', description: 'Snag report filed by an agent with the snaglog log-snag skill' },
   skill: { color: '0E8A16', description: 'Snags about one skill' },
@@ -128,7 +128,9 @@ export function buildPlan({ repo, root, skillsDir, env = process.env }) {
     }
   }
 
-  const parent = skillsDir ? resolve(root, skillsDir) : skillsParent(root, skills);
+  const layout = detectLayout(root);
+  if (!skills.length) warnings.push(`no skills found; log-snag and fix-snags will be added to ${relative(root, layout.skillsDir)}/, where Claude Code loads them`);
+  const parent = skillsDir ? resolve(root, skillsDir) : skills.length ? skillsParent(root, skills) : layout.skillsDir;
   if (!parent) {
     warnings.push('skills live in several folders; pass --skills-dir to choose where the bundled skills go');
   } else {
@@ -159,10 +161,10 @@ export function buildPlan({ repo, root, skillsDir, env = process.env }) {
   }
 
   for (const skill of valid) {
-    const dir = join(root, 'evals', skill.name);
+    const dir = join(layout.evalsDir, skill.name);
     if (existsSync(dir)) continue;
     changes.push({
-      where: `evals/${skill.name}/`,
+      where: `${layout.evalsRel}/${skill.name}/`,
       what: 'create an inactive eval skeleton',
       apply: () => {
         for (const [file, content] of Object.entries(evalSkeleton(skill.name))) {
@@ -176,12 +178,13 @@ export function buildPlan({ repo, root, skillsDir, env = process.env }) {
 
   const gitignore = join(root, '.gitignore');
   const ignoreText = existsSync(gitignore) ? readFileSync(gitignore, 'utf8') : '';
-  const ignored = ignoreText.split(/\r?\n/).some((line) => ['evals/results/', 'evals/results', '/evals/results/', '/evals/results'].includes(line.trim()));
+  const resultsIgnore = `${layout.evalsRel}/results/`;
+  const ignored = ignoreText.split(/\r?\n/).some((line) => [resultsIgnore, resultsIgnore.slice(0, -1), `/${resultsIgnore}`, `/${resultsIgnore.slice(0, -1)}`].includes(line.trim()));
   if (!ignored) {
     changes.push({
       where: '.gitignore',
-      what: `ignore ${RESULTS_IGNORE} (eval results contain transcripts)`,
-      apply: () => writeFileSync(gitignore, `${ignoreText}${ignoreText && !ignoreText.endsWith('\n') ? '\n' : ''}${RESULTS_IGNORE}\n`),
+      what: `ignore ${resultsIgnore} (eval results contain transcripts)`,
+      apply: () => writeFileSync(gitignore, `${ignoreText}${ignoreText && !ignoreText.endsWith('\n') ? '\n' : ''}${resultsIgnore}\n`),
     });
   }
 

@@ -10,7 +10,7 @@ import { fileURLToPath } from 'node:url';
 import { COMMANDS, main } from '../cli/snaglog.mjs';
 
 const ROOT = fileURLToPath(new URL('..', import.meta.url));
-const DOCS = ['README.md', 'CONTRIBUTING.md', 'CHANGELOG.md', 'docs/AGENT-ADAPTERS.md', 'docs/ECOSYSTEM.md'];
+const DOCS = ['README.md', 'CONTRIBUTING.md', 'CHANGELOG.md', 'docs/AGENT-ADAPTERS.md', 'docs/ECOSYSTEM.md', 'docs/GETTING-STARTED.md', 'docs/E2E-TRIAL.md'];
 
 function commandLines(file) {
   const text = readFileSync(join(ROOT, file), 'utf8');
@@ -31,7 +31,7 @@ async function help(command) {
 }
 
 test('every documented snaglog command and flag exists', async () => {
-  const lines = ['README.md', 'CONTRIBUTING.md'].flatMap(commandLines);
+  const lines = ['README.md', 'CONTRIBUTING.md', 'docs/GETTING-STARTED.md'].flatMap(commandLines);
   assert.ok(lines.length >= 10, 'found the documented commands');
   for (const line of lines) {
     const [, command, ...rest] = line.split(/\s+/);

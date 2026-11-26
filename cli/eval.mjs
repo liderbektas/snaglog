@@ -22,6 +22,7 @@ import { confirm } from './lib/confirm.mjs';
 import { CATEGORIES, estimateCost, fingerprint, lastRecord, listCases } from './lib/eval-cases.mjs';
 import { readJson, snaglogHome, writeJson } from './lib/home.mjs';
 import { BUNDLED_SKILLS, findSkills } from './lib/skills.mjs';
+import { detectLayout } from './lib/layout.mjs';
 
 export const MIN_CLAUDE = [2, 1, 269];
 export const MIN_GIT = [2, 31, 0];
@@ -47,7 +48,7 @@ Options:
   --path <dir>          Skills repo checkout (default: current directory)
   --max-cost-usd <usd>  Hard ceiling per skill run (default: ${DEFAULT_MAX_COST_USD})
   --runs <n>            Override runs per case (fewer runs cost less)
-  --keep-report         Keep Claude Code's full report in evals/results/ (git-ignored;
+  --keep-report         Keep Claude Code's full report in <evals dir>/results/ (git-ignored;
                         contains prompts and transcripts)
   --trust-plugin        Needed once per repo: Claude Code runs only plugins you trust.
                         snaglog asks you to confirm in a terminal (--yes does not)
@@ -108,13 +109,14 @@ function git(root, args) {
 }
 
 function plan({ root, home, wanted, all, ablate, maxCostUsd }) {
-  const skills = findSkills(join(root, 'skills')).filter((s) => !BUNDLED_SKILLS.includes(s.name));
+  const { skillsDir } = detectLayout(root);
+  const skills = findSkills(skillsDir).filter((s) => !BUNDLED_SKILLS.includes(s.name));
   const cases = listCases(root);
   const warnings = [];
   const known = new Set(skills.map((s) => s.name));
   let selected;
   if (wanted) {
-    if (!known.has(wanted)) return { error: `no skill "${wanted}" under ${join(root, 'skills')}` };
+    if (!known.has(wanted)) return { error: `no skill "${wanted}" under ${skillsDir}` };
     selected = [wanted];
   } else {
     selected = skills.map((s) => s.name).filter((name) => {
@@ -156,7 +158,8 @@ function record({ root, home, skill, result, ablate, exitCode, keepReport, outpu
   const ranAt = new Date().toISOString();
   const summary = summarizeResult(result, { cases: caseSkills(root), ranAt }).find((s) => s.skill === skill);
   if (!summary) return undefined;
-  const skillDir = join(root, 'skills', skill);
+  const { skillsDir, evalsDir } = detectLayout(root);
+  const skillDir = join(skillsDir, skill);
   const entry = {
     ...summary,
     // Only this skill's cases ran, so the whole run's cost belongs to it.
@@ -164,7 +167,7 @@ function record({ root, home, skill, result, ablate, exitCode, keepReport, outpu
     source: 'snaglog eval',
     ablation: Boolean(ablate),
     commit: git(root, ['log', '-1', '--format=%H', '--', skillDir]) ?? null,
-    dirty: Boolean(git(root, ['status', '--porcelain', '--', skillDir, join(root, 'evals', skill)])),
+    dirty: Boolean(git(root, ['status', '--porcelain', '--', skillDir, join(evalsDir, skill)])),
     fingerprint: fingerprint(root, skill),
     exitCode,
     allPassed: summary.cases.length > 0 && summary.cases.every((c) => c.score === 1),
@@ -224,8 +227,9 @@ export async function run(args, io, deps = {}) {
   }
 
   const root = resolve(values.path ?? process.cwd());
-  if (!existsSync(join(root, 'skills'))) {
-    io.err(`snaglog eval: ${root} has no skills/ directory; claude plugin eval loads skills from <repo>/skills/<name>/SKILL.md`);
+  const layout = detectLayout(root);
+  if (!existsSync(layout.skillsDir)) {
+    io.err(`snaglog eval: no skills found in ${root} (looked in skills/ and .claude/skills/)`);
     return 2;
   }
   const home = snaglogHome(env);
@@ -281,12 +285,12 @@ export async function run(args, io, deps = {}) {
   for (const row of rows) {
     const tmp = mkdtempSync(join(tmpdir(), 'snaglog-eval-'));
     const stamp = new Date().toISOString().replace(/[:.]/g, '-');
-    const outputDir = values['keep-report'] ? join(root, 'evals', 'results', stamp) : join(tmp, 'out');
+    const outputDir = values['keep-report'] ? join(layout.evalsDir, 'results', stamp) : join(tmp, 'out');
     mkdirSync(outputDir, { recursive: true });
     const jsonPath = join(tmp, 'result.json');
     io.out(`\n▶ ${row.skill}`);
     try {
-      const r = spawnSync(claudeBin(env), evalArgs({ root, skill: row.skill, ablate, maxCostUsd, runs, jsonPath, outputDir, trust }), { stdio: 'inherit', env });
+      const r = spawnSync(claudeBin(env), evalArgs({ root: layout.pluginRoot, skill: row.skill, ablate, maxCostUsd, runs, jsonPath, outputDir, trust }), { stdio: 'inherit', env });
       const exitCode = r.status ?? (r.signal ? 130 : 1);
       if (exitCode === 130 || exitCode === 143) {
         io.err(`${row.skill}: interrupted; stopping`);

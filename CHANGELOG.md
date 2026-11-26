@@ -21,6 +21,11 @@ First development version; not yet published.
 
 See [docs/E2E-TRIAL.md](docs/E2E-TRIAL.md): stable node path and self-updating hook, plugin namespaces dropped from skill names, skill windows no longer closed on `assistant_response`, `snaglog eval --trust-plugin` with its own confirmation, valid `match: not_contains` in the eval-case template, honest small-sample verdicts, `SNAGLOG_DEBUG_EVENTS`.
 
+### Added after the first release
+
+- Projects that keep skills in `.claude/skills/` are fully supported, including evals (`.claude/evals/`); `init` in a project without skills puts `log-snag` and `fix-snags` in `.claude/skills/`.
+- [docs/GETTING-STARTED.md](docs/GETTING-STARTED.md).
+
 ### Known limitations
 
 - The end-to-end trial covered Claude Code only.

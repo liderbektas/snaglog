@@ -61,8 +61,16 @@ function requireIssue(issue) {
   return n;
 }
 
+// A root-level skills/ folder marks a skills repo (evals/ next to it);
+// otherwise skills and evals live under .claude/ (a project).
+function layoutOf(root) {
+  return existsSync(join(root, 'skills'))
+    ? { skillsDir: join(root, 'skills'), evalsDir: join(root, 'evals') }
+    : { skillsDir: join(root, '.claude', 'skills'), evalsDir: join(root, '.claude', 'evals') };
+}
+
 function caseDir(root, skill, issue) {
-  const dir = join(root, 'evals', skill);
+  const dir = join(layoutOf(root).evalsDir, skill);
   if (!existsSync(dir)) return undefined;
   const name = readdirSync(dir).find((d) => d.startsWith(`snag-${issue}-`) || d === `snag-${issue}`);
   return name ? join(dir, name) : undefined;
@@ -74,7 +82,7 @@ export function newCase({ root, skill, issue, slug }) {
   const n = requireIssue(issue);
   if (caseDir(root, skill, n)) throw new FixError(`an eval case for snag #${n} already exists: ${caseDir(root, skill, n)}`, 3);
   const name = `snag-${n}${slugify(slug) ? `-${slugify(slug)}` : ''}`;
-  const dir = join(root, 'evals', skill, name);
+  const dir = join(layoutOf(root).evalsDir, skill, name);
   mkdirSync(join(dir, 'graders'), { recursive: true });
   writeFileSync(join(dir, 'prompt.md'), `---
 name: ${name}
@@ -109,7 +117,7 @@ export function checkCase({ root, skill, issue }) {
   requireSkill(skill);
   const n = requireIssue(issue);
   const dir = caseDir(root, skill, n);
-  if (!dir) return { ok: false, problems: [`no eval case for snag #${n} under evals/${skill}/`] };
+  if (!dir) return { ok: false, problems: [`no eval case for snag #${n} under ${join(layoutOf(root).evalsDir, skill)}`] };
   const problems = [];
   const prompt = readFileSync(join(dir, 'prompt.md'), 'utf8');
   for (const tag of [`skill:${skill}`, 'real-usage', `snag:${n}`]) {
@@ -151,7 +159,7 @@ function quiet(text) {
 }
 
 function skillCommit(root, skill) {
-  const r = run('git', ['-C', root, 'log', '-1', '--format=%H', '--', join('skills', skill)]);
+  const r = run('git', ['-C', root, 'log', '-1', '--format=%H', '--', join(layoutOf(root).skillsDir, skill)]);
   return r.ok && r.stdout ? r.stdout : undefined;
 }
 

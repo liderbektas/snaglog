@@ -1,5 +1,5 @@
 // Eval collector: import results written by Claude Code's official
-// `claude plugin eval` (evals/results/<timestamp>/aggregate-result.json) and
+// `claude plugin eval` (<evals dir>/results/<timestamp>/aggregate-result.json) and
 // store one allow-listed summary per skill and run under
 // ~/.snaglog/evals/<skill>/. Prompts, grader explanations and evidence in the
 // result file are never copied.
@@ -10,6 +10,7 @@ import { basename, dirname, join } from 'node:path';
 import { readJson, snaglogHome, writeJson } from '../lib/home.mjs';
 import { findSkills } from '../lib/skills.mjs';
 import { listCases } from '../lib/eval-cases.mjs';
+import { detectLayout } from '../lib/layout.mjs';
 
 /** Map case name → skill from the evals/<skill>/<case>/ layout snaglog uses. */
 export function caseSkills(root) {
@@ -19,7 +20,7 @@ export function caseSkills(root) {
 }
 
 function resultFiles(root) {
-  const dir = join(root, 'evals', 'results');
+  const dir = join(detectLayout(root).evalsDir, 'results');
   if (!existsSync(dir)) return [];
   return readdirSync(dir, { withFileTypes: true })
     .filter((d) => d.isDirectory() && existsSync(join(dir, d.name, 'aggregate-result.json')))
@@ -71,7 +72,7 @@ export function summarizeResult(result, { cases: caseMap, ranAt }) {
   });
 }
 
-/** Import every not-yet-imported result in <root>/evals/results. */
+/** Import every not-yet-imported result in <evals dir>/results. */
 export function collectEvals(root, env = process.env) {
   const home = snaglogHome(env);
   const indexFile = join(home, 'evals', 'imported.json');

@@ -77,7 +77,7 @@ arm: both
 
 ### How snaglog uses it
 
-1. **Layout:** one folder per skill, `evals/<skill>/<case>/`. Every case is tagged `skill:<name>` plus exactly one category tag — `golden` (~5 %), `real-usage` (~80 %, includes every snag-derived case, which also gets `snag:<issue>`), or `owner-reviewed` (~15 %). `snaglog eval <skill>` runs with `--tag skill:<name>`; the dashboard reports the category mix against the recommended split.
+1. **Layout:** one folder per skill, `<evals dir>/<skill>/<case>/`, where `<evals dir>` is `evals/` in a skills repo (skills in `skills/`) and `.claude/evals/` in a project (skills in `.claude/skills/`). Every case is tagged `skill:<name>` plus exactly one category tag — `golden` (~5 %), `real-usage` (~80 %, includes every snag-derived case, which also gets `snag:<issue>`), or `owner-reviewed` (~15 %). `snaglog eval <skill>` runs with `--tag skill:<name>`; the dashboard reports the category mix against the recommended split.
 2. **Free graders first:** snag cases prefer `regex`, `tool_used`, `tool_order` and `file_exists`; `llm` graders are added only when a deterministic check is impossible.
 3. **Ablation:** `snaglog eval <skill> --ablate` passes `--ablation with-without` and records `meanDelta` / per-case `delta`; without `--ablate` it passes `--ablation none` to halve cost. The baseline arm runs **without the whole plugin**, i.e. without any of the repo's skills, so the delta measures what the skills repo adds on this skill's cases rather than this one skill in isolation.
 4. **Data never leaves the machine:** snaglog always passes `--no-publish` (by default the report is published to claude.ai as a private artifact) and never `--publish-report`, `--scaffold`, `--allow-real-servers`, `--mocks off` or `--trust-plugin`; a test asserts the exact argument list. Agent and judge calls use the user's own Claude credentials, as any Claude Code session does.
@@ -90,7 +90,7 @@ arm: both
 
 - **Claude Code only.** There is no official Codex eval runner; Codex skill quality is measured through telemetry and snags until OpenAI ships one.
 - **Server-side gate.** The docs list "currently unavailable" as a state Anthropic can switch on; `snaglog eval` reports it clearly instead of failing obscurely.
-- **Skills-repo target.** Verified offline (no model calls) on Claude Code 2.1.291: a repository with `skills/<name>/SKILL.md` and no `plugin.json` loads as a plugin from its path (`claude --plugin-dir <repo> plugin details <repo-name>` lists its skills), so `snaglog eval` targets the repo path and `init`'s `evals/` at the repo root is the default eval dir. Skills kept elsewhere (for example `.claude/skills/`) are not loaded this way, and `snaglog eval` refuses repos without `skills/`.
+- **Eval target.** Verified offline (no model calls) on Claude Code 2.1.291: a folder whose `skills/<name>/SKILL.md` exist loads as a plugin from its path, without a `plugin.json` (`claude --plugin-dir <dir> plugin details <name>` lists its skills). `snaglog eval` therefore targets the repo root in a skills repo and the project's `.claude/` folder in a project; the default eval dir is `evals/` below that target (`evals/` or `.claude/evals/`).
 - **Not documented:** a per-case boolean pass (snaglog derives it as score ≥ threshold), token counts, and whether the JSON contains full transcripts (snaglog assumes it does and drops everything outside its allow-list).
 
 ## Agent telemetry

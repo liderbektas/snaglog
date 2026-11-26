@@ -1,11 +1,14 @@
 // Eval cases in snaglog's layout for `claude plugin eval`:
-//   <repo>/evals/<skill>/<case>/prompt.md   (or case.yaml) + graders/*.md
+//   <evals dir>/<skill>/<case>/prompt.md   (or case.yaml) + graders/*.md
+// where <evals dir> is evals/ in a skills repo and .claude/evals/ in a
+// project (see layout.mjs).
 // Inactive `.example` files are ignored, as Claude Code ignores them.
 
 import { createHash } from 'node:crypto';
 import { existsSync, readdirSync, readFileSync, statSync } from 'node:fs';
 import { join, relative } from 'node:path';
 import { parseFrontmatter } from '../../skills/log-snag/scripts/file-snag.mjs';
+import { detectLayout } from './layout.mjs';
 
 export const CATEGORIES = ['golden', 'real-usage', 'owner-reviewed'];
 const RESERVED = new Set(['results', 'mocks']);
@@ -25,7 +28,7 @@ function parseTags(text, isYaml) {
 /** Map<skill, [{ name, dir, tags, category }]> for every active case. */
 export function listCases(root) {
   const out = new Map();
-  const evals = join(root, 'evals');
+  const evals = detectLayout(root).evalsDir;
   if (!existsSync(evals)) return out;
   for (const skill of readdirSync(evals, { withFileTypes: true })) {
     if (!skill.isDirectory() || RESERVED.has(skill.name)) continue;
@@ -71,7 +74,8 @@ function filesUnder(dir) {
 /** Content hash of a skill and its eval cases: changes when either changes. */
 export function fingerprint(root, skill) {
   const hash = createHash('sha256');
-  for (const file of [...filesUnder(join(root, 'skills', skill)), ...filesUnder(join(root, 'evals', skill))]) {
+  const { skillsDir, evalsDir } = detectLayout(root);
+  for (const file of [...filesUnder(join(skillsDir, skill)), ...filesUnder(join(evalsDir, skill))]) {
     hash.update(relative(root, file)).update('\0').update(readFileSync(file)).update('\0');
   }
   return hash.digest('hex').slice(0, 16);

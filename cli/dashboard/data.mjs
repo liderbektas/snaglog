@@ -4,9 +4,10 @@
 
 import { spawnSync } from 'node:child_process';
 import { existsSync, readdirSync, readFileSync } from 'node:fs';
-import { join } from 'node:path';
+import { join, relative } from 'node:path';
 import { readJson } from '../lib/home.mjs';
 import { BUNDLED_SKILLS, findSkills } from '../lib/skills.mjs';
+import { detectLayout } from '../lib/layout.mjs';
 
 function jsonLines(file) {
   if (!existsSync(file)) return [];
@@ -70,16 +71,20 @@ export function loadConnections(home) {
   return readJson(join(home, 'connections.json'), {});
 }
 
-/** Skill names found in the checkout's skills/ folder (bundled ones excluded). */
+/** Skill names in the checkout's skills/ or .claude/skills/ folder (bundled ones excluded). */
 export function repoSkills(root) {
-  if (!root || !existsSync(join(root, 'skills'))) return [];
-  return findSkills(join(root, 'skills')).filter((s) => !BUNDLED_SKILLS.includes(s.name)).map((s) => s.name);
+  if (!root) return [];
+  const { skillsDir } = detectLayout(root);
+  if (!existsSync(skillsDir)) return [];
+  return findSkills(skillsDir).filter((s) => !BUNDLED_SKILLS.includes(s.name)).map((s) => s.name);
 }
 
 /** Commits that changed skills/<skill>/SKILL.md, newest first. */
 export function skillChanges(root, skill) {
-  if (!root || !existsSync(join(root, 'skills', skill, 'SKILL.md'))) return [];
-  const r = spawnSync('git', ['-C', root, 'log', '--format=%H%x09%cI%x09%s', '--', join('skills', skill, 'SKILL.md')], { encoding: 'utf8' });
+  if (!root) return [];
+  const file = join(detectLayout(root).skillsDir, skill, 'SKILL.md');
+  if (!existsSync(file)) return [];
+  const r = spawnSync('git', ['-C', root, 'log', '--format=%H%x09%cI%x09%s', '--', relative(root, file)], { encoding: 'utf8' });
   if (r.status !== 0) return [];
   return r.stdout
     .trim()
