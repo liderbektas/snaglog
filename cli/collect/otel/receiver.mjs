@@ -85,10 +85,30 @@ export function createReceiver({ env = process.env, now = () => Date.now() } = {
     writeJson(connectionsFile, state);
   }
 
+  // Troubleshooting aid: SNAGLOG_DEBUG_EVENTS=1 records the shape of incoming
+  // records (event name, time, sequence, tool and skill name, success, hashed
+  // prompt id) to debug-events.jsonl. Never content, ids or identities.
+  const debug = env.SNAGLOG_DEBUG_EVENTS === '1';
+  function trace(item) {
+    const a = item.attrs;
+    appendJsonLine(join(home, 'debug-events.jsonl'), {
+      at: new Date(now()).toISOString(),
+      name: a['event.name'] ?? null,
+      time: item.time,
+      seq: a['event.sequence'] ?? null,
+      prompt: typeof a['prompt.id'] === 'string' ? hash(a['prompt.id']).slice(0, 6) : null,
+      tool: typeof a.tool_name === 'string' ? a.tool_name : null,
+      skill: typeof a['skill.name'] === 'string' ? a['skill.name'] : null,
+      trigger: typeof a.invocation_trigger === 'string' ? a.invocation_trigger : null,
+      success: a.success ?? null,
+    });
+  }
+
   function ingest(request) {
     const events = [];
     let unknown = 0;
     for (const item of logRecords(request)) {
+      if (debug) trace(item);
       const adapter = adapters.find((a) => a.matches(item));
       if (!adapter) {
         unknown += 1;

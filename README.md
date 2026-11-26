@@ -130,7 +130,7 @@ snaglog eval --dry-run
 snaglog eval deploy-preview --ablate
 ```
 
-Without a skill name, only skills whose `SKILL.md`, scripts or eval cases changed since their last recorded eval are selected; `--all` selects every skill with eval cases. `--ablate` adds a baseline run without the repo's skills to show how much they help. Each run stops at `--max-cost-usd` (default $1).
+The first eval in a repo needs `--trust-plugin`: Claude Code runs only plugins you trust, and snaglog asks you to confirm that in a terminal. Without a skill name, only skills whose `SKILL.md`, scripts or eval cases changed since their last recorded eval are selected; `--all` selects every skill with eval cases. `--ablate` adds a baseline run without the repo's skills to show how much they help. Each run stops at `--max-cost-usd` (default $1).
 
 **Fix snags** (skill owners): ask your agent to fix the snags of a skill; it uses `fix-snags`, shows you the grouped reports, and asks before each change, eval and pull request.
 
@@ -172,7 +172,7 @@ Existing skill-feedback skills either file to one fixed repository, file without
 
 ## Limitations
 
-- An end-to-end trial on a real private repository has not been run yet.
+- The end-to-end trial ([docs/E2E-TRIAL.md](docs/E2E-TRIAL.md)) covered Claude Code only.
 - Codex support is built from Codex's source code and has not been checked against a live Codex session.
 - The receiver accepts OTLP JSON only; protobuf requests are rejected with a clear error.
 - Team mode (one shared receiver for a team) is designed but not implemented; endpoints are loopback-only.
@@ -182,6 +182,7 @@ Existing skill-feedback skills either file to one fixed repository, file without
 
 - [docs/AGENT-ADAPTERS.md](docs/AGENT-ADAPTERS.md) — agent telemetry, how skill use is recognised, stored files.
 - [docs/ECOSYSTEM.md](docs/ECOSYSTEM.md) — trust policy, standards and official tools snaglog builds on.
+- [docs/E2E-TRIAL.md](docs/E2E-TRIAL.md) — the end-to-end trial on a real repository, and what it changed.
 - [CONTRIBUTING.md](CONTRIBUTING.md) — development, tests and writing a new agent adapter.
 - [CHANGELOG.md](CHANGELOG.md)
 

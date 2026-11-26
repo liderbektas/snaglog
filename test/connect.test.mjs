@@ -228,3 +228,31 @@ describe('skill-name hook', () => {
     assert.equal(text.includes('raw-session') || text.includes('SECRET'), false);
   });
 });
+
+describe('claude-code hook upkeep', () => {
+  test('a changed node path updates the hook instead of adding a second one, and disconnect still removes it', async () => {
+    await call(connect, ['claude-code', '--yes']);
+    const settings = JSON.parse(readFileSync(claudeFile(), 'utf8'));
+    for (const event of ['PreToolUse', 'UserPromptExpansion']) {
+      const h = settings.hooks[event].at(-1).hooks[0];
+      h.command = h.command.replace(/^"[^"]+"/, '"/old/versioned/bin/node"');
+    }
+    writeFileSync(claudeFile(), JSON.stringify(settings, null, 2));
+    const r = await call(connect, ['claude-code', '--yes']);
+    assert.match(r.out, /update the snaglog hook command/);
+    const after = JSON.parse(readFileSync(claudeFile(), 'utf8'));
+    assert.equal(after.hooks.PreToolUse.length, 1);
+    assert.equal(after.hooks.PreToolUse[0].hooks[0].command.includes('/old/versioned/'), false);
+    await call(disconnect, ['claude-code', '--yes']);
+    assert.equal(existsSync(claudeFile()), false, 'created by connect, removed again');
+  });
+
+  test('an outdated hook script is refreshed even when settings are unchanged', async () => {
+    await call(connect, ['claude-code', '--yes']);
+    const target = join(env.SNAGLOG_HOME, 'hooks', 'claude-skill-hint.mjs');
+    writeFileSync(target, '// old version\n');
+    const r = await call(connect, ['claude-code', '--yes']);
+    assert.match(r.out, /Updated the hook script/);
+    assert.notEqual(readFileSync(target, 'utf8'), '// old version\n');
+  });
+});

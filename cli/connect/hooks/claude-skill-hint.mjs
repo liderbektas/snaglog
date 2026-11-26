@@ -54,7 +54,9 @@ export function skillNameFrom(input) {
   }
   if (typeof candidate !== 'string') return undefined;
   const name = candidate.replace(/^\//, '').trim();
-  return NAME.test(name) ? name : undefined;
+  if (!NAME.test(name)) return undefined;
+  // Drop a plugin namespace ("team-skills:count-lines" → "count-lines").
+  return name.includes(':') ? name.slice(name.lastIndexOf(':') + 1) || undefined : name;
 }
 
 export function record(input, dir = home()) {

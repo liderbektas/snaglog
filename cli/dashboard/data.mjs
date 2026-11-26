@@ -29,7 +29,9 @@ export function loadEvents(home) {
     .filter((f) => /^\d{4}-\d{2}-\d{2}\.jsonl$/.test(f))
     .sort()
     .flatMap((f) => jsonLines(join(dir, f)))
-    .filter((e) => e && typeof e.skill === 'string' && typeof e.time === 'string');
+    .filter((e) => e && typeof e.skill === 'string' && typeof e.time === 'string')
+    // Events stored before plugin namespaces were dropped ("repo:count-lines").
+    .map((e) => (e.skill.includes(':') ? { ...e, skill: e.skill.slice(e.skill.lastIndexOf(':') + 1) } : e));
 }
 
 export function loadSnags(home) {

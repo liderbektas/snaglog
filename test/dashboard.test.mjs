@@ -217,3 +217,17 @@ describe('metrics', () => {
     assert.equal(skillDetail('x', empty).summary.invocations, 0);
   });
 });
+
+describe('small samples (end-to-end trial)', () => {
+  test('few runs on each side give not-enough-data with the numbers as notes', () => {
+    const at = Date.parse('2026-11-20T12:00:00Z');
+    const ev = (t, kind) => ({ time: new Date(at + t * 60000).toISOString(), agent: 'claude-code', skill: 'count-lines', kind, sessionId: 's' });
+    const events = [ev(-30, 'error'), ev(-20, 'error'), ev(-10, 'error'), ev(10, 'tool_call'), ev(20, 'tool_call')];
+    const evals = new Map([['count-lines', [{ ranAt: new Date(at + 5 * 60000).toISOString(), score: 0.5, commit: 'abc1234' }]]]);
+    const changes = [{ commit: 'abc1234', date: new Date(at).toISOString(), subject: 'fix' }];
+    const r = compare('count-lines', 'abc1234', { events, snags: [], evals, changes, now: at + 60 * 60000 });
+    assert.equal(r.verdict.result, 'not-enough-data');
+    assert.ok(r.verdict.notes.some((n) => n.includes('100% → 0%') && n.includes('only 3 and 2 tool calls')));
+    assert.ok(r.verdict.notes.some((n) => n.includes('eval score after the change: 50%')));
+  });
+});

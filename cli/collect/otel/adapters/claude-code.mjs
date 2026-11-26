@@ -4,7 +4,11 @@
 // tool_name, success, duration_ms, model, input_tokens, output_tokens,
 // cache_read_tokens, cache_creation_tokens, cost_usd.
 // skill.name on api_request / api_error is the real name for project and user
-// skills even when skill_activated says "custom_skill" (live capture, 2.1.291).
+// skills even when skill_activated says "custom_skill" (live capture, 2.1.291);
+// for skills loaded from a plugin it is "third-party", so the hook is the only
+// source of their name. assistant_response is emitted after every model
+// message with text, not only at the end of a turn, so it does not close a
+// window (end-to-end trial, 2026-11-26).
 // Everything else on the record (prompt text, tool parameters and input, error
 // text, emails, account and host identifiers) is ignored and never stored.
 
@@ -61,9 +65,6 @@ export function createAdapter({ anonymize, hints }) {
       }
       case 'user_prompt':
         return tracker.close(sessionId, time);
-      case 'assistant_response':
-        // Emitted once at the end of a turn (live capture, 2.1.291).
-        return tracker.closeScope(sessionId, scope, time);
       default:
         return [];
     }

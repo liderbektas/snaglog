@@ -60,7 +60,8 @@ export async function run(args, io, deps = {}) {
   if (current !== undefined) {
     if (untouched && existed) writeConfig(file, readFileSync(backup));
     else if (untouched) rmSync(file);
-    else if (next === '') rmSync(file);
+    // A file snaglog created and that now holds nothing else goes away again.
+    else if (next === '' || (!existed && next.trim() === '{}')) rmSync(file);
     else writeConfig(file, next);
   }
   if (agent.name === 'claude-code') removeHook(env);

@@ -38,8 +38,10 @@ function hookEntry(command) {
   return { type: 'command', command, async: true, timeout: 10 };
 }
 
-function hasHook(settings, event, command) {
-  return (settings.hooks?.[event] ?? []).some((group) => (group.hooks ?? []).some((h) => h.command === command));
+// snaglog's hook is recognised by its script path, so a changed node path
+// updates the entry instead of adding a second one.
+function ourHooks(settings, event, target) {
+  return (settings.hooks?.[event] ?? []).flatMap((group) => (group.hooks ?? []).filter((h) => typeof h.command === 'string' && h.command.includes(target)));
 }
 
 function managedSettingsPath() {
@@ -59,7 +61,7 @@ function parse(text, path) {
 }
 
 /** Plan the change. Returns { text, lines, warnings, record } or { nothing: true }. */
-export function plan({ text, path, endpoint, hookCommand }) {
+export function plan({ text, path, endpoint, hookCommand, hookTarget = hookCommand }) {
   const settings = text === undefined ? {} : parse(text, path);
   const before = JSON.stringify(settings);
   const lines = [];
@@ -82,7 +84,14 @@ export function plan({ text, path, endpoint, hookCommand }) {
 
   const hooksAdded = [];
   for (const { event, matcher } of HOOK_EVENTS) {
-    if (hasHook(settings, event, hookCommand)) continue;
+    const existing = ourHooks(settings, event, hookTarget);
+    if (existing.length) {
+      for (const h of existing.filter((x) => x.command !== hookCommand)) {
+        h.command = hookCommand;
+        lines.push(`hooks.${event}: update the snaglog hook command`);
+      }
+      continue;
+    }
     settings.hooks ??= {};
     settings.hooks[event] ??= [];
     settings.hooks[event].push({ ...(matcher ? { matcher } : {}), hooks: [hookEntry(hookCommand)] });
@@ -104,7 +113,7 @@ export function plan({ text, path, endpoint, hookCommand }) {
     text: `${JSON.stringify(settings, null, 2)}\n`,
     lines,
     warnings,
-    record: { previous, hooksAdded, hookCommand, envCreated: !('env' in (text === undefined ? {} : parse(text, path))) },
+    record: { previous, hooksAdded, hookCommand, hookTarget, envCreated: !('env' in (text === undefined ? {} : parse(text, path))) },
   };
 }
 
@@ -124,7 +133,7 @@ export function revert({ text, path, record, endpoint }) {
     const groups = settings.hooks?.[event];
     if (!groups) continue;
     settings.hooks[event] = groups
-      .map((g) => ({ ...g, hooks: (g.hooks ?? []).filter((h) => h.command !== record.hookCommand) }))
+      .map((g) => ({ ...g, hooks: (g.hooks ?? []).filter((h) => !(typeof h.command === 'string' && h.command.includes(record.hookTarget ?? record.hookCommand))) }))
       .filter((g) => g.hooks.length > 0);
     if (settings.hooks[event].length === 0) delete settings.hooks[event];
   }

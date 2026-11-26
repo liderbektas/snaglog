@@ -119,6 +119,8 @@ describe('eval cases', () => {
     assert.equal(before.problems.length, 2);
     writeFileSync(join(created, 'prompt.md'), readFileSync(join(created, 'prompt.md'), 'utf8').replace(/TODO\(fix-snags\)[\s\S]*$/, 'Deploy a preview of this branch to staging.\n'));
     writeFileSync(join(created, 'graders', 'no-snag.md'), '---\ntype: regex\ntarget: trace\npattern: "unknown option .--env."\nmatch: false\n---\n');
+    assert.match(checkCase({ root: repo, skill: 'deploy-preview', issue: 42 }).problems.join(), /match must be not_contains or count:N \(got false\)/);
+    writeFileSync(join(created, 'graders', 'no-snag.md'), '---\ntype: regex\ntarget: trace\npattern: "unknown option .--env."\nmatch: not_contains\n---\n');
     assert.deepEqual(checkCase({ root: repo, skill: 'deploy-preview', issue: 42 }), { ok: true, dir: created, problems: [] });
   });
 

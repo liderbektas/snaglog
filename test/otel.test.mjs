@@ -57,13 +57,13 @@ describe('claude-code adapter', () => {
     const { events } = createReceiver({ env }).ingest(fixture('claude-code-skill-session'));
     assert.deepEqual(events.map((e) => e.kind), ['invoked', 'error', 'error', 'tool_call', 'completed']);
     assert.ok(events.every((e) => e.skill === 'deploy-preview' && e.agent === 'claude-code'));
-    assert.equal(events.at(-1).time, new Date(T + 9000).toISOString(), 'closed by assistant_response at the end of the turn');
+    assert.equal(events.at(-1).time, new Date(T + 8000).toISOString(), 'completed at the last activity, closed by the next prompt');
     const done = events.at(-1);
     assert.equal(done.success, false);
     assert.equal(done.retries, 1, 'the second failing Bash call is a retry');
     assert.equal(done.tokens, 10500, 'input + output + cache tokens');
     assert.equal(done.costUsd, 0.02);
-    assert.equal(done.durationMs, 8000);
+    assert.equal(done.durationMs, 7000);
     assert.equal(done.model, 'claude-opus-5-5');
   });
 
@@ -121,8 +121,12 @@ describe('claude-code adapter on a captured session', () => {
   });
 
   test('full capture: proactive and slash-command runs of a broken skill', () => {
-    const { events } = createReceiver({ env }).ingest(fixture('claude-code-captured-skill'));
-    const runs = [events.slice(0, 4), events.slice(4)];
+    const receiver = createReceiver({ env, now: () => Date.parse('2030-01-01T00:00:00Z') });
+    // The last run has no following prompt: it is closed once idle.
+    const events = [...receiver.ingest(fixture('claude-code-captured-skill')).events, ...receiver.sweep()];
+    const sessions = [...new Set(events.map((e) => e.sessionId))];
+    const runs = sessions.map((id) => events.filter((e) => e.sessionId === id));
+    assert.equal(runs.length, 2);
     for (const run of runs) {
       assert.deepEqual(run.map((e) => e.kind), ['invoked', 'error', 'tool_call', 'completed']);
       assert.ok(run.every((e) => e.skill === 'demo-snag'));

@@ -26,8 +26,11 @@ import { BUNDLED_SKILLS, findSkills } from './lib/skills.mjs';
 export const MIN_CLAUDE = [2, 1, 269];
 export const MIN_GIT = [2, 31, 0];
 export const DEFAULT_MAX_COST_USD = 1;
-// Flags snaglog must never pass to `claude plugin eval`.
-export const FORBIDDEN_FLAGS = ['--publish-report', '--scaffold', '--allow-real-servers', '--trust-plugin', '--mocks', '--allow-tools'];
+// Flags snaglog must never pass to `claude plugin eval`. --trust-plugin is
+// passed only when the user answers snaglog's own trust question in a
+// terminal (`--trust-plugin`; --yes does not answer it): with --json,
+// Claude Code cannot ask that question itself.
+export const FORBIDDEN_FLAGS = ['--publish-report', '--scaffold', '--allow-real-servers', '--mocks', '--allow-tools'];
 
 const USAGE = `Usage: snaglog eval [<skill>] [options]
 
@@ -46,6 +49,8 @@ Options:
   --runs <n>            Override runs per case (fewer runs cost less)
   --keep-report         Keep Claude Code's full report in evals/results/ (git-ignored;
                         contains prompts and transcripts)
+  --trust-plugin        Needed once per repo: Claude Code runs only plugins you trust.
+                        snaglog asks you to confirm in a terminal (--yes does not)
   --dry-run             Show the plan and estimate, run nothing
   --yes                 Do not ask for confirmation
   -h, --help            Show this help`;
@@ -81,7 +86,7 @@ export function checkTools(env) {
 }
 
 /** The exact argument list for one run. Exported so tests can pin it. */
-export function evalArgs({ root, skill, ablate, maxCostUsd, runs, jsonPath, outputDir }) {
+export function evalArgs({ root, skill, ablate, maxCostUsd, runs, jsonPath, outputDir, trust = false }) {
   const args = [
     'plugin', 'eval', root,
     '--tag', `skill:${skill}`,
@@ -92,6 +97,7 @@ export function evalArgs({ root, skill, ablate, maxCostUsd, runs, jsonPath, outp
     '--max-cost-usd', String(maxCostUsd),
   ];
   if (runs) args.push('--runs', String(runs));
+  if (trust) args.push('--trust-plugin');
   for (const flag of FORBIDDEN_FLAGS) if (args.includes(flag)) throw new Error(`refusing to pass ${flag}`);
   return args;
 }
@@ -192,6 +198,7 @@ export async function run(args, io, deps = {}) {
         'max-cost-usd': { type: 'string' },
         runs: { type: 'string' },
         'keep-report': { type: 'boolean' },
+        'trust-plugin': { type: 'boolean' },
         'dry-run': { type: 'boolean' },
         yes: { type: 'boolean' },
         help: { type: 'boolean', short: 'h' },
@@ -257,6 +264,19 @@ export async function run(args, io, deps = {}) {
     }
   }
 
+  let trust = false;
+  if (values['trust-plugin']) {
+    // Never answered by --yes: this is a security decision, not a cost one.
+    const answer = await (deps.confirm ?? ((q) => confirm(q)))(
+      `\nTrust ${root}?\nclaude plugin eval will load this repo's skills and run its eval suite on this machine as you. Answer yes only for a repo whose code you trust.`,
+    );
+    if (answer !== true) {
+      io.err(answer === null ? 'snaglog eval: --trust-plugin must be confirmed in a terminal' : 'Not trusted: nothing was run.');
+      return 1;
+    }
+    trust = true;
+  }
+
   let failed = 0;
   for (const row of rows) {
     const tmp = mkdtempSync(join(tmpdir(), 'snaglog-eval-'));
@@ -266,7 +286,7 @@ export async function run(args, io, deps = {}) {
     const jsonPath = join(tmp, 'result.json');
     io.out(`\n▶ ${row.skill}`);
     try {
-      const r = spawnSync(claudeBin(env), evalArgs({ root, skill: row.skill, ablate, maxCostUsd, runs, jsonPath, outputDir }), { stdio: 'inherit', env });
+      const r = spawnSync(claudeBin(env), evalArgs({ root, skill: row.skill, ablate, maxCostUsd, runs, jsonPath, outputDir, trust }), { stdio: 'inherit', env });
       const exitCode = r.status ?? (r.signal ? 130 : 1);
       if (exitCode === 130 || exitCode === 143) {
         io.err(`${row.skill}: interrupted; stopping`);
@@ -281,13 +301,16 @@ export async function run(args, io, deps = {}) {
       }
       if (!result) {
         failed += 1;
-        io.err(`${row.skill}: claude plugin eval produced no result (exit ${exitCode}). If it reported "currently unavailable", Anthropic has switched the command off for now.`);
+        io.err(`${row.skill}: claude plugin eval produced no result (exit ${exitCode}). If it said the directory is not trusted, re-run with --trust-plugin once (you will be asked to confirm). If it reported "currently unavailable", Anthropic has switched the command off for now.`);
         continue;
       }
       const saved = record({ root, home, skill: row.skill, result, ablate, exitCode, keepReport: values['keep-report'], outputDir });
       if (!saved) {
         failed += 1;
-        io.err(`${row.skill}: the result contains none of this skill's cases`);
+        const loaded = Array.isArray(result.cases) ? result.cases.length : 0;
+        io.err(loaded
+          ? `${row.skill}: the result contains none of this skill's cases`
+          : `${row.skill}: no eval case could be loaded; see the errors printed above by claude plugin eval (for example an invalid grader), fix them and run again. Nothing was recorded.`);
         continue;
       }
       const { entry } = saved;

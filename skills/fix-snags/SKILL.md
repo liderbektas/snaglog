@@ -74,7 +74,7 @@ For each approved group:
    ```
 
 4. **Commit** with a Conventional Commits message, for example `fix(<skill>): <summary>`.
-5. **Eval (costs money, ask first).** Run `snaglog eval <skill> --dry-run` and show the owner the estimate and ceiling. Only if they agree, run `snaglog eval <skill>` (it asks again). If they decline, continue; the pull request will say the eval was not run.
+5. **Eval (costs money, ask first).** Run `snaglog eval <skill> --dry-run` and show the owner the estimate and ceiling. Only if they agree, run `snaglog eval <skill> --yes`. If it fails because the repo is not a trusted plugin directory, do not pass `--trust-plugin` yourself: that is the owner's security decision, and snaglog asks it only in a terminal. Ask the owner to run `snaglog eval <skill> --trust-plugin` once in their own terminal, then continue. If they decline either step, continue; the pull request will say the eval was not run.
 6. **Write the pull request.** Save the group as `fix.json`:
 
    ```json

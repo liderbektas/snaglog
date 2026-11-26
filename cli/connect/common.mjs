@@ -2,8 +2,8 @@
 // the exact reverse. State lives in ~/.snaglog/connections.json.
 
 import { createHash } from 'node:crypto';
-import { copyFileSync, existsSync, mkdirSync, readFileSync, rmSync, writeFileSync } from 'node:fs';
-import { dirname, join } from 'node:path';
+import { copyFileSync, existsSync, mkdirSync, readFileSync, rmSync, statSync, writeFileSync } from 'node:fs';
+import { delimiter, dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { parseArgs } from 'node:util';
 import { confirm } from '../lib/confirm.mjs';
@@ -67,9 +67,33 @@ export function checkEndpoint(endpoint) {
   return `${url.protocol}//${url.host}`;
 }
 
+/**
+ * The node binary for the hook command: the first `node` on PATH (usually a
+ * stable link such as /opt/homebrew/bin/node) rather than process.execPath,
+ * which can be a versioned path that disappears on upgrade.
+ */
+function nodeBinary(env) {
+  for (const dir of String(env.PATH ?? '').split(delimiter)) {
+    if (!dir) continue;
+    const candidate = join(dir, process.platform === 'win32' ? 'node.exe' : 'node');
+    try {
+      if (statSync(candidate).isFile()) return candidate;
+    } catch {
+      // not here
+    }
+  }
+  return process.execPath;
+}
+
 export function hookPaths(env) {
   const target = join(snaglogHome(env), 'hooks', 'claude-skill-hint.mjs');
-  return { source: HOOK_SOURCE, target, command: `"${process.execPath}" "${target}"` };
+  return { source: HOOK_SOURCE, target, command: `"${nodeBinary(env)}" "${target}"` };
+}
+
+/** True when the installed hook script differs from the one in this snaglog. */
+export function hookOutdated(env) {
+  const { source, target } = hookPaths(env);
+  return !existsSync(target) || !readFileSync(target).equals(readFileSync(source));
 }
 
 export function state(env) {

@@ -201,7 +201,15 @@ function verdict(before, after) {
   const notes = [];
   let better = 0;
   let worse = 0;
-  if (before.errorRate !== null && after.errorRate !== null && after.toolCalls >= 5) {
+  const errorsComparable = before.toolCalls >= 5 && after.toolCalls >= 5;
+  const evalsComparable = before.evalScore !== null && after.evalScore !== null;
+  if (!errorsComparable && !evalsComparable) {
+    const hints = [];
+    if (before.toolCalls && after.toolCalls) hints.push(`tool error rate ${pct(before.errorRate)} → ${pct(after.errorRate)}, but only ${before.toolCalls} and ${after.toolCalls} tool calls`);
+    if (after.evalScore !== null && before.evalScore === null) hints.push(`eval score after the change: ${pct(after.evalScore)} (no eval before it)`);
+    return { result: 'not-enough-data', notes: hints.length ? hints : ['Not enough data on both sides of this change yet.'] };
+  }
+  if (errorsComparable && before.errorRate !== null && after.errorRate !== null) {
     if (after.errorRate < before.errorRate - 0.03) {
       better += 1;
       notes.push(`tool error rate ${pct(before.errorRate)} → ${pct(after.errorRate)}`);
@@ -210,12 +218,11 @@ function verdict(before, after) {
       notes.push(`tool error rate ${pct(before.errorRate)} → ${pct(after.errorRate)}`);
     }
   }
-  if (before.evalScore !== null && after.evalScore !== null) {
+  if (evalsComparable) {
     if (after.evalScore > before.evalScore + 0.001) better += 1;
     if (after.evalScore < before.evalScore - 0.001) worse += 1;
     if (after.evalScore !== before.evalScore) notes.push(`eval score ${pct(before.evalScore)} → ${pct(after.evalScore)}`);
   }
-  if (after.toolCalls < 5 && after.evalScore === null) return { result: 'not-enough-data', notes: ['Not enough usage or eval results since this change yet.'] };
   if (better && !worse) return { result: 'improved', notes };
   if (worse && !better) return { result: 'worse', notes };
   if (better && worse) return { result: 'mixed', notes };

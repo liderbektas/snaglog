@@ -120,7 +120,13 @@ export class SkillTracker {
 
 const SKILL_ID = /^[A-Za-z0-9][A-Za-z0-9:_.-]{0,127}$/;
 
-/** Skill names come from agents; anything unexpected is stored as "unknown". */
+/**
+ * Skill names come from agents; anything unexpected is stored as "unknown".
+ * A plugin namespace ("team-skills:count-lines", as Claude Code reports
+ * skills of a repo loaded as a plugin) is dropped so telemetry joins snags
+ * and evals, which use the plain name.
+ */
 export function safeSkillName(name) {
-  return typeof name === 'string' && SKILL_ID.test(name) ? name : 'unknown';
+  if (typeof name !== 'string' || !SKILL_ID.test(name)) return 'unknown';
+  return name.includes(':') ? name.slice(name.lastIndexOf(':') + 1) || 'unknown' : name;
 }

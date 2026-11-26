@@ -17,9 +17,13 @@ First development version; not yet published.
 - `snaglog eval`: runs Claude Code's official `claude plugin eval` for changed skills (or one, or all) after showing an estimate and a hard cost ceiling, and records results with the skill's commit.
 - `snaglog dashboard`: local dashboard with overview, skill detail, before/after, unsent reports and connections pages; light and dark themes; `--demo` mode.
 
+### Changed after the end-to-end trial
+
+See [docs/E2E-TRIAL.md](docs/E2E-TRIAL.md): stable node path and self-updating hook, plugin namespaces dropped from skill names, skill windows no longer closed on `assistant_response`, `snaglog eval --trust-plugin` with its own confirmation, valid `match: not_contains` in the eval-case template, honest small-sample verdicts, `SNAGLOG_DEBUG_EVENTS`.
+
 ### Known limitations
 
-- No end-to-end trial on a real repository yet.
+- The end-to-end trial covered Claude Code only.
 - Codex adapter not yet verified with a live capture.
 - OTLP protobuf is not accepted.
 - Team mode is not implemented.

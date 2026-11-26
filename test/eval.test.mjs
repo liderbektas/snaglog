@@ -95,6 +95,25 @@ describe('safety of the claude call', () => {
   });
 });
 
+describe('trust', () => {
+  test('--trust-plugin is passed only after the user confirms trust; --yes does not confirm it', async () => {
+    const answers = [];
+    const out = [];
+    const run2 = (args, answer) => run(['--path', repo, ...args], { out: (s) => out.push(s), err: (s) => out.push(s) }, {
+      env: { PATH: process.env.PATH, SNAGLOG_HOME: home, SNAGLOG_CLAUDE: FAKE_CLAUDE, FAKE_CLAUDE_LOG: log, FAKE_CLAUDE_SCENARIO: JSON.stringify({ cases: PASSING }) },
+      confirm: async (q) => { answers.push(q); return answer; },
+    });
+    assert.equal(await run2(['--yes', '--trust-plugin'], null), 1, 'no terminal: refused');
+    assert.equal(await run2(['--yes', '--trust-plugin'], false), 1, 'declined: refused');
+    assert.equal(calls().length, 0);
+    assert.match(answers[0], /Trust [\s\S]*run its eval suite on this machine as you/);
+    assert.equal(await run2(['--yes', '--trust-plugin'], true), 0);
+    assert.ok(calls()[0].includes('--trust-plugin'));
+    await run2(['--yes', '--all'], true);
+    assert.equal(calls()[1].includes('--trust-plugin'), false, 'never passed without the option');
+  });
+});
+
 describe('plan and confirmation', () => {
   test('dry run shows cases, mix, estimate and ceiling and runs nothing', async () => {
     const r = await evalCmd(['--dry-run']);

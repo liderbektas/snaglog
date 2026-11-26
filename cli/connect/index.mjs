@@ -1,7 +1,7 @@
 // `snaglog connect <agent>` — route an agent's telemetry to the local
 // snaglog receiver. Shows every change, asks, backs up, then writes.
 
-import { ask, backup, checkEndpoint, DEFAULT_ENDPOINT, existsSync, hookPaths, installHook, parse, readFileSync, resolveAgent, sha256, state, writeConfig } from './common.mjs';
+import { ask, backup, checkEndpoint, DEFAULT_ENDPOINT, existsSync, hookOutdated, hookPaths, installHook, parse, readFileSync, resolveAgent, sha256, state, writeConfig } from './common.mjs';
 
 export async function run(args, io, deps = {}) {
   const env = deps.env ?? process.env;
@@ -38,7 +38,7 @@ export async function run(args, io, deps = {}) {
   const hook = hookPaths(env);
   let plan;
   try {
-    plan = agent.plan({ text: original, path, endpoint, hookCommand: hook.command });
+    plan = agent.plan({ text: original, path, endpoint, hookCommand: hook.command, hookTarget: hook.target });
   } catch (error) {
     io.err(`snaglog connect: ${error.message}`);
     return 1;
@@ -49,6 +49,13 @@ export async function run(args, io, deps = {}) {
   for (const warning of plan.warnings) io.out(`warning: ${warning}`);
   const connections = state(env).read();
   if (plan.nothing) {
+    if (agent.name === 'claude-code' && connections[agent.name]?.connection && hookOutdated(env)) {
+      if (values['dry-run']) io.out(`Would update the hook script: ${hook.target}`);
+      else {
+        installHook(env);
+        io.out(`Updated the hook script: ${hook.target}`);
+      }
+    }
     io.out('Nothing to do: already connected.');
     return 0;
   }

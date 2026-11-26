@@ -98,7 +98,7 @@ arm: both
 type: regex
 target: trace
 pattern: "${TODO}: a pattern that appears only when the snag happens"
-match: false
+match: not_contains
 ---
 `);
   return { created: dir, name, files: ['prompt.md', 'graders/uses-skill.md', 'graders/no-snag.md'] };
@@ -118,6 +118,12 @@ export function checkCase({ root, skill, issue }) {
   const files = [join(dir, 'prompt.md'), ...readdirSync(join(dir, 'graders')).map((f) => join(dir, 'graders', f))];
   for (const file of files) if (readFileSync(file, 'utf8').includes(TODO)) problems.push(`${file.slice(dir.length + 1)} still contains ${TODO}`);
   if (!readdirSync(join(dir, 'graders')).some((f) => f.endsWith('.md'))) problems.push('no grader in graders/');
+  // claude plugin eval accepts only these spellings for a regex grader's match
+  // (it rejects booleans); catching it here avoids a failed, paid eval run.
+  for (const file of readdirSync(join(dir, 'graders')).filter((f) => f.endsWith('.md'))) {
+    const m = /^match:\s*["']?([^"'\n]+?)["']?\s*$/m.exec(readFileSync(join(dir, 'graders', file), 'utf8'));
+    if (m && !/^(not_contains|count:\d+)$/.test(m[1])) problems.push(`graders/${file}: match must be not_contains or count:N (got ${m[1]})`);
+  }
   return { ok: problems.length === 0, dir, problems };
 }
 
