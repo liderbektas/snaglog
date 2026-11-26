@@ -8,6 +8,8 @@
 //   issues: [{ number, title, url }]   -> returned by `gh issue list`
 //   labelsMissing: true    -> `gh issue create --label ...` fails like gh does
 //   createFails: true      -> every `gh issue create` fails
+//   labels: ['name', ...]  -> returned by `gh label list`
+//   labelCreateFails: true -> every `gh label create` fails
 
 import { appendFileSync, readFileSync } from 'node:fs';
 
@@ -47,6 +49,11 @@ if (a === '--version') {
   if (scenario.createFails) fail('HTTP 502: Bad Gateway');
   if (scenario.labelsMissing && args.includes('--label')) fail("could not add label: 'skill-friction' not found");
   process.stdout.write(`https://github.com/${flag('--repo')}/issues/101\n`);
+} else if (a === 'label' && b === 'list') {
+  process.stdout.write(JSON.stringify((scenario.labels ?? []).map((name) => ({ name }))));
+} else if (a === 'label' && b === 'create') {
+  if (scenario.labelCreateFails) fail('HTTP 403: Resource not accessible by integration');
+  process.stdout.write('');
 } else if (a === 'issue' && b === 'comment') {
   process.stdout.write(`https://github.com/${flag('--repo')}/issues/${args[2]}#issuecomment-1\n`);
 } else {
