@@ -1,7 +1,8 @@
 // Claude Code adapter. See docs/AGENT-ADAPTERS.md.
 //
 // Reads only these attributes: event.name, session.id, prompt.id, skill.name,
-// tool_name, success, duration_ms, model, input_tokens, output_tokens.
+// tool_name, success, duration_ms, model, input_tokens, output_tokens,
+// cache_read_tokens, cache_creation_tokens, cost_usd.
 // skill.name on api_request / api_error is the real name for project and user
 // skills even when skill_activated says "custom_skill" (live capture, 2.1.291).
 // Everything else on the record (prompt text, tool parameters and input, error
@@ -53,11 +54,16 @@ export function createAdapter({ anonymize, hints }) {
         return renameFrom(sessionId, scope, attrs);
       case 'api_request': {
         const renamed = renameFrom(sessionId, scope, attrs);
-        const tokens = (toNumber(attrs.input_tokens) ?? 0) + (toNumber(attrs.output_tokens) ?? 0);
-        return [...renamed, ...tracker.tokens(sessionId, { time, scope, tokens, model: typeof attrs.model === 'string' ? attrs.model : undefined })];
+        // input_tokens excludes prompt-cache tokens, which dominate real sessions.
+        const tokens = ['input_tokens', 'output_tokens', 'cache_read_tokens', 'cache_creation_tokens'].reduce((sum, key) => sum + (toNumber(attrs[key]) ?? 0), 0);
+        const costUsd = toNumber(attrs.cost_usd);
+        return [...renamed, ...tracker.tokens(sessionId, { time, scope, tokens, costUsd, model: typeof attrs.model === 'string' ? attrs.model : undefined })];
       }
       case 'user_prompt':
         return tracker.close(sessionId, time);
+      case 'assistant_response':
+        // Emitted once at the end of a turn (live capture, 2.1.291).
+        return tracker.closeScope(sessionId, scope, time);
       default:
         return [];
     }

@@ -1,0 +1,3229 @@
+{
+ "_provenance": "CAPTURED from Claude Code 2.1.291 (darwin) on 2026-11-26 with snaglog connect settings, two sessions with a deliberately broken project skill (demo-snag): one proactive Skill call, one typed /demo-snag. Anonymised: identifiers replaced consistently, unrelated events dropped. prompt, prompt_text and response are the values Claude Code sent with logging off.",
+ "resourceLogs": [
+  {
+   "resource": {
+    "attributes": [
+     {
+      "key": "os.type",
+      "value": {
+       "stringValue": "darwin"
+      }
+     },
+     {
+      "key": "os.version",
+      "value": {
+       "stringValue": "25.6.0"
+      }
+     },
+     {
+      "key": "service.name",
+      "value": {
+       "stringValue": "claude-code"
+      }
+     },
+     {
+      "key": "service.version",
+      "value": {
+       "stringValue": "2.1.291"
+      }
+     }
+    ]
+   },
+   "scopeLogs": [
+    {
+     "scope": {
+      "name": "com.anthropic.claude_code.events",
+      "version": "2.1.291"
+     },
+     "logRecords": [
+      {
+       "timeUnixNano": "1795691773708000000",
+       "observedTimeUnixNano": "1795691773708000000",
+       "body": {
+        "stringValue": "claude_code.user_prompt"
+       },
+       "attributes": [
+        {
+         "key": "user.id",
+         "value": {
+          "stringValue": "<user.id>"
+         }
+        },
+        {
+         "key": "session.id",
+         "value": {
+          "stringValue": "00000000-0000-4000-8000-000000000102"
+         }
+        },
+        {
+         "key": "organization.id",
+         "value": {
+          "stringValue": "<organization.id>"
+         }
+        },
+        {
+         "key": "user.email",
+         "value": {
+          "stringValue": "<user.email>"
+         }
+        },
+        {
+         "key": "user.account_uuid",
+         "value": {
+          "stringValue": "<user.account_uuid>"
+         }
+        },
+        {
+         "key": "user.account_id",
+         "value": {
+          "stringValue": "<user.account_id>"
+         }
+        },
+        {
+         "key": "terminal.type",
+         "value": {
+          "stringValue": "non-interactive"
+         }
+        },
+        {
+         "key": "event.name",
+         "value": {
+          "stringValue": "user_prompt"
+         }
+        },
+        {
+         "key": "event.timestamp",
+         "value": {
+          "stringValue": "2026-11-26T11:16:13.708Z"
+         }
+        },
+        {
+         "key": "event.sequence",
+         "value": {
+          "intValue": 13
+         }
+        },
+        {
+         "key": "prompt.id",
+         "value": {
+          "stringValue": "00000000-0000-4000-8000-000000000107"
+         }
+        },
+        {
+         "key": "prompt_length",
+         "value": {
+          "stringValue": "50"
+         }
+        },
+        {
+         "key": "prompt",
+         "value": {
+          "stringValue": "<REDACTED>"
+         }
+        },
+        {
+         "key": "prompt_text",
+         "value": {
+          "stringValue": "<REDACTED>"
+         }
+        },
+        {
+         "key": "message.uuid",
+         "value": {
+          "stringValue": "<message.uuid-000000000108>"
+         }
+        }
+       ],
+       "droppedAttributesCount": 0
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "resource": {
+    "attributes": [
+     {
+      "key": "os.type",
+      "value": {
+       "stringValue": "darwin"
+      }
+     },
+     {
+      "key": "os.version",
+      "value": {
+       "stringValue": "25.6.0"
+      }
+     },
+     {
+      "key": "service.name",
+      "value": {
+       "stringValue": "claude-code"
+      }
+     },
+     {
+      "key": "service.version",
+      "value": {
+       "stringValue": "2.1.291"
+      }
+     }
+    ]
+   },
+   "scopeLogs": [
+    {
+     "scope": {
+      "name": "com.anthropic.claude_code.events",
+      "version": "2.1.291"
+     },
+     "logRecords": [
+      {
+       "timeUnixNano": "1795691781185000000",
+       "observedTimeUnixNano": "1795691781185000000",
+       "body": {
+        "stringValue": "claude_code.api_request"
+       },
+       "attributes": [
+        {
+         "key": "user.id",
+         "value": {
+          "stringValue": "<user.id>"
+         }
+        },
+        {
+         "key": "session.id",
+         "value": {
+          "stringValue": "00000000-0000-4000-8000-000000000102"
+         }
+        },
+        {
+         "key": "organization.id",
+         "value": {
+          "stringValue": "<organization.id>"
+         }
+        },
+        {
+         "key": "user.email",
+         "value": {
+          "stringValue": "<user.email>"
+         }
+        },
+        {
+         "key": "user.account_uuid",
+         "value": {
+          "stringValue": "<user.account_uuid>"
+         }
+        },
+        {
+         "key": "user.account_id",
+         "value": {
+          "stringValue": "<user.account_id>"
+         }
+        },
+        {
+         "key": "terminal.type",
+         "value": {
+          "stringValue": "non-interactive"
+         }
+        },
+        {
+         "key": "event.name",
+         "value": {
+          "stringValue": "api_request"
+         }
+        },
+        {
+         "key": "event.timestamp",
+         "value": {
+          "stringValue": "2026-11-26T11:16:21.185Z"
+         }
+        },
+        {
+         "key": "event.sequence",
+         "value": {
+          "intValue": 21
+         }
+        },
+        {
+         "key": "prompt.id",
+         "value": {
+          "stringValue": "00000000-0000-4000-8000-000000000107"
+         }
+        },
+        {
+         "key": "model",
+         "value": {
+          "stringValue": "claude-opus-5-5"
+         }
+        },
+        {
+         "key": "input_tokens",
+         "value": {
+          "intValue": 2
+         }
+        },
+        {
+         "key": "output_tokens",
+         "value": {
+          "intValue": 52
+         }
+        },
+        {
+         "key": "cache_read_tokens",
+         "value": {
+          "intValue": 10345
+         }
+        },
+        {
+         "key": "cache_creation_tokens",
+         "value": {
+          "intValue": 14496
+         }
+        },
+        {
+         "key": "cost_usd",
+         "value": {
+          "doubleValue": 0.119085
+         }
+        },
+        {
+         "key": "cost_usd_micros",
+         "value": {
+          "intValue": 119085
+         }
+        },
+        {
+         "key": "duration_ms",
+         "value": {
+          "intValue": 7451
+         }
+        },
+        {
+         "key": "ttft_ms",
+         "value": {
+          "intValue": 7187
+         }
+        },
+        {
+         "key": "request_id",
+         "value": {
+          "stringValue": "<request_id-000000000109>"
+         }
+        },
+        {
+         "key": "client_request_id",
+         "value": {
+          "stringValue": "<client_request_id-000000000110>"
+         }
+        },
+        {
+         "key": "speed",
+         "value": {
+          "stringValue": "normal"
+         }
+        },
+        {
+         "key": "query_source",
+         "value": {
+          "stringValue": "sdk"
+         }
+        },
+        {
+         "key": "effort",
+         "value": {
+          "stringValue": "medium"
+         }
+        }
+       ],
+       "droppedAttributesCount": 0
+      },
+      {
+       "timeUnixNano": "1795691781234000000",
+       "observedTimeUnixNano": "1795691781234000000",
+       "body": {
+        "stringValue": "claude_code.tool_decision"
+       },
+       "attributes": [
+        {
+         "key": "user.id",
+         "value": {
+          "stringValue": "<user.id>"
+         }
+        },
+        {
+         "key": "session.id",
+         "value": {
+          "stringValue": "00000000-0000-4000-8000-000000000102"
+         }
+        },
+        {
+         "key": "organization.id",
+         "value": {
+          "stringValue": "<organization.id>"
+         }
+        },
+        {
+         "key": "user.email",
+         "value": {
+          "stringValue": "<user.email>"
+         }
+        },
+        {
+         "key": "user.account_uuid",
+         "value": {
+          "stringValue": "<user.account_uuid>"
+         }
+        },
+        {
+         "key": "user.account_id",
+         "value": {
+          "stringValue": "<user.account_id>"
+         }
+        },
+        {
+         "key": "terminal.type",
+         "value": {
+          "stringValue": "non-interactive"
+         }
+        },
+        {
+         "key": "event.name",
+         "value": {
+          "stringValue": "tool_decision"
+         }
+        },
+        {
+         "key": "event.timestamp",
+         "value": {
+          "stringValue": "2026-11-26T11:16:21.234Z"
+         }
+        },
+        {
+         "key": "event.sequence",
+         "value": {
+          "intValue": 23
+         }
+        },
+        {
+         "key": "prompt.id",
+         "value": {
+          "stringValue": "00000000-0000-4000-8000-000000000107"
+         }
+        },
+        {
+         "key": "decision",
+         "value": {
+          "stringValue": "accept"
+         }
+        },
+        {
+         "key": "source",
+         "value": {
+          "stringValue": "config"
+         }
+        },
+        {
+         "key": "tool_name",
+         "value": {
+          "stringValue": "Skill"
+         }
+        },
+        {
+         "key": "tool_use_id",
+         "value": {
+          "stringValue": "<tool_use_id-000000000111>"
+         }
+        },
+        {
+         "key": "tool_source",
+         "value": {
+          "stringValue": "builtin"
+         }
+        }
+       ],
+       "droppedAttributesCount": 0
+      },
+      {
+       "timeUnixNano": "1795691781239000000",
+       "observedTimeUnixNano": "1795691781239000000",
+       "body": {
+        "stringValue": "claude_code.skill_activated"
+       },
+       "attributes": [
+        {
+         "key": "user.id",
+         "value": {
+          "stringValue": "<user.id>"
+         }
+        },
+        {
+         "key": "session.id",
+         "value": {
+          "stringValue": "00000000-0000-4000-8000-000000000102"
+         }
+        },
+        {
+         "key": "organization.id",
+         "value": {
+          "stringValue": "<organization.id>"
+         }
+        },
+        {
+         "key": "user.email",
+         "value": {
+          "stringValue": "<user.email>"
+         }
+        },
+        {
+         "key": "user.account_uuid",
+         "value": {
+          "stringValue": "<user.account_uuid>"
+         }
+        },
+        {
+         "key": "user.account_id",
+         "value": {
+          "stringValue": "<user.account_id>"
+         }
+        },
+        {
+         "key": "terminal.type",
+         "value": {
+          "stringValue": "non-interactive"
+         }
+        },
+        {
+         "key": "event.name",
+         "value": {
+          "stringValue": "skill_activated"
+         }
+        },
+        {
+         "key": "event.timestamp",
+         "value": {
+          "stringValue": "2026-11-26T11:16:21.239Z"
+         }
+        },
+        {
+         "key": "event.sequence",
+         "value": {
+          "intValue": 24
+         }
+        },
+        {
+         "key": "prompt.id",
+         "value": {
+          "stringValue": "00000000-0000-4000-8000-000000000107"
+         }
+        },
+        {
+         "key": "skill.name",
+         "value": {
+          "stringValue": "custom_skill"
+         }
+        },
+        {
+         "key": "invocation_trigger",
+         "value": {
+          "stringValue": "claude-proactive"
+         }
+        },
+        {
+         "key": "skill.source",
+         "value": {
+          "stringValue": "projectSettings"
+         }
+        }
+       ],
+       "droppedAttributesCount": 0
+      },
+      {
+       "timeUnixNano": "1795691781239000000",
+       "observedTimeUnixNano": "1795691781239000000",
+       "body": {
+        "stringValue": "claude_code.tool_result"
+       },
+       "attributes": [
+        {
+         "key": "user.id",
+         "value": {
+          "stringValue": "<user.id>"
+         }
+        },
+        {
+         "key": "session.id",
+         "value": {
+          "stringValue": "00000000-0000-4000-8000-000000000102"
+         }
+        },
+        {
+         "key": "organization.id",
+         "value": {
+          "stringValue": "<organization.id>"
+         }
+        },
+        {
+         "key": "user.email",
+         "value": {
+          "stringValue": "<user.email>"
+         }
+        },
+        {
+         "key": "user.account_uuid",
+         "value": {
+          "stringValue": "<user.account_uuid>"
+         }
+        },
+        {
+         "key": "user.account_id",
+         "value": {
+          "stringValue": "<user.account_id>"
+         }
+        },
+        {
+         "key": "terminal.type",
+         "value": {
+          "stringValue": "non-interactive"
+         }
+        },
+        {
+         "key": "event.name",
+         "value": {
+          "stringValue": "tool_result"
+         }
+        },
+        {
+         "key": "event.timestamp",
+         "value": {
+          "stringValue": "2026-11-26T11:16:21.239Z"
+         }
+        },
+        {
+         "key": "event.sequence",
+         "value": {
+          "intValue": 25
+         }
+        },
+        {
+         "key": "prompt.id",
+         "value": {
+          "stringValue": "00000000-0000-4000-8000-000000000107"
+         }
+        },
+        {
+         "key": "tool_name",
+         "value": {
+          "stringValue": "Skill"
+         }
+        },
+        {
+         "key": "tool_use_id",
+         "value": {
+          "stringValue": "<tool_use_id-000000000111>"
+         }
+        },
+        {
+         "key": "success",
+         "value": {
+          "stringValue": "true"
+         }
+        },
+        {
+         "key": "duration_ms",
+         "value": {
+          "stringValue": "5"
+         }
+        },
+        {
+         "key": "tool_input_size_bytes",
+         "value": {
+          "stringValue": "21"
+         }
+        },
+        {
+         "key": "tool_result_size_bytes",
+         "value": {
+          "stringValue": "26"
+         }
+        }
+       ],
+       "droppedAttributesCount": 0
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "resource": {
+    "attributes": [
+     {
+      "key": "os.type",
+      "value": {
+       "stringValue": "darwin"
+      }
+     },
+     {
+      "key": "os.version",
+      "value": {
+       "stringValue": "25.6.0"
+      }
+     },
+     {
+      "key": "service.name",
+      "value": {
+       "stringValue": "claude-code"
+      }
+     },
+     {
+      "key": "service.version",
+      "value": {
+       "stringValue": "2.1.291"
+      }
+     }
+    ]
+   },
+   "scopeLogs": [
+    {
+     "scope": {
+      "name": "com.anthropic.claude_code.events",
+      "version": "2.1.291"
+     },
+     "logRecords": [
+      {
+       "timeUnixNano": "1795691785788000000",
+       "observedTimeUnixNano": "1795691785788000000",
+       "body": {
+        "stringValue": "claude_code.tool_decision"
+       },
+       "attributes": [
+        {
+         "key": "user.id",
+         "value": {
+          "stringValue": "<user.id>"
+         }
+        },
+        {
+         "key": "session.id",
+         "value": {
+          "stringValue": "00000000-0000-4000-8000-000000000102"
+         }
+        },
+        {
+         "key": "organization.id",
+         "value": {
+          "stringValue": "<organization.id>"
+         }
+        },
+        {
+         "key": "user.email",
+         "value": {
+          "stringValue": "<user.email>"
+         }
+        },
+        {
+         "key": "user.account_uuid",
+         "value": {
+          "stringValue": "<user.account_uuid>"
+         }
+        },
+        {
+         "key": "user.account_id",
+         "value": {
+          "stringValue": "<user.account_id>"
+         }
+        },
+        {
+         "key": "terminal.type",
+         "value": {
+          "stringValue": "non-interactive"
+         }
+        },
+        {
+         "key": "event.name",
+         "value": {
+          "stringValue": "tool_decision"
+         }
+        },
+        {
+         "key": "event.timestamp",
+         "value": {
+          "stringValue": "2026-11-26T11:16:25.788Z"
+         }
+        },
+        {
+         "key": "event.sequence",
+         "value": {
+          "intValue": 26
+         }
+        },
+        {
+         "key": "prompt.id",
+         "value": {
+          "stringValue": "00000000-0000-4000-8000-000000000107"
+         }
+        },
+        {
+         "key": "decision",
+         "value": {
+          "stringValue": "accept"
+         }
+        },
+        {
+         "key": "source",
+         "value": {
+          "stringValue": "config"
+         }
+        },
+        {
+         "key": "tool_name",
+         "value": {
+          "stringValue": "Bash"
+         }
+        },
+        {
+         "key": "tool_use_id",
+         "value": {
+          "stringValue": "<tool_use_id-000000000112>"
+         }
+        },
+        {
+         "key": "tool_source",
+         "value": {
+          "stringValue": "builtin"
+         }
+        }
+       ],
+       "droppedAttributesCount": 0
+      },
+      {
+       "timeUnixNano": "1795691785793000000",
+       "observedTimeUnixNano": "1795691785793000000",
+       "body": {
+        "stringValue": "claude_code.api_request"
+       },
+       "attributes": [
+        {
+         "key": "user.id",
+         "value": {
+          "stringValue": "<user.id>"
+         }
+        },
+        {
+         "key": "session.id",
+         "value": {
+          "stringValue": "00000000-0000-4000-8000-000000000102"
+         }
+        },
+        {
+         "key": "organization.id",
+         "value": {
+          "stringValue": "<organization.id>"
+         }
+        },
+        {
+         "key": "user.email",
+         "value": {
+          "stringValue": "<user.email>"
+         }
+        },
+        {
+         "key": "user.account_uuid",
+         "value": {
+          "stringValue": "<user.account_uuid>"
+         }
+        },
+        {
+         "key": "user.account_id",
+         "value": {
+          "stringValue": "<user.account_id>"
+         }
+        },
+        {
+         "key": "terminal.type",
+         "value": {
+          "stringValue": "non-interactive"
+         }
+        },
+        {
+         "key": "event.name",
+         "value": {
+          "stringValue": "api_request"
+         }
+        },
+        {
+         "key": "event.timestamp",
+         "value": {
+          "stringValue": "2026-11-26T11:16:25.793Z"
+         }
+        },
+        {
+         "key": "event.sequence",
+         "value": {
+          "intValue": 27
+         }
+        },
+        {
+         "key": "prompt.id",
+         "value": {
+          "stringValue": "00000000-0000-4000-8000-000000000107"
+         }
+        },
+        {
+         "key": "model",
+         "value": {
+          "stringValue": "claude-opus-5-5"
+         }
+        },
+        {
+         "key": "input_tokens",
+         "value": {
+          "intValue": 2
+         }
+        },
+        {
+         "key": "output_tokens",
+         "value": {
+          "intValue": 90
+         }
+        },
+        {
+         "key": "cache_read_tokens",
+         "value": {
+          "intValue": 24841
+         }
+        },
+        {
+         "key": "cache_creation_tokens",
+         "value": {
+          "intValue": 14994
+         }
+        },
+        {
+         "key": "cost_usd",
+         "value": {
+          "doubleValue": 0.1267282
+         }
+        },
+        {
+         "key": "cost_usd_micros",
+         "value": {
+          "intValue": 126728
+         }
+        },
+        {
+         "key": "duration_ms",
+         "value": {
+          "intValue": 4532
+         }
+        },
+        {
+         "key": "ttft_ms",
+         "value": {
+          "intValue": 3937
+         }
+        },
+        {
+         "key": "request_id",
+         "value": {
+          "stringValue": "<request_id-000000000113>"
+         }
+        },
+        {
+         "key": "client_request_id",
+         "value": {
+          "stringValue": "<client_request_id-000000000114>"
+         }
+        },
+        {
+         "key": "speed",
+         "value": {
+          "stringValue": "normal"
+         }
+        },
+        {
+         "key": "query_source",
+         "value": {
+          "stringValue": "sdk"
+         }
+        },
+        {
+         "key": "effort",
+         "value": {
+          "stringValue": "medium"
+         }
+        },
+        {
+         "key": "skill.name",
+         "value": {
+          "stringValue": "demo-snag"
+         }
+        }
+       ],
+       "droppedAttributesCount": 0
+      },
+      {
+       "timeUnixNano": "1795691785859000000",
+       "observedTimeUnixNano": "1795691785859000000",
+       "body": {
+        "stringValue": "claude_code.tool_result"
+       },
+       "attributes": [
+        {
+         "key": "user.id",
+         "value": {
+          "stringValue": "<user.id>"
+         }
+        },
+        {
+         "key": "session.id",
+         "value": {
+          "stringValue": "00000000-0000-4000-8000-000000000102"
+         }
+        },
+        {
+         "key": "organization.id",
+         "value": {
+          "stringValue": "<organization.id>"
+         }
+        },
+        {
+         "key": "user.email",
+         "value": {
+          "stringValue": "<user.email>"
+         }
+        },
+        {
+         "key": "user.account_uuid",
+         "value": {
+          "stringValue": "<user.account_uuid>"
+         }
+        },
+        {
+         "key": "user.account_id",
+         "value": {
+          "stringValue": "<user.account_id>"
+         }
+        },
+        {
+         "key": "terminal.type",
+         "value": {
+          "stringValue": "non-interactive"
+         }
+        },
+        {
+         "key": "event.name",
+         "value": {
+          "stringValue": "tool_result"
+         }
+        },
+        {
+         "key": "event.timestamp",
+         "value": {
+          "stringValue": "2026-11-26T11:16:25.859Z"
+         }
+        },
+        {
+         "key": "event.sequence",
+         "value": {
+          "intValue": 28
+         }
+        },
+        {
+         "key": "prompt.id",
+         "value": {
+          "stringValue": "00000000-0000-4000-8000-000000000107"
+         }
+        },
+        {
+         "key": "tool_name",
+         "value": {
+          "stringValue": "Bash"
+         }
+        },
+        {
+         "key": "tool_use_id",
+         "value": {
+          "stringValue": "<tool_use_id-000000000112>"
+         }
+        },
+        {
+         "key": "success",
+         "value": {
+          "stringValue": "false"
+         }
+        },
+        {
+         "key": "duration_ms",
+         "value": {
+          "stringValue": "69"
+         }
+        },
+        {
+         "key": "error_type",
+         "value": {
+          "stringValue": "ShellError"
+         }
+        },
+        {
+         "key": "tool_input_size_bytes",
+         "value": {
+          "stringValue": "100"
+         }
+        }
+       ],
+       "droppedAttributesCount": 0
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "resource": {
+    "attributes": [
+     {
+      "key": "os.type",
+      "value": {
+       "stringValue": "darwin"
+      }
+     },
+     {
+      "key": "os.version",
+      "value": {
+       "stringValue": "25.6.0"
+      }
+     },
+     {
+      "key": "service.name",
+      "value": {
+       "stringValue": "claude-code"
+      }
+     },
+     {
+      "key": "service.version",
+      "value": {
+       "stringValue": "2.1.291"
+      }
+     }
+    ]
+   },
+   "scopeLogs": [
+    {
+     "scope": {
+      "name": "com.anthropic.claude_code.events",
+      "version": "2.1.291"
+     },
+     "logRecords": [
+      {
+       "timeUnixNano": "1795691788673000000",
+       "observedTimeUnixNano": "1795691788673000000",
+       "body": {
+        "stringValue": "claude_code.tool_decision"
+       },
+       "attributes": [
+        {
+         "key": "user.id",
+         "value": {
+          "stringValue": "<user.id>"
+         }
+        },
+        {
+         "key": "session.id",
+         "value": {
+          "stringValue": "00000000-0000-4000-8000-000000000102"
+         }
+        },
+        {
+         "key": "organization.id",
+         "value": {
+          "stringValue": "<organization.id>"
+         }
+        },
+        {
+         "key": "user.email",
+         "value": {
+          "stringValue": "<user.email>"
+         }
+        },
+        {
+         "key": "user.account_uuid",
+         "value": {
+          "stringValue": "<user.account_uuid>"
+         }
+        },
+        {
+         "key": "user.account_id",
+         "value": {
+          "stringValue": "<user.account_id>"
+         }
+        },
+        {
+         "key": "terminal.type",
+         "value": {
+          "stringValue": "non-interactive"
+         }
+        },
+        {
+         "key": "event.name",
+         "value": {
+          "stringValue": "tool_decision"
+         }
+        },
+        {
+         "key": "event.timestamp",
+         "value": {
+          "stringValue": "2026-11-26T11:16:28.673Z"
+         }
+        },
+        {
+         "key": "event.sequence",
+         "value": {
+          "intValue": 29
+         }
+        },
+        {
+         "key": "prompt.id",
+         "value": {
+          "stringValue": "00000000-0000-4000-8000-000000000107"
+         }
+        },
+        {
+         "key": "decision",
+         "value": {
+          "stringValue": "accept"
+         }
+        },
+        {
+         "key": "source",
+         "value": {
+          "stringValue": "config"
+         }
+        },
+        {
+         "key": "tool_name",
+         "value": {
+          "stringValue": "Bash"
+         }
+        },
+        {
+         "key": "tool_use_id",
+         "value": {
+          "stringValue": "<tool_use_id-000000000115>"
+         }
+        },
+        {
+         "key": "tool_source",
+         "value": {
+          "stringValue": "builtin"
+         }
+        }
+       ],
+       "droppedAttributesCount": 0
+      },
+      {
+       "timeUnixNano": "1795691788680000000",
+       "observedTimeUnixNano": "1795691788680000000",
+       "body": {
+        "stringValue": "claude_code.api_request"
+       },
+       "attributes": [
+        {
+         "key": "user.id",
+         "value": {
+          "stringValue": "<user.id>"
+         }
+        },
+        {
+         "key": "session.id",
+         "value": {
+          "stringValue": "00000000-0000-4000-8000-000000000102"
+         }
+        },
+        {
+         "key": "organization.id",
+         "value": {
+          "stringValue": "<organization.id>"
+         }
+        },
+        {
+         "key": "user.email",
+         "value": {
+          "stringValue": "<user.email>"
+         }
+        },
+        {
+         "key": "user.account_uuid",
+         "value": {
+          "stringValue": "<user.account_uuid>"
+         }
+        },
+        {
+         "key": "user.account_id",
+         "value": {
+          "stringValue": "<user.account_id>"
+         }
+        },
+        {
+         "key": "terminal.type",
+         "value": {
+          "stringValue": "non-interactive"
+         }
+        },
+        {
+         "key": "event.name",
+         "value": {
+          "stringValue": "api_request"
+         }
+        },
+        {
+         "key": "event.timestamp",
+         "value": {
+          "stringValue": "2026-11-26T11:16:28.680Z"
+         }
+        },
+        {
+         "key": "event.sequence",
+         "value": {
+          "intValue": 30
+         }
+        },
+        {
+         "key": "prompt.id",
+         "value": {
+          "stringValue": "00000000-0000-4000-8000-000000000107"
+         }
+        },
+        {
+         "key": "model",
+         "value": {
+          "stringValue": "claude-opus-5-5"
+         }
+        },
+        {
+         "key": "input_tokens",
+         "value": {
+          "intValue": 2
+         }
+        },
+        {
+         "key": "output_tokens",
+         "value": {
+          "intValue": 74
+         }
+        },
+        {
+         "key": "cache_read_tokens",
+         "value": {
+          "intValue": 39835
+         }
+        },
+        {
+         "key": "cache_creation_tokens",
+         "value": {
+          "intValue": 192
+         }
+        },
+        {
+         "key": "cost_usd",
+         "value": {
+          "doubleValue": 0.010991
+         }
+        },
+        {
+         "key": "cost_usd_micros",
+         "value": {
+          "intValue": 10991
+         }
+        },
+        {
+         "key": "duration_ms",
+         "value": {
+          "intValue": 2806
+         }
+        },
+        {
+         "key": "ttft_ms",
+         "value": {
+          "intValue": 2416
+         }
+        },
+        {
+         "key": "request_id",
+         "value": {
+          "stringValue": "<request_id-000000000116>"
+         }
+        },
+        {
+         "key": "client_request_id",
+         "value": {
+          "stringValue": "<client_request_id-000000000117>"
+         }
+        },
+        {
+         "key": "speed",
+         "value": {
+          "stringValue": "normal"
+         }
+        },
+        {
+         "key": "query_source",
+         "value": {
+          "stringValue": "sdk"
+         }
+        },
+        {
+         "key": "effort",
+         "value": {
+          "stringValue": "medium"
+         }
+        },
+        {
+         "key": "skill.name",
+         "value": {
+          "stringValue": "demo-snag"
+         }
+        }
+       ],
+       "droppedAttributesCount": 0
+      },
+      {
+       "timeUnixNano": "1795691788699000000",
+       "observedTimeUnixNano": "1795691788699000000",
+       "body": {
+        "stringValue": "claude_code.tool_result"
+       },
+       "attributes": [
+        {
+         "key": "user.id",
+         "value": {
+          "stringValue": "<user.id>"
+         }
+        },
+        {
+         "key": "session.id",
+         "value": {
+          "stringValue": "00000000-0000-4000-8000-000000000102"
+         }
+        },
+        {
+         "key": "organization.id",
+         "value": {
+          "stringValue": "<organization.id>"
+         }
+        },
+        {
+         "key": "user.email",
+         "value": {
+          "stringValue": "<user.email>"
+         }
+        },
+        {
+         "key": "user.account_uuid",
+         "value": {
+          "stringValue": "<user.account_uuid>"
+         }
+        },
+        {
+         "key": "user.account_id",
+         "value": {
+          "stringValue": "<user.account_id>"
+         }
+        },
+        {
+         "key": "terminal.type",
+         "value": {
+          "stringValue": "non-interactive"
+         }
+        },
+        {
+         "key": "event.name",
+         "value": {
+          "stringValue": "tool_result"
+         }
+        },
+        {
+         "key": "event.timestamp",
+         "value": {
+          "stringValue": "2026-11-26T11:16:28.699Z"
+         }
+        },
+        {
+         "key": "event.sequence",
+         "value": {
+          "intValue": 31
+         }
+        },
+        {
+         "key": "prompt.id",
+         "value": {
+          "stringValue": "00000000-0000-4000-8000-000000000107"
+         }
+        },
+        {
+         "key": "tool_name",
+         "value": {
+          "stringValue": "Bash"
+         }
+        },
+        {
+         "key": "tool_use_id",
+         "value": {
+          "stringValue": "<tool_use_id-000000000115>"
+         }
+        },
+        {
+         "key": "success",
+         "value": {
+          "stringValue": "true"
+         }
+        },
+        {
+         "key": "duration_ms",
+         "value": {
+          "stringValue": "26"
+         }
+        },
+        {
+         "key": "tool_input_size_bytes",
+         "value": {
+          "stringValue": "64"
+         }
+        },
+        {
+         "key": "tool_result_size_bytes",
+         "value": {
+          "stringValue": "5"
+         }
+        }
+       ],
+       "droppedAttributesCount": 0
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "resource": {
+    "attributes": [
+     {
+      "key": "os.type",
+      "value": {
+       "stringValue": "darwin"
+      }
+     },
+     {
+      "key": "os.version",
+      "value": {
+       "stringValue": "25.6.0"
+      }
+     },
+     {
+      "key": "service.name",
+      "value": {
+       "stringValue": "claude-code"
+      }
+     },
+     {
+      "key": "service.version",
+      "value": {
+       "stringValue": "2.1.291"
+      }
+     }
+    ]
+   },
+   "scopeLogs": [
+    {
+     "scope": {
+      "name": "com.anthropic.claude_code.events",
+      "version": "2.1.291"
+     },
+     "logRecords": [
+      {
+       "timeUnixNano": "1795691793925000000",
+       "observedTimeUnixNano": "1795691793925000000",
+       "body": {
+        "stringValue": "claude_code.api_request"
+       },
+       "attributes": [
+        {
+         "key": "user.id",
+         "value": {
+          "stringValue": "<user.id>"
+         }
+        },
+        {
+         "key": "session.id",
+         "value": {
+          "stringValue": "00000000-0000-4000-8000-000000000102"
+         }
+        },
+        {
+         "key": "organization.id",
+         "value": {
+          "stringValue": "<organization.id>"
+         }
+        },
+        {
+         "key": "user.email",
+         "value": {
+          "stringValue": "<user.email>"
+         }
+        },
+        {
+         "key": "user.account_uuid",
+         "value": {
+          "stringValue": "<user.account_uuid>"
+         }
+        },
+        {
+         "key": "user.account_id",
+         "value": {
+          "stringValue": "<user.account_id>"
+         }
+        },
+        {
+         "key": "terminal.type",
+         "value": {
+          "stringValue": "non-interactive"
+         }
+        },
+        {
+         "key": "event.name",
+         "value": {
+          "stringValue": "api_request"
+         }
+        },
+        {
+         "key": "event.timestamp",
+         "value": {
+          "stringValue": "2026-11-26T11:16:33.925Z"
+         }
+        },
+        {
+         "key": "event.sequence",
+         "value": {
+          "intValue": 32
+         }
+        },
+        {
+         "key": "prompt.id",
+         "value": {
+          "stringValue": "00000000-0000-4000-8000-000000000107"
+         }
+        },
+        {
+         "key": "model",
+         "value": {
+          "stringValue": "claude-opus-5-5"
+         }
+        },
+        {
+         "key": "input_tokens",
+         "value": {
+          "intValue": 2
+         }
+        },
+        {
+         "key": "output_tokens",
+         "value": {
+          "intValue": 150
+         }
+        },
+        {
+         "key": "cache_read_tokens",
+         "value": {
+          "intValue": 40027
+         }
+        },
+        {
+         "key": "cache_creation_tokens",
+         "value": {
+          "intValue": 83
+         }
+        },
+        {
+         "key": "cost_usd",
+         "value": {
+          "doubleValue": 0.011677400000000001
+         }
+        },
+        {
+         "key": "cost_usd_micros",
+         "value": {
+          "intValue": 11677
+         }
+        },
+        {
+         "key": "duration_ms",
+         "value": {
+          "intValue": 5208
+         }
+        },
+        {
+         "key": "ttft_ms",
+         "value": {
+          "intValue": 3668
+         }
+        },
+        {
+         "key": "request_id",
+         "value": {
+          "stringValue": "<request_id-000000000118>"
+         }
+        },
+        {
+         "key": "client_request_id",
+         "value": {
+          "stringValue": "<client_request_id-000000000119>"
+         }
+        },
+        {
+         "key": "speed",
+         "value": {
+          "stringValue": "normal"
+         }
+        },
+        {
+         "key": "query_source",
+         "value": {
+          "stringValue": "sdk"
+         }
+        },
+        {
+         "key": "effort",
+         "value": {
+          "stringValue": "medium"
+         }
+        },
+        {
+         "key": "skill.name",
+         "value": {
+          "stringValue": "demo-snag"
+         }
+        }
+       ],
+       "droppedAttributesCount": 0
+      },
+      {
+       "timeUnixNano": "1795691793926000000",
+       "observedTimeUnixNano": "1795691793926000000",
+       "body": {
+        "stringValue": "claude_code.assistant_response"
+       },
+       "attributes": [
+        {
+         "key": "user.id",
+         "value": {
+          "stringValue": "<user.id>"
+         }
+        },
+        {
+         "key": "session.id",
+         "value": {
+          "stringValue": "00000000-0000-4000-8000-000000000102"
+         }
+        },
+        {
+         "key": "organization.id",
+         "value": {
+          "stringValue": "<organization.id>"
+         }
+        },
+        {
+         "key": "user.email",
+         "value": {
+          "stringValue": "<user.email>"
+         }
+        },
+        {
+         "key": "user.account_uuid",
+         "value": {
+          "stringValue": "<user.account_uuid>"
+         }
+        },
+        {
+         "key": "user.account_id",
+         "value": {
+          "stringValue": "<user.account_id>"
+         }
+        },
+        {
+         "key": "terminal.type",
+         "value": {
+          "stringValue": "non-interactive"
+         }
+        },
+        {
+         "key": "event.name",
+         "value": {
+          "stringValue": "assistant_response"
+         }
+        },
+        {
+         "key": "event.timestamp",
+         "value": {
+          "stringValue": "2026-11-26T11:16:33.926Z"
+         }
+        },
+        {
+         "key": "event.sequence",
+         "value": {
+          "intValue": 33
+         }
+        },
+        {
+         "key": "prompt.id",
+         "value": {
+          "stringValue": "00000000-0000-4000-8000-000000000107"
+         }
+        },
+        {
+         "key": "response_length",
+         "value": {
+          "intValue": 195
+         }
+        },
+        {
+         "key": "response",
+         "value": {
+          "stringValue": "<REDACTED>"
+         }
+        },
+        {
+         "key": "request_id",
+         "value": {
+          "stringValue": "<request_id-000000000118>"
+         }
+        },
+        {
+         "key": "message.uuid",
+         "value": {
+          "stringValue": "<message.uuid-000000000120>"
+         }
+        },
+        {
+         "key": "model",
+         "value": {
+          "stringValue": "claude-opus-5-5"
+         }
+        },
+        {
+         "key": "query_source",
+         "value": {
+          "stringValue": "sdk"
+         }
+        }
+       ],
+       "droppedAttributesCount": 0
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "resource": {
+    "attributes": [
+     {
+      "key": "os.type",
+      "value": {
+       "stringValue": "darwin"
+      }
+     },
+     {
+      "key": "os.version",
+      "value": {
+       "stringValue": "25.6.0"
+      }
+     },
+     {
+      "key": "service.name",
+      "value": {
+       "stringValue": "claude-code"
+      }
+     },
+     {
+      "key": "service.version",
+      "value": {
+       "stringValue": "2.1.291"
+      }
+     }
+    ]
+   },
+   "scopeLogs": [
+    {
+     "scope": {
+      "name": "com.anthropic.claude_code.events",
+      "version": "2.1.291"
+     },
+     "logRecords": [
+      {
+       "timeUnixNano": "1795691797690000000",
+       "observedTimeUnixNano": "1795691797690000000",
+       "body": {
+        "stringValue": "claude_code.user_prompt"
+       },
+       "attributes": [
+        {
+         "key": "user.id",
+         "value": {
+          "stringValue": "<user.id>"
+         }
+        },
+        {
+         "key": "session.id",
+         "value": {
+          "stringValue": "00000000-0000-4000-8000-000000000121"
+         }
+        },
+        {
+         "key": "organization.id",
+         "value": {
+          "stringValue": "<organization.id>"
+         }
+        },
+        {
+         "key": "user.email",
+         "value": {
+          "stringValue": "<user.email>"
+         }
+        },
+        {
+         "key": "user.account_uuid",
+         "value": {
+          "stringValue": "<user.account_uuid>"
+         }
+        },
+        {
+         "key": "user.account_id",
+         "value": {
+          "stringValue": "<user.account_id>"
+         }
+        },
+        {
+         "key": "terminal.type",
+         "value": {
+          "stringValue": "non-interactive"
+         }
+        },
+        {
+         "key": "event.name",
+         "value": {
+          "stringValue": "user_prompt"
+         }
+        },
+        {
+         "key": "event.timestamp",
+         "value": {
+          "stringValue": "2026-11-26T11:16:37.690Z"
+         }
+        },
+        {
+         "key": "event.sequence",
+         "value": {
+          "intValue": 12
+         }
+        },
+        {
+         "key": "prompt.id",
+         "value": {
+          "stringValue": "00000000-0000-4000-8000-000000000122"
+         }
+        },
+        {
+         "key": "prompt_length",
+         "value": {
+          "stringValue": "10"
+         }
+        },
+        {
+         "key": "prompt",
+         "value": {
+          "stringValue": "<REDACTED>"
+         }
+        },
+        {
+         "key": "prompt_text",
+         "value": {
+          "stringValue": "<REDACTED>"
+         }
+        },
+        {
+         "key": "command_name",
+         "value": {
+          "stringValue": "custom"
+         }
+        },
+        {
+         "key": "command_source",
+         "value": {
+          "stringValue": "custom"
+         }
+        }
+       ],
+       "droppedAttributesCount": 0
+      },
+      {
+       "timeUnixNano": "1795691797691000000",
+       "observedTimeUnixNano": "1795691797691000000",
+       "body": {
+        "stringValue": "claude_code.skill_activated"
+       },
+       "attributes": [
+        {
+         "key": "user.id",
+         "value": {
+          "stringValue": "<user.id>"
+         }
+        },
+        {
+         "key": "session.id",
+         "value": {
+          "stringValue": "00000000-0000-4000-8000-000000000121"
+         }
+        },
+        {
+         "key": "organization.id",
+         "value": {
+          "stringValue": "<organization.id>"
+         }
+        },
+        {
+         "key": "user.email",
+         "value": {
+          "stringValue": "<user.email>"
+         }
+        },
+        {
+         "key": "user.account_uuid",
+         "value": {
+          "stringValue": "<user.account_uuid>"
+         }
+        },
+        {
+         "key": "user.account_id",
+         "value": {
+          "stringValue": "<user.account_id>"
+         }
+        },
+        {
+         "key": "terminal.type",
+         "value": {
+          "stringValue": "non-interactive"
+         }
+        },
+        {
+         "key": "event.name",
+         "value": {
+          "stringValue": "skill_activated"
+         }
+        },
+        {
+         "key": "event.timestamp",
+         "value": {
+          "stringValue": "2026-11-26T11:16:37.691Z"
+         }
+        },
+        {
+         "key": "event.sequence",
+         "value": {
+          "intValue": 13
+         }
+        },
+        {
+         "key": "prompt.id",
+         "value": {
+          "stringValue": "00000000-0000-4000-8000-000000000122"
+         }
+        },
+        {
+         "key": "skill.name",
+         "value": {
+          "stringValue": "custom_skill"
+         }
+        },
+        {
+         "key": "invocation_trigger",
+         "value": {
+          "stringValue": "user-slash"
+         }
+        },
+        {
+         "key": "skill.source",
+         "value": {
+          "stringValue": "projectSettings"
+         }
+        }
+       ],
+       "droppedAttributesCount": 0
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "resource": {
+    "attributes": [
+     {
+      "key": "os.type",
+      "value": {
+       "stringValue": "darwin"
+      }
+     },
+     {
+      "key": "os.version",
+      "value": {
+       "stringValue": "25.6.0"
+      }
+     },
+     {
+      "key": "service.name",
+      "value": {
+       "stringValue": "claude-code"
+      }
+     },
+     {
+      "key": "service.version",
+      "value": {
+       "stringValue": "2.1.291"
+      }
+     }
+    ]
+   },
+   "scopeLogs": [
+    {
+     "scope": {
+      "name": "com.anthropic.claude_code.events",
+      "version": "2.1.291"
+     },
+     "logRecords": [
+      {
+       "timeUnixNano": "1795691802157000000",
+       "observedTimeUnixNano": "1795691802157000000",
+       "body": {
+        "stringValue": "claude_code.tool_decision"
+       },
+       "attributes": [
+        {
+         "key": "user.id",
+         "value": {
+          "stringValue": "<user.id>"
+         }
+        },
+        {
+         "key": "session.id",
+         "value": {
+          "stringValue": "00000000-0000-4000-8000-000000000121"
+         }
+        },
+        {
+         "key": "organization.id",
+         "value": {
+          "stringValue": "<organization.id>"
+         }
+        },
+        {
+         "key": "user.email",
+         "value": {
+          "stringValue": "<user.email>"
+         }
+        },
+        {
+         "key": "user.account_uuid",
+         "value": {
+          "stringValue": "<user.account_uuid>"
+         }
+        },
+        {
+         "key": "user.account_id",
+         "value": {
+          "stringValue": "<user.account_id>"
+         }
+        },
+        {
+         "key": "terminal.type",
+         "value": {
+          "stringValue": "non-interactive"
+         }
+        },
+        {
+         "key": "event.name",
+         "value": {
+          "stringValue": "tool_decision"
+         }
+        },
+        {
+         "key": "event.timestamp",
+         "value": {
+          "stringValue": "2026-11-26T11:16:42.157Z"
+         }
+        },
+        {
+         "key": "event.sequence",
+         "value": {
+          "intValue": 23
+         }
+        },
+        {
+         "key": "prompt.id",
+         "value": {
+          "stringValue": "00000000-0000-4000-8000-000000000122"
+         }
+        },
+        {
+         "key": "decision",
+         "value": {
+          "stringValue": "accept"
+         }
+        },
+        {
+         "key": "source",
+         "value": {
+          "stringValue": "config"
+         }
+        },
+        {
+         "key": "tool_name",
+         "value": {
+          "stringValue": "Bash"
+         }
+        },
+        {
+         "key": "tool_use_id",
+         "value": {
+          "stringValue": "<tool_use_id-000000000123>"
+         }
+        },
+        {
+         "key": "tool_source",
+         "value": {
+          "stringValue": "builtin"
+         }
+        }
+       ],
+       "droppedAttributesCount": 0
+      },
+      {
+       "timeUnixNano": "1795691802163000000",
+       "observedTimeUnixNano": "1795691802163000000",
+       "body": {
+        "stringValue": "claude_code.api_request"
+       },
+       "attributes": [
+        {
+         "key": "user.id",
+         "value": {
+          "stringValue": "<user.id>"
+         }
+        },
+        {
+         "key": "session.id",
+         "value": {
+          "stringValue": "00000000-0000-4000-8000-000000000121"
+         }
+        },
+        {
+         "key": "organization.id",
+         "value": {
+          "stringValue": "<organization.id>"
+         }
+        },
+        {
+         "key": "user.email",
+         "value": {
+          "stringValue": "<user.email>"
+         }
+        },
+        {
+         "key": "user.account_uuid",
+         "value": {
+          "stringValue": "<user.account_uuid>"
+         }
+        },
+        {
+         "key": "user.account_id",
+         "value": {
+          "stringValue": "<user.account_id>"
+         }
+        },
+        {
+         "key": "terminal.type",
+         "value": {
+          "stringValue": "non-interactive"
+         }
+        },
+        {
+         "key": "event.name",
+         "value": {
+          "stringValue": "api_request"
+         }
+        },
+        {
+         "key": "event.timestamp",
+         "value": {
+          "stringValue": "2026-11-26T11:16:42.163Z"
+         }
+        },
+        {
+         "key": "event.sequence",
+         "value": {
+          "intValue": 24
+         }
+        },
+        {
+         "key": "prompt.id",
+         "value": {
+          "stringValue": "00000000-0000-4000-8000-000000000122"
+         }
+        },
+        {
+         "key": "model",
+         "value": {
+          "stringValue": "claude-opus-5-5"
+         }
+        },
+        {
+         "key": "input_tokens",
+         "value": {
+          "intValue": 2
+         }
+        },
+        {
+         "key": "output_tokens",
+         "value": {
+          "intValue": 88
+         }
+        },
+        {
+         "key": "cache_read_tokens",
+         "value": {
+          "intValue": 12185
+         }
+        },
+        {
+         "key": "cache_creation_tokens",
+         "value": {
+          "intValue": 12965
+         }
+        },
+        {
+         "key": "cost_usd",
+         "value": {
+          "doubleValue": 0.10792500000000001
+         }
+        },
+        {
+         "key": "cost_usd_micros",
+         "value": {
+          "intValue": 107925
+         }
+        },
+        {
+         "key": "duration_ms",
+         "value": {
+          "intValue": 4230
+         }
+        },
+        {
+         "key": "ttft_ms",
+         "value": {
+          "intValue": 3297
+         }
+        },
+        {
+         "key": "request_id",
+         "value": {
+          "stringValue": "<request_id-000000000124>"
+         }
+        },
+        {
+         "key": "client_request_id",
+         "value": {
+          "stringValue": "<client_request_id-000000000125>"
+         }
+        },
+        {
+         "key": "speed",
+         "value": {
+          "stringValue": "normal"
+         }
+        },
+        {
+         "key": "query_source",
+         "value": {
+          "stringValue": "sdk"
+         }
+        },
+        {
+         "key": "effort",
+         "value": {
+          "stringValue": "medium"
+         }
+        },
+        {
+         "key": "skill.name",
+         "value": {
+          "stringValue": "demo-snag"
+         }
+        }
+       ],
+       "droppedAttributesCount": 0
+      },
+      {
+       "timeUnixNano": "1795691802213000000",
+       "observedTimeUnixNano": "1795691802213000000",
+       "body": {
+        "stringValue": "claude_code.tool_result"
+       },
+       "attributes": [
+        {
+         "key": "user.id",
+         "value": {
+          "stringValue": "<user.id>"
+         }
+        },
+        {
+         "key": "session.id",
+         "value": {
+          "stringValue": "00000000-0000-4000-8000-000000000121"
+         }
+        },
+        {
+         "key": "organization.id",
+         "value": {
+          "stringValue": "<organization.id>"
+         }
+        },
+        {
+         "key": "user.email",
+         "value": {
+          "stringValue": "<user.email>"
+         }
+        },
+        {
+         "key": "user.account_uuid",
+         "value": {
+          "stringValue": "<user.account_uuid>"
+         }
+        },
+        {
+         "key": "user.account_id",
+         "value": {
+          "stringValue": "<user.account_id>"
+         }
+        },
+        {
+         "key": "terminal.type",
+         "value": {
+          "stringValue": "non-interactive"
+         }
+        },
+        {
+         "key": "event.name",
+         "value": {
+          "stringValue": "tool_result"
+         }
+        },
+        {
+         "key": "event.timestamp",
+         "value": {
+          "stringValue": "2026-11-26T11:16:42.213Z"
+         }
+        },
+        {
+         "key": "event.sequence",
+         "value": {
+          "intValue": 25
+         }
+        },
+        {
+         "key": "prompt.id",
+         "value": {
+          "stringValue": "00000000-0000-4000-8000-000000000122"
+         }
+        },
+        {
+         "key": "tool_name",
+         "value": {
+          "stringValue": "Bash"
+         }
+        },
+        {
+         "key": "tool_use_id",
+         "value": {
+          "stringValue": "<tool_use_id-000000000123>"
+         }
+        },
+        {
+         "key": "success",
+         "value": {
+          "stringValue": "false"
+         }
+        },
+        {
+         "key": "duration_ms",
+         "value": {
+          "stringValue": "55"
+         }
+        },
+        {
+         "key": "error_type",
+         "value": {
+          "stringValue": "ShellError"
+         }
+        },
+        {
+         "key": "tool_input_size_bytes",
+         "value": {
+          "stringValue": "88"
+         }
+        }
+       ],
+       "droppedAttributesCount": 0
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "resource": {
+    "attributes": [
+     {
+      "key": "os.type",
+      "value": {
+       "stringValue": "darwin"
+      }
+     },
+     {
+      "key": "os.version",
+      "value": {
+       "stringValue": "25.6.0"
+      }
+     },
+     {
+      "key": "service.name",
+      "value": {
+       "stringValue": "claude-code"
+      }
+     },
+     {
+      "key": "service.version",
+      "value": {
+       "stringValue": "2.1.291"
+      }
+     }
+    ]
+   },
+   "scopeLogs": [
+    {
+     "scope": {
+      "name": "com.anthropic.claude_code.events",
+      "version": "2.1.291"
+     },
+     "logRecords": [
+      {
+       "timeUnixNano": "1795691815948000000",
+       "observedTimeUnixNano": "1795691815948000000",
+       "body": {
+        "stringValue": "claude_code.tool_decision"
+       },
+       "attributes": [
+        {
+         "key": "user.id",
+         "value": {
+          "stringValue": "<user.id>"
+         }
+        },
+        {
+         "key": "session.id",
+         "value": {
+          "stringValue": "00000000-0000-4000-8000-000000000121"
+         }
+        },
+        {
+         "key": "organization.id",
+         "value": {
+          "stringValue": "<organization.id>"
+         }
+        },
+        {
+         "key": "user.email",
+         "value": {
+          "stringValue": "<user.email>"
+         }
+        },
+        {
+         "key": "user.account_uuid",
+         "value": {
+          "stringValue": "<user.account_uuid>"
+         }
+        },
+        {
+         "key": "user.account_id",
+         "value": {
+          "stringValue": "<user.account_id>"
+         }
+        },
+        {
+         "key": "terminal.type",
+         "value": {
+          "stringValue": "non-interactive"
+         }
+        },
+        {
+         "key": "event.name",
+         "value": {
+          "stringValue": "tool_decision"
+         }
+        },
+        {
+         "key": "event.timestamp",
+         "value": {
+          "stringValue": "2026-11-26T11:16:55.948Z"
+         }
+        },
+        {
+         "key": "event.sequence",
+         "value": {
+          "intValue": 26
+         }
+        },
+        {
+         "key": "prompt.id",
+         "value": {
+          "stringValue": "00000000-0000-4000-8000-000000000122"
+         }
+        },
+        {
+         "key": "decision",
+         "value": {
+          "stringValue": "accept"
+         }
+        },
+        {
+         "key": "source",
+         "value": {
+          "stringValue": "config"
+         }
+        },
+        {
+         "key": "tool_name",
+         "value": {
+          "stringValue": "Bash"
+         }
+        },
+        {
+         "key": "tool_use_id",
+         "value": {
+          "stringValue": "<tool_use_id-000000000126>"
+         }
+        },
+        {
+         "key": "tool_source",
+         "value": {
+          "stringValue": "builtin"
+         }
+        }
+       ],
+       "droppedAttributesCount": 0
+      },
+      {
+       "timeUnixNano": "1795691815954000000",
+       "observedTimeUnixNano": "1795691815954000000",
+       "body": {
+        "stringValue": "claude_code.api_request"
+       },
+       "attributes": [
+        {
+         "key": "user.id",
+         "value": {
+          "stringValue": "<user.id>"
+         }
+        },
+        {
+         "key": "session.id",
+         "value": {
+          "stringValue": "00000000-0000-4000-8000-000000000121"
+         }
+        },
+        {
+         "key": "organization.id",
+         "value": {
+          "stringValue": "<organization.id>"
+         }
+        },
+        {
+         "key": "user.email",
+         "value": {
+          "stringValue": "<user.email>"
+         }
+        },
+        {
+         "key": "user.account_uuid",
+         "value": {
+          "stringValue": "<user.account_uuid>"
+         }
+        },
+        {
+         "key": "user.account_id",
+         "value": {
+          "stringValue": "<user.account_id>"
+         }
+        },
+        {
+         "key": "terminal.type",
+         "value": {
+          "stringValue": "non-interactive"
+         }
+        },
+        {
+         "key": "event.name",
+         "value": {
+          "stringValue": "api_request"
+         }
+        },
+        {
+         "key": "event.timestamp",
+         "value": {
+          "stringValue": "2026-11-26T11:16:55.954Z"
+         }
+        },
+        {
+         "key": "event.sequence",
+         "value": {
+          "intValue": 27
+         }
+        },
+        {
+         "key": "prompt.id",
+         "value": {
+          "stringValue": "00000000-0000-4000-8000-000000000122"
+         }
+        },
+        {
+         "key": "model",
+         "value": {
+          "stringValue": "claude-opus-5-5"
+         }
+        },
+        {
+         "key": "input_tokens",
+         "value": {
+          "intValue": 2
+         }
+        },
+        {
+         "key": "output_tokens",
+         "value": {
+          "intValue": 74
+         }
+        },
+        {
+         "key": "cache_read_tokens",
+         "value": {
+          "intValue": 25150
+         }
+        },
+        {
+         "key": "cache_creation_tokens",
+         "value": {
+          "intValue": 10119
+         }
+        },
+        {
+         "key": "cost_usd",
+         "value": {
+          "doubleValue": 0.08746999999999999
+         }
+        },
+        {
+         "key": "cost_usd_micros",
+         "value": {
+          "intValue": 87470
+         }
+        },
+        {
+         "key": "duration_ms",
+         "value": {
+          "intValue": 13722
+         }
+        },
+        {
+         "key": "ttft_ms",
+         "value": {
+          "intValue": 12866
+         }
+        },
+        {
+         "key": "request_id",
+         "value": {
+          "stringValue": "<request_id-000000000127>"
+         }
+        },
+        {
+         "key": "client_request_id",
+         "value": {
+          "stringValue": "<client_request_id-000000000128>"
+         }
+        },
+        {
+         "key": "speed",
+         "value": {
+          "stringValue": "normal"
+         }
+        },
+        {
+         "key": "query_source",
+         "value": {
+          "stringValue": "sdk"
+         }
+        },
+        {
+         "key": "effort",
+         "value": {
+          "stringValue": "medium"
+         }
+        },
+        {
+         "key": "skill.name",
+         "value": {
+          "stringValue": "demo-snag"
+         }
+        }
+       ],
+       "droppedAttributesCount": 0
+      },
+      {
+       "timeUnixNano": "1795691815975000000",
+       "observedTimeUnixNano": "1795691815975000000",
+       "body": {
+        "stringValue": "claude_code.tool_result"
+       },
+       "attributes": [
+        {
+         "key": "user.id",
+         "value": {
+          "stringValue": "<user.id>"
+         }
+        },
+        {
+         "key": "session.id",
+         "value": {
+          "stringValue": "00000000-0000-4000-8000-000000000121"
+         }
+        },
+        {
+         "key": "organization.id",
+         "value": {
+          "stringValue": "<organization.id>"
+         }
+        },
+        {
+         "key": "user.email",
+         "value": {
+          "stringValue": "<user.email>"
+         }
+        },
+        {
+         "key": "user.account_uuid",
+         "value": {
+          "stringValue": "<user.account_uuid>"
+         }
+        },
+        {
+         "key": "user.account_id",
+         "value": {
+          "stringValue": "<user.account_id>"
+         }
+        },
+        {
+         "key": "terminal.type",
+         "value": {
+          "stringValue": "non-interactive"
+         }
+        },
+        {
+         "key": "event.name",
+         "value": {
+          "stringValue": "tool_result"
+         }
+        },
+        {
+         "key": "event.timestamp",
+         "value": {
+          "stringValue": "2026-11-26T11:16:55.975Z"
+         }
+        },
+        {
+         "key": "event.sequence",
+         "value": {
+          "intValue": 28
+         }
+        },
+        {
+         "key": "prompt.id",
+         "value": {
+          "stringValue": "00000000-0000-4000-8000-000000000122"
+         }
+        },
+        {
+         "key": "tool_name",
+         "value": {
+          "stringValue": "Bash"
+         }
+        },
+        {
+         "key": "tool_use_id",
+         "value": {
+          "stringValue": "<tool_use_id-000000000126>"
+         }
+        },
+        {
+         "key": "success",
+         "value": {
+          "stringValue": "true"
+         }
+        },
+        {
+         "key": "duration_ms",
+         "value": {
+          "stringValue": "26"
+         }
+        },
+        {
+         "key": "tool_input_size_bytes",
+         "value": {
+          "stringValue": "64"
+         }
+        },
+        {
+         "key": "tool_result_size_bytes",
+         "value": {
+          "stringValue": "5"
+         }
+        }
+       ],
+       "droppedAttributesCount": 0
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "resource": {
+    "attributes": [
+     {
+      "key": "os.type",
+      "value": {
+       "stringValue": "darwin"
+      }
+     },
+     {
+      "key": "os.version",
+      "value": {
+       "stringValue": "25.6.0"
+      }
+     },
+     {
+      "key": "service.name",
+      "value": {
+       "stringValue": "claude-code"
+      }
+     },
+     {
+      "key": "service.version",
+      "value": {
+       "stringValue": "2.1.291"
+      }
+     }
+    ]
+   },
+   "scopeLogs": [
+    {
+     "scope": {
+      "name": "com.anthropic.claude_code.events",
+      "version": "2.1.291"
+     },
+     "logRecords": [
+      {
+       "timeUnixNano": "1795691819835000000",
+       "observedTimeUnixNano": "1795691819835000000",
+       "body": {
+        "stringValue": "claude_code.api_request"
+       },
+       "attributes": [
+        {
+         "key": "user.id",
+         "value": {
+          "stringValue": "<user.id>"
+         }
+        },
+        {
+         "key": "session.id",
+         "value": {
+          "stringValue": "00000000-0000-4000-8000-000000000121"
+         }
+        },
+        {
+         "key": "organization.id",
+         "value": {
+          "stringValue": "<organization.id>"
+         }
+        },
+        {
+         "key": "user.email",
+         "value": {
+          "stringValue": "<user.email>"
+         }
+        },
+        {
+         "key": "user.account_uuid",
+         "value": {
+          "stringValue": "<user.account_uuid>"
+         }
+        },
+        {
+         "key": "user.account_id",
+         "value": {
+          "stringValue": "<user.account_id>"
+         }
+        },
+        {
+         "key": "terminal.type",
+         "value": {
+          "stringValue": "non-interactive"
+         }
+        },
+        {
+         "key": "event.name",
+         "value": {
+          "stringValue": "api_request"
+         }
+        },
+        {
+         "key": "event.timestamp",
+         "value": {
+          "stringValue": "2026-11-26T11:16:59.835Z"
+         }
+        },
+        {
+         "key": "event.sequence",
+         "value": {
+          "intValue": 29
+         }
+        },
+        {
+         "key": "prompt.id",
+         "value": {
+          "stringValue": "00000000-0000-4000-8000-000000000122"
+         }
+        },
+        {
+         "key": "model",
+         "value": {
+          "stringValue": "claude-opus-5-5"
+         }
+        },
+        {
+         "key": "input_tokens",
+         "value": {
+          "intValue": 2
+         }
+        },
+        {
+         "key": "output_tokens",
+         "value": {
+          "intValue": 53
+         }
+        },
+        {
+         "key": "cache_read_tokens",
+         "value": {
+          "intValue": 35269
+         }
+        },
+        {
+         "key": "cache_creation_tokens",
+         "value": {
+          "intValue": 2804
+         }
+        },
+        {
+         "key": "cost_usd",
+         "value": {
+          "doubleValue": 0.0305538
+         }
+        },
+        {
+         "key": "cost_usd_micros",
+         "value": {
+          "intValue": 30554
+         }
+        },
+        {
+         "key": "duration_ms",
+         "value": {
+          "intValue": 3840
+         }
+        },
+        {
+         "key": "ttft_ms",
+         "value": {
+          "intValue": 3820
+         }
+        },
+        {
+         "key": "request_id",
+         "value": {
+          "stringValue": "<request_id-000000000129>"
+         }
+        },
+        {
+         "key": "client_request_id",
+         "value": {
+          "stringValue": "<client_request_id-000000000130>"
+         }
+        },
+        {
+         "key": "speed",
+         "value": {
+          "stringValue": "normal"
+         }
+        },
+        {
+         "key": "query_source",
+         "value": {
+          "stringValue": "sdk"
+         }
+        },
+        {
+         "key": "effort",
+         "value": {
+          "stringValue": "medium"
+         }
+        },
+        {
+         "key": "skill.name",
+         "value": {
+          "stringValue": "demo-snag"
+         }
+        }
+       ],
+       "droppedAttributesCount": 0
+      },
+      {
+       "timeUnixNano": "1795691819836000000",
+       "observedTimeUnixNano": "1795691819836000000",
+       "body": {
+        "stringValue": "claude_code.assistant_response"
+       },
+       "attributes": [
+        {
+         "key": "user.id",
+         "value": {
+          "stringValue": "<user.id>"
+         }
+        },
+        {
+         "key": "session.id",
+         "value": {
+          "stringValue": "00000000-0000-4000-8000-000000000121"
+         }
+        },
+        {
+         "key": "organization.id",
+         "value": {
+          "stringValue": "<organization.id>"
+         }
+        },
+        {
+         "key": "user.email",
+         "value": {
+          "stringValue": "<user.email>"
+         }
+        },
+        {
+         "key": "user.account_uuid",
+         "value": {
+          "stringValue": "<user.account_uuid>"
+         }
+        },
+        {
+         "key": "user.account_id",
+         "value": {
+          "stringValue": "<user.account_id>"
+         }
+        },
+        {
+         "key": "terminal.type",
+         "value": {
+          "stringValue": "non-interactive"
+         }
+        },
+        {
+         "key": "event.name",
+         "value": {
+          "stringValue": "assistant_response"
+         }
+        },
+        {
+         "key": "event.timestamp",
+         "value": {
+          "stringValue": "2026-11-26T11:16:59.836Z"
+         }
+        },
+        {
+         "key": "event.sequence",
+         "value": {
+          "intValue": 30
+         }
+        },
+        {
+         "key": "prompt.id",
+         "value": {
+          "stringValue": "00000000-0000-4000-8000-000000000122"
+         }
+        },
+        {
+         "key": "response_length",
+         "value": {
+          "intValue": 123
+         }
+        },
+        {
+         "key": "response",
+         "value": {
+          "stringValue": "<REDACTED>"
+         }
+        },
+        {
+         "key": "request_id",
+         "value": {
+          "stringValue": "<request_id-000000000129>"
+         }
+        },
+        {
+         "key": "message.uuid",
+         "value": {
+          "stringValue": "<message.uuid-000000000131>"
+         }
+        },
+        {
+         "key": "model",
+         "value": {
+          "stringValue": "claude-opus-5-5"
+         }
+        },
+        {
+         "key": "query_source",
+         "value": {
+          "stringValue": "sdk"
+         }
+        }
+       ],
+       "droppedAttributesCount": 0
+      }
+     ]
+    }
+   ]
+  }
+ ]
+}

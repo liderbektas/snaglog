@@ -37,7 +37,7 @@ Telemetry is machine-wide, so snaglog keeps its data in `~/.snaglog/` (or `$SNAG
 
 | Path | Content |
 |---|---|
-| `events/<UTC day>.jsonl` | `SkillEvent`s (the only telemetry stored) |
+| `events/<UTC day>.jsonl` | `SkillEvent`s (the only telemetry stored); `completed` events also carry `retries` and, for Claude Code, `costUsd` |
 | `hints/claude-code.jsonl` | `{ t, s, k }` lines from the Claude Code hook |
 | `connections.json` | last event time per agent, `connect` state |
 | `backups/` | agent config files as they were before `connect` |
@@ -52,7 +52,7 @@ The receiver (`cli/collect/otel/receiver.mjs`) listens on `127.0.0.1` only, reje
 
 | Agent | Skill invocation event | Real skill name by default | Tool calls linked to skill | Verdict |
 |---|---|---|---|---|
-| Claude Code | `claude_code.skill_activated` + snaglog hook | `custom_skill` on the activation; real name via hook (prompt id) or `api_*` events | By `session.id` + `prompt.id` + order | Reliable for slash commands (captured); proactive calls pending a full capture; `OTEL_LOG_TOOL_DETAILS` stays off |
+| Claude Code | `claude_code.skill_activated` + snaglog hook | `custom_skill` on the activation; real name via hook (prompt id) or `api_*` events | By `session.id` + `prompt.id` + order | **Reliable, verified with live captures** of proactive and slash-command runs; `OTEL_LOG_TOOL_DETAILS` stays off |
 | Codex | `codex.skill_invocation` (builds after 2026-09-30) | Yes | By `conversation.id` + time order (inferred, weaker) | Reliable for explicit use, best-effort for implicit |
 | Copilot (VS Code) | `execute_tool` span with `github.copilot.tool.parameters.skill_name` | Yes | Same trace | Reliable (later milestone; spans, not logs) |
 | ChatGPT web/desktop | — | — | — | **Not supported**: no telemetry export |
@@ -123,7 +123,7 @@ The hook runs `async` (it cannot slow the agent down), prints nothing (stdout of
 
 **Verified with a live capture (Claude Code 2.1.291, 2026-11-26):** the hook's `session_id` and `prompt_id` equal the OTel `session.id` and `prompt.id`, so the adapter matches a hint by hashed prompt id first and falls back to session plus time; `UserPromptExpansion` delivers `command_name` (plus `expansion_type`, `command_args`, `command_source`). Also observed: `skill.name` on `api_request` / `api_error` carries the **real** name of a project skill while `skill_activated` says `custom_skill`. The adapter therefore holds back the `invoked` event of a redacted activation until a hint or an API event in the same prompt names it (or the window closes, in which case it stays `custom_skill`).
 
-Still `UNVERIFIED` (needs a session that reaches the model): the `tool_input` field of the Skill tool that holds the name (the hook tries `skill`, `skill_name`, `name`, `command`), and the exact `tool_result` attribute encoding. If the field differs, the API-event fallback still names the skill.
+A second capture with full model turns confirmed the rest: the Skill tool's `tool_name` is `Skill` with `tool_input.skill` holding the name; `tool_result.success` and `duration_ms` are strings (`"true"`, `"69"`) while `event.sequence` and API `duration_ms` are integers; `prompt`, `prompt_text` and `response` arrive as `"<REDACTED>"`; `assistant_response` is emitted once at the end of each turn, so the adapter closes the skill window there; `input_tokens` excludes prompt-cache tokens (often single digits), so token totals add `cache_read_tokens` and `cache_creation_tokens`, and `cost_usd` is summed into `costUsd` on the `completed` event. The anonymised capture is `test/fixtures/otel/claude-code-captured-skill.json`.
 
 ### PII handling
 
@@ -283,5 +283,5 @@ To be expanded in `CONTRIBUTING.md` (M8). In short: a module in `cli/collect/ote
 ## Open items
 
 1. **Claude Code custom skill names.** `OTEL_LOG_TOOL_DETAILS` stays off; names come from the local hook (implemented, two fields `UNVERIFIED`, see above). If the hook cannot be made reliable, the fallback is aggregate "custom skill" numbers, not enabling the flag. In team mode, each machine runs a local snaglog relay that forwards only `SkillEvent`s, never raw OTel records.
-2. **Live samples.** A first Claude Code capture (slash-command path, stopped at authentication) is in `test/fixtures/otel/claude-code-captured-slash.json` and `test/fixtures/claude-hook-captured-expansion.json`, anonymised. Still needed: a Claude Code session that reaches the model (Skill tool call, `tool_result`, `api_request`), which requires the command-line `claude` to be logged in, and a Codex capture, which requires Codex to be installed and logged in. The other fixtures remain reconstructed and say so in `_provenance`.
+2. **Live samples.** Claude Code is covered by anonymised live captures (`test/fixtures/otel/claude-code-captured-*.json`, `test/fixtures/claude-hook-captured-*.json`). Codex still needs one, which requires Codex to be installed and logged in; until then `codex-skill-session.json` is reconstructed from source and says so in `_provenance`.
 3. **Protobuf.** Claude Code and Copilot can both be told to use JSON, but other local tools can force protobuf through shared environment variables. Until protobuf lands, the receiver returns `415` for protobuf and the Connections page explains why.

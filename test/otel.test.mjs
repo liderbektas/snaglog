@@ -57,11 +57,13 @@ describe('claude-code adapter', () => {
     const { events } = createReceiver({ env }).ingest(fixture('claude-code-skill-session'));
     assert.deepEqual(events.map((e) => e.kind), ['invoked', 'error', 'error', 'tool_call', 'completed']);
     assert.ok(events.every((e) => e.skill === 'deploy-preview' && e.agent === 'claude-code'));
+    assert.equal(events.at(-1).time, new Date(T + 9000).toISOString(), 'closed by assistant_response at the end of the turn');
     const done = events.at(-1);
     assert.equal(done.success, false);
     assert.equal(done.retries, 1, 'the second failing Bash call is a retry');
-    assert.equal(done.tokens, 1500, 'input + output tokens, without cache tokens');
-    assert.equal(done.durationMs, 7000);
+    assert.equal(done.tokens, 10500, 'input + output + cache tokens');
+    assert.equal(done.costUsd, 0.02);
+    assert.equal(done.durationMs, 8000);
     assert.equal(done.model, 'claude-opus-5-5');
   });
 
@@ -118,6 +120,34 @@ describe('claude-code adapter on a captured session', () => {
     assert.deepEqual(swept.map((e) => [e.kind, e.skill]), [['invoked', 'custom_skill'], ['completed', 'custom_skill']]);
   });
 
+  test('full capture: proactive and slash-command runs of a broken skill', () => {
+    const { events } = createReceiver({ env }).ingest(fixture('claude-code-captured-skill'));
+    const runs = [events.slice(0, 4), events.slice(4)];
+    for (const run of runs) {
+      assert.deepEqual(run.map((e) => e.kind), ['invoked', 'error', 'tool_call', 'completed']);
+      assert.ok(run.every((e) => e.skill === 'demo-snag'));
+      const done = run.at(-1);
+      assert.equal(done.model, 'claude-opus-5-5', 'the model is known from the first API call on');
+      assert.equal(done.success, false, 'the documented flag failed');
+      assert.ok(done.tokens > 0 && done.costUsd > 0);
+    }
+    assert.notEqual(runs[0][0].sessionId, runs[1][0].sessionId);
+  });
+
+  test('full capture: the captured Skill-tool hook input names the skill by prompt id', async () => {
+    const { record } = await import('../cli/connect/hooks/claude-skill-hint.mjs');
+    const hookInput = JSON.parse(readFileSync(new URL('./fixtures/claude-hook-captured-skill-tool.json', import.meta.url), 'utf8'));
+    assert.equal(record(hookInput, home), true);
+    const doc = fixture('claude-code-captured-skill');
+    for (const rl of doc.resourceLogs) for (const sl of rl.scopeLogs) for (const lr of sl.logRecords) {
+      const name = lr.attributes.find((a) => a.key === 'skill.name');
+      if (name) name.value.stringValue = 'custom_skill';
+    }
+    const { events } = createReceiver({ env }).ingest(doc);
+    assert.equal(events[0].skill, 'demo-snag', 'proactive run named by the hook');
+    assert.equal(events[4].skill, 'custom_skill', 'the slash run had no PreToolUse hook in this capture');
+  });
+
   test('stores no identifiers from the capture', () => {
     createReceiver({ env }).ingest(captured());
     const text = storedText();
@@ -150,7 +180,7 @@ describe('privacy', () => {
   test('stored events contain only SkillEvent fields', () => {
     writeHint(CLAUDE_SESSION, T + 1200, 'deploy-preview');
     createReceiver({ env }).ingest(fixture('claude-code-skill-session'));
-    const allowed = new Set(['time', 'agent', 'model', 'skill', 'kind', 'durationMs', 'success', 'tokens', 'sessionId', 'retries']);
+    const allowed = new Set(['time', 'agent', 'model', 'skill', 'kind', 'durationMs', 'success', 'tokens', 'costUsd', 'sessionId', 'retries']);
     for (const event of storedEvents()) for (const key of Object.keys(event)) assert.ok(allowed.has(key), key);
   });
 

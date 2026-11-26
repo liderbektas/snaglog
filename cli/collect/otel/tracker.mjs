@@ -25,7 +25,7 @@ export class SkillTracker {
   // still be learned (rename); any later event or the close flushes it.
   open(sessionId, { skill, time, scope, model, pending = false }) {
     const out = this.close(sessionId, time);
-    const window = { sessionId, skill, scope, model, start: time, last: time, errors: 0, calls: 0, retries: 0, tokens: 0, lastFailedTool: undefined, pending };
+    const window = { sessionId, skill, scope, model, start: time, last: time, errors: 0, calls: 0, retries: 0, tokens: 0, costUsd: 0, lastFailedTool: undefined, pending };
     this.windows.set(sessionId, window);
     out.push(...this.flush(window));
     return out;
@@ -78,10 +78,11 @@ export class SkillTracker {
     return [...out, this.event(window, 'tool_call', time, extra)];
   }
 
-  tokens(sessionId, { time, scope, tokens, model }) {
+  tokens(sessionId, { time, scope, tokens, costUsd, model }) {
     const { window, closed } = this.current(sessionId, scope, time);
     if (!window) return closed;
     if (tokens) window.tokens += tokens;
+    if (costUsd) window.costUsd += costUsd;
     if (model && !window.model) window.model = model;
     window.last = time;
     return [];
@@ -95,7 +96,16 @@ export class SkillTracker {
     const end = Date.parse(window.last) || Date.parse(time);
     const extra = { success: window.errors === 0, durationMs: Math.max(0, end - Date.parse(window.start)), retries: window.retries };
     if (window.tokens) extra.tokens = window.tokens;
+    if (window.costUsd) extra.costUsd = Math.round(window.costUsd * 1e6) / 1e6;
     return [...out, this.event(window, 'completed', window.last, extra)];
+  }
+
+  /** Close the window if it belongs to this scope (end of a turn). */
+  closeScope(sessionId, scope, time) {
+    const window = this.windows.get(sessionId);
+    if (!window || (scope && window.scope && scope !== window.scope)) return [];
+    window.last = time; // the turn ends here, including the final answer
+    return this.close(sessionId, time);
   }
 
   /** Close windows that have been idle for longer than idleMs. */

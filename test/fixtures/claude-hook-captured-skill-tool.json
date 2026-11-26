@@ -1,0 +1,17 @@
+{
+ "_provenance": "CAPTURED PreToolUse (matcher Skill) hook input from Claude Code 2.1.291 on 2026-11-26, anonymised; ids match claude-code-captured-skill.json.",
+ "session_id": "00000000-0000-4000-8000-000000000102",
+ "transcript_path": "<removed>",
+ "cwd": "<removed>",
+ "prompt_id": "00000000-0000-4000-8000-000000000107",
+ "permission_mode": "default",
+ "effort": {
+  "level": "medium"
+ },
+ "hook_event_name": "PreToolUse",
+ "tool_name": "Skill",
+ "tool_input": {
+  "skill": "demo-snag"
+ },
+ "tool_use_id": "<tool_use_id-000000000111>"
+}
