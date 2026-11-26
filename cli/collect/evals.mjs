@@ -7,32 +7,14 @@
 import { spawnSync } from 'node:child_process';
 import { existsSync, readdirSync, readFileSync, statSync } from 'node:fs';
 import { basename, dirname, join } from 'node:path';
-import { parseFrontmatter } from '../../skills/log-snag/scripts/file-snag.mjs';
 import { readJson, snaglogHome, writeJson } from '../lib/home.mjs';
 import { findSkills } from '../lib/skills.mjs';
-
-const CASE_NAME = /^name:\s*["']?([^"'\n#]+?)["']?\s*(?:#.*)?$/m;
+import { listCases } from '../lib/eval-cases.mjs';
 
 /** Map case name → skill from the evals/<skill>/<case>/ layout snaglog uses. */
 export function caseSkills(root) {
   const map = new Map();
-  const evals = join(root, 'evals');
-  if (!existsSync(evals)) return map;
-  for (const skill of readdirSync(evals, { withFileTypes: true })) {
-    if (!skill.isDirectory() || skill.name === 'results' || skill.name === 'mocks') continue;
-    for (const kase of readdirSync(join(evals, skill.name), { withFileTypes: true })) {
-      if (!kase.isDirectory()) continue;
-      const dir = join(evals, skill.name, kase.name);
-      let name = kase.name;
-      if (existsSync(join(dir, 'prompt.md'))) {
-        const fm = parseFrontmatter(readFileSync(join(dir, 'prompt.md'), 'utf8'));
-        if (typeof fm.name === 'string' && fm.name) name = fm.name;
-      } else if (existsSync(join(dir, 'case.yaml'))) {
-        name = CASE_NAME.exec(readFileSync(join(dir, 'case.yaml'), 'utf8'))?.[1] ?? name;
-      } else continue;
-      map.set(name, skill.name);
-    }
-  }
+  for (const [skill, cases] of listCases(root)) for (const kase of cases) map.set(kase.name, skill);
   return map;
 }
 
