@@ -87,6 +87,14 @@ describe('a project with .claude/skills', () => {
     assert.match(o.text(), /deploy: score 100%/);
   });
 
+  test('eval names the .claude/evals folder when only examples exist', async () => {
+    write('.claude/evals/deploy/example-case/prompt.md.example', '---\nname: deploy-example\n---\nDeploy.\n');
+    const o = io();
+    await evalCmd(['deploy', '--path', app, '--yes'], o.io, { env });
+    assert.match(o.text(), /no active eval cases in \.claude\/evals\/deploy\//);
+    assert.equal(existsSync(claudeLog), false, 'claude was not run');
+  });
+
   test('collect imports results from .claude/evals/results', () => {
     write('.claude/evals/deploy/golden/prompt.md', '---\nname: deploy-golden\n---\nDeploy.\n');
     write('.claude/evals/results/2026-11-26T10-00-00/aggregate-result.json', JSON.stringify({ schemaVersion: 1, costUsd: 0.1, cases: [{ name: 'deploy-golden', aggregates: { score: 0.5 } }] }));

@@ -109,7 +109,7 @@ function git(root, args) {
 }
 
 function plan({ root, home, wanted, all, ablate, maxCostUsd }) {
-  const { skillsDir } = detectLayout(root);
+  const { skillsDir, evalsRel } = detectLayout(root);
   const skills = findSkills(skillsDir).filter((s) => !BUNDLED_SKILLS.includes(s.name));
   const cases = listCases(root);
   const warnings = [];
@@ -128,7 +128,7 @@ function plan({ root, home, wanted, all, ablate, maxCostUsd }) {
   for (const skill of selected) {
     const skillCases = cases.get(skill) ?? [];
     if (!skillCases.length) {
-      warnings.push(`${skill}: no active eval cases in evals/${skill}/ (rename the .example files to start)`);
+      warnings.push(`${skill}: no active eval cases in ${evalsRel}/${skill}/ (copy the .example files without the .example ending and fill them in)`);
       continue;
     }
     const untagged = skillCases.filter((c) => !c.tags.includes(`skill:${skill}`));
