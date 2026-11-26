@@ -69,7 +69,16 @@ input, select, textarea { padding: 7px 10px; }
 .skill-list a.active { background: var(--panel); box-shadow: var(--shadow); }
 .skill-list .uses { margin-left: auto; color: var(--faint); font-size: 12.5px; font-variant-numeric: tabular-nums; }
 .side-foot { margin-top: auto; display: flex; align-items: center; gap: 8px; padding: 10px; border-top: 1px solid var(--line); color: var(--muted); font-size: 13px; }
-.side-foot button { margin-left: auto; padding: 5px 10px; font-size: 12.5px; }
+.side-foot .icon-btn { margin-left: auto; width: 32px; height: 32px; padding: 0; display: grid; place-items: center; border-radius: 10px; }
+.icon-btn svg { width: 16px; height: 16px; stroke: currentColor; fill: none; stroke-width: 1.7; stroke-linecap: round; stroke-linejoin: round; }
+.icon-btn .moon { display: none; }
+:root[data-theme="light"] .icon-btn .sun { display: none; }
+:root[data-theme="light"] .icon-btn .moon { display: block; }
+@media (prefers-color-scheme: light) {
+  :root:not([data-theme="dark"]) .icon-btn .sun { display: none; }
+  :root:not([data-theme="dark"]) .icon-btn .moon { display: block; }
+}
+.side-foot .recv { cursor: default; }
 .dot { width: 8px; height: 8px; border-radius: 50%; background: var(--faint); flex: none; }
 .dot.good { background: var(--good); box-shadow: 0 0 0 3px color-mix(in srgb, var(--good) 18%, transparent); }
 .dot.bad { background: var(--bad); box-shadow: 0 0 0 3px color-mix(in srgb, var(--bad) 18%, transparent); }
@@ -194,7 +203,7 @@ details.defs dd { margin: 0; color: var(--muted); }
     </nav>
     <div class="section-title"><span>Skills</span><span id="skill-total"></span></div>
     <div class="skill-list" id="skill-list"></div>
-    <div class="side-foot"><span class="dot" id="recv-dot"></span><span id="recv-text">Receiver</span><button id="theme" type="button" title="Switch between light and dark">Theme</button></div>
+    <div class="side-foot"><span class="dot" id="recv-dot"></span><span class="recv" id="recv-text">Receiver</span><button id="theme" class="icon-btn" type="button" title="Switch between light and dark" aria-label="Switch between light and dark"><svg class="sun" viewBox="0 0 16 16" aria-hidden="true"><circle cx="8" cy="8" r="3"/><path d="M8 1.5v1.6M8 12.9v1.6M1.5 8h1.6M12.9 8h1.6M3.4 3.4l1.1 1.1M11.5 11.5l1.1 1.1M3.4 12.6l1.1-1.1M11.5 4.5l1.1-1.1"/></svg><svg class="moon" viewBox="0 0 16 16" aria-hidden="true"><path d="M13.5 9.6A5.6 5.6 0 0 1 6.4 2.5a5.6 5.6 0 1 0 7.1 7.1Z"/></svg></button></div>
   </aside>
   <main class="main" id="app"><p class="muted">Loading…</p></main>
 </div>
@@ -349,9 +358,17 @@ async function refreshSidebar() {
     el.textContent = counts[el.dataset.count];
     el.classList.toggle('live', el.dataset.count === 'live' && !counts.live.startsWith('0'));
   }
+  // Receiver state: collecting, demo (off on purpose) or really off, with the reason on hover.
   const recv = conn.receiver;
-  document.getElementById('recv-dot').className = `dot ${recv.running ? 'good' : ''}`;
-  document.getElementById('recv-text').textContent = recv.running ? `Receiver :${recv.port}` : 'Receiver off';
+  const recvText = document.getElementById('recv-text');
+  const [dotClass, label, hint] = recv.running
+    ? ['good', `Receiver :${recv.port}`, `Collecting telemetry on 127.0.0.1:${recv.port}`]
+    : META.demo
+      ? ['', 'Demo data', 'Demo mode shows generated data; no telemetry is collected']
+      : ['bad', 'Receiver off', recv.error ? `Not collecting telemetry: ${recv.error}` : 'Not collecting telemetry (started with --no-receiver)'];
+  document.getElementById('recv-dot').className = `dot ${dotClass}`;
+  recvText.textContent = label;
+  recvText.title = hint;
   renderSkillList(currentSkill());
 }
 
