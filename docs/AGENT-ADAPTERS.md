@@ -35,7 +35,7 @@ Rules that apply to every adapter:
 
 | Agent | Skill invocation event | Real skill name by default | Tool calls linked to skill | Verdict |
 |---|---|---|---|---|
-| Claude Code | `claude_code.skill_activated` | **No** for custom skills (`custom_skill`) | By `session.id` + `prompt.id` + order (inferred) | Reliable **only with `OTEL_LOG_TOOL_DETAILS=1`** |
+| Claude Code | `claude_code.skill_activated` + snaglog hook | Not via OTel for custom skills (`custom_skill`); yes via the hook | By `session.id` + `prompt.id` + order (inferred) | Reliable once the hook is verified (M3); `OTEL_LOG_TOOL_DETAILS` stays off |
 | Codex | `codex.skill_invocation` (builds after 2026-09-30) | Yes | By `conversation.id` + time order (inferred, weaker) | Reliable for explicit use, best-effort for implicit |
 | Copilot (VS Code) | `execute_tool` span with `github.copilot.tool.parameters.skill_name` | Yes | Same trace | Reliable (later milestone; spans, not logs) |
 | ChatGPT web/desktop | — | — | — | **Not supported**: no telemetry export |
@@ -60,7 +60,7 @@ Set in the `env` block of the **user** settings file `~/.claude/settings.json`. 
     "OTEL_LOGS_EXPORT_INTERVAL": "5000",
     "OTEL_LOG_USER_PROMPTS": "0",
     "OTEL_LOG_ASSISTANT_RESPONSES": "0",
-    "OTEL_LOG_TOOL_DETAILS": "<decision pending, see below>"
+    "OTEL_LOG_TOOL_DETAILS": "0"
   }
 }
 ```
@@ -90,7 +90,9 @@ Everything else (`assistant_response`, `api_request_body`, hooks, plugins, …) 
 3. A team's private skills are exactly that case. Without the flag, snaglog can count *that* a custom skill ran, but not *which* one.
 4. With the flag, `tool_result.tool_parameters` for the Skill tool also contains `skill_name`, and the tool name is presumably `Skill` (`UNVERIFIED`); snaglog uses `skill_activated` and treats this only as a cross-check.
 
-**Cost of the flag:** `OTEL_LOG_TOOL_DETAILS=1` also exports the untruncated Bash `full_command`, `tool_input` (file paths, URLs, up to ~4 KB) and error text. In local mode these go only to `127.0.0.1` and the adapter's allow-list drops them before storage. In team mode they would cross the network — see [Open items](#open-items).
+**Why snaglog does not enable the flag:** `OTEL_LOG_TOOL_DETAILS=1` also exports the untruncated Bash `full_command`, `tool_input` (file paths, URLs, up to ~4 KB) and error text for *every* tool call. Even pointed at `127.0.0.1`, that data would sit in the agent's export pipeline and could be redirected by a managed setting or another local tool (TraceRoost rewrites agent endpoints). snaglog keeps the flag at `0` and sets it explicitly so another tool cannot have turned it on unnoticed.
+
+**Skill name via a hook (planned, to be verified in M3).** `snaglog connect claude-code` adds one Claude Code hook — a snaglog-owned Node script with no dependencies — that fires only for Skill tool calls (and for user slash commands). The script extracts the skill name and session id, posts `{ skill, sessionId, time }` to `127.0.0.1`, and discards everything else in memory; it never writes prompt text or tool input anywhere. The adapter joins that name to the anonymous `skill_activated` event on session and time. The exact hook event, matcher and input fields must be confirmed against the Claude Code hooks documentation and a live capture before this is built.
 
 ### PII handling
 
@@ -98,7 +100,7 @@ Dropped: `user.email`, `user.account_uuid`, `user.account_id`, `user.id`, `organ
 
 ### Example (reconstructed, anonymised)
 
-`skill_activated` followed by a failed Bash call in the same prompt, with `OTEL_LOG_TOOL_DETAILS=1`:
+`skill_activated` followed by a failed Bash call in the same prompt, with snaglog's settings (`OTEL_LOG_TOOL_DETAILS=0`). The OTel record carries only `custom_skill`; the real name `deploy-preview` comes from the snaglog hook for the same session:
 
 ```json
 {
@@ -115,7 +117,7 @@ Dropped: `user.email`, `user.account_uuid`, `user.account_id`, `user.id`, `organ
           { "key": "event.sequence", "value": { "intValue": "41" } },
           { "key": "session.id", "value": { "stringValue": "00000000-0000-4000-8000-000000000001" } },
           { "key": "prompt.id", "value": { "stringValue": "00000000-0000-4000-8000-0000000000aa" } },
-          { "key": "skill.name", "value": { "stringValue": "deploy-preview" } },
+          { "key": "skill.name", "value": { "stringValue": "custom_skill" } },
           { "key": "invocation_trigger", "value": { "stringValue": "claude-proactive" } },
           { "key": "skill.source", "value": { "stringValue": "projectSettings" } }
         ]},
@@ -127,9 +129,7 @@ Dropped: `user.email`, `user.account_uuid`, `user.account_id`, `user.id`, `organ
           { "key": "tool_name", "value": { "stringValue": "Bash" } },
           { "key": "success", "value": { "stringValue": "false" } },
           { "key": "error_type", "value": { "stringValue": "ShellError" } },
-          { "key": "duration_ms", "value": { "stringValue": "340" } },
-          { "key": "error", "value": { "stringValue": "<dropped by adapter>" } },
-          { "key": "tool_parameters", "value": { "stringValue": "<dropped by adapter>" } }
+          { "key": "duration_ms", "value": { "stringValue": "340" } }
         ]}
       ]
     }]
@@ -167,7 +167,7 @@ trace_exporter = "none"
 
 - The endpoint must be the **full signal path** (`/v1/logs`); Codex does not append it.
 - `tool_result.max_bytes = 0` is proposed (not forced) to stop the 2 KB tool-output preview from being exported; whether `0` fully disables it is `UNVERIFIED`.
-- `metrics_exporter` defaults to `statsig` (OpenAI-bound, follows `analytics.enabled`). snaglog does not touch it, and the README says so.
+- `metrics_exporter` defaults to `statsig`, which sends usage metrics to OpenAI (follows `analytics.enabled`). This is Codex's own behaviour, independent of snaglog. snaglog does not change it silently, but `connect codex` shows the current value and how to turn it off, and the README documents it.
 
 ### Events used
 
@@ -235,8 +235,8 @@ Codex exports some sensitive fields **by default**, so dropping them at ingest i
 | Agent | Path | Notes |
 |---|---|---|
 | GitHub Copilot (VS Code) | `github.copilot.chat.otel.enabled` + `.otlpEndpoint`; `.captureContent` stays `false` | Skill name on `execute_tool` spans (`github.copilot.tool.parameters.skill_name`); needs a traces endpoint. Code defaults to http/json, docs say protobuf. |
-| OpenCode | `@devtheops/opencode-plugin-otel`, `OPENCODE_OTLP_PROTOCOL=http/json` | No skill event; skill name only inside span tool input. |
-| Cursor, Gemini CLI | `o11y-dev/opentelemetry-hooks` | Sends protobuf/gRPC only, so needs protobuf support first. Not skill-aware. |
+| OpenCode | No official native export; the community plugin is not used (trust policy) | Supported once OpenCode ships official OTel. |
+| Cursor, Gemini CLI | No hook bridges or community tools (trust policy) | Re-evaluate each agent's official telemetry when its adapter is planned; Cursor's native export is Enterprise-only today. |
 | ChatGPT web/desktop | — | No telemetry export; not supported. |
 
 ## Writing a new adapter
@@ -245,6 +245,6 @@ To be expanded in `CONTRIBUTING.md` (M8). In short: export `{ agent, match(resou
 
 ## Open items
 
-1. **Claude Code custom skill names need `OTEL_LOG_TOOL_DETAILS=1`.** Without it, private team skills all appear as `custom_skill`. Options: (a) `connect` enables the flag after explaining what it exports, with snaglog's allow-list dropping the extra data at ingest (local mode); (b) leave it off and show only aggregate "custom skill" numbers; (c) a Claude Code hook that reports only the skill name. Recommendation: (a) for local mode. For team mode, the connected machine should run a local snaglog relay that strips fields before forwarding, so detailed data never crosses the network.
+1. **Claude Code custom skill names.** Without `OTEL_LOG_TOOL_DETAILS=1`, private team skills all appear as `custom_skill`. Decision: the flag stays off for security; the skill name comes from a snaglog-owned local hook (see above), to be verified in M3. If the hook cannot be made reliable, the fallback is aggregate "custom skill" numbers, not enabling the flag. In team mode, each machine runs a local snaglog relay that forwards only `SkillEvent`s, never raw OTel records.
 2. **Live samples.** Capture real, anonymised payloads from Claude Code and Codex (one short scripted session each, telemetry pointed at a throwaway local capture server via environment variables only) to replace the reconstructed examples and resolve every `UNVERIFIED` field. Codex is not installed on the development machine yet.
 3. **Protobuf.** Claude Code and Copilot can both be told to use JSON, but other local tools (hedge-local) force protobuf through shared environment variables. Until protobuf lands, the receiver returns `415` for protobuf and the Connections page explains why.
