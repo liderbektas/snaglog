@@ -231,3 +231,17 @@ describe('small samples (end-to-end trial)', () => {
     assert.ok(r.verdict.notes.some((n) => n.includes('eval score after the change: 50%')));
   });
 });
+
+describe('redesign data', () => {
+  test('overview rows carry 14-day bars and last use; skill detail carries recent activity', () => {
+    const d = data();
+    const [row] = overview({ ...d, skills: ['deploy-preview'] }).filter((r) => r.skill === 'deploy-preview');
+    assert.equal(row.daily14.length, 14);
+    assert.ok(row.daily14.some((n) => n > 0));
+    assert.match(row.lastUsedAt, /^\d{4}-/);
+    const detail = skillDetail('deploy-preview', { ...d, changes: [] });
+    assert.ok(detail.recent.length > 0 && detail.recent.length <= 40);
+    assert.deepEqual(Object.keys(detail.recent[0]).sort(), ['agent', 'durationMs', 'kind', 'success', 'time']);
+    assert.ok(detail.recent[0].time >= detail.recent.at(-1).time, 'newest first');
+  });
+});

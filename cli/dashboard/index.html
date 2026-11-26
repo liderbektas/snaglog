@@ -7,115 +7,223 @@
 <title>snaglog</title>
 <style nonce="__NONCE__">
 :root {
-  --bg: #f7f7f5; --panel: #ffffff; --text: #1c1b19; --muted: #5c5a55; --line: #e2e0da; --soft: #f0efeb;
-  --accent: #1d5d8a; --bad: #b42318; --warn: #8a5a00; --good: #18733a; --bar: #1d5d8a; --bar-bad: #c2410c;
+  --bg: #eef0f3; --side: #f8f9fb; --panel: #ffffff; --panel-2: #f4f5f7; --line: #e1e4e8; --line-2: #d3d7dd;
+  --text: #15171a; --muted: #5d646d; --faint: #8a919a;
+  --accent: #1f6feb; --good: #1a7f37; --bad: #cf3a33; --warn: #9a6700;
+  --bar: #d5d9df; --bar-hi: #15171a; --bar-bad: #e5534b;
+  --shadow: 0 1px 2px rgb(0 0 0 / 4%), 0 8px 24px rgb(0 0 0 / 5%);
   color-scheme: light;
 }
 :root[data-theme="dark"] {
-  --bg: #131312; --panel: #1b1b19; --text: #ebeae6; --muted: #a29f98; --line: #2f2e2b; --soft: #232220;
-  --accent: #7cb8e4; --bad: #ff8b7d; --warn: #e2b54c; --good: #5fd17f; --bar: #7cb8e4; --bar-bad: #f59e6b;
+  --bg: #07080a; --side: #0d0f12; --panel: #121418; --panel-2: #181b20; --line: #22262c; --line-2: #2c3138;
+  --text: #eceef1; --muted: #9aa1aa; --faint: #6b727b;
+  --accent: #6cb6ff; --good: #3fb950; --bad: #f47067; --warn: #d9a43a;
+  --bar: #2b3037; --bar-hi: #eceef1; --bar-bad: #f47067;
+  --shadow: 0 1px 0 rgb(255 255 255 / 3%) inset, 0 12px 32px rgb(0 0 0 / 35%);
   color-scheme: dark;
 }
 @media (prefers-color-scheme: dark) {
   :root:not([data-theme="light"]) {
-    --bg: #131312; --panel: #1b1b19; --text: #ebeae6; --muted: #a29f98; --line: #2f2e2b; --soft: #232220;
-    --accent: #7cb8e4; --bad: #ff8b7d; --warn: #e2b54c; --good: #5fd17f; --bar: #7cb8e4; --bar-bad: #f59e6b;
+    --bg: #07080a; --side: #0d0f12; --panel: #121418; --panel-2: #181b20; --line: #22262c; --line-2: #2c3138;
+    --text: #eceef1; --muted: #9aa1aa; --faint: #6b727b;
+    --accent: #6cb6ff; --good: #3fb950; --bad: #f47067; --warn: #d9a43a;
+    --bar: #2b3037; --bar-hi: #eceef1; --bar-bad: #f47067;
+    --shadow: 0 1px 0 rgb(255 255 255 / 3%) inset, 0 12px 32px rgb(0 0 0 / 35%);
     color-scheme: dark;
   }
 }
 * { box-sizing: border-box; }
-body { margin: 0; background: var(--bg); color: var(--text); font: 14px/1.5 system-ui, -apple-system, "Segoe UI", sans-serif; }
-a { color: var(--accent); }
-header { display: flex; align-items: center; gap: 24px; padding: 12px 24px; border-bottom: 1px solid var(--line); background: var(--panel); flex-wrap: wrap; }
-.brand { font-weight: 650; font-size: 16px; letter-spacing: -0.01em; }
-nav { display: flex; gap: 4px; flex-wrap: wrap; }
-nav a { text-decoration: none; color: var(--muted); padding: 6px 10px; border-radius: 6px; }
-nav a.active { color: var(--text); background: var(--soft); }
-.spacer { flex: 1; }
-button, select, input, textarea { font: inherit; color: var(--text); background: var(--panel); border: 1px solid var(--line); border-radius: 6px; }
-button { padding: 6px 12px; cursor: pointer; }
-button:hover { background: var(--soft); }
-button.primary { border-color: var(--accent); color: var(--accent); }
-button.danger { border-color: var(--bad); color: var(--bad); }
-button:disabled { opacity: .5; cursor: not-allowed; }
-main { max-width: 1180px; margin: 0 auto; padding: 24px; }
-h1 { font-size: 20px; margin: 0 0 4px; font-weight: 650; }
-h2 { font-size: 15px; margin: 28px 0 10px; font-weight: 650; }
-.sub { color: var(--muted); margin: 0 0 20px; }
-.banner { border: 1px solid var(--line); background: var(--panel); border-left: 3px solid var(--warn); padding: 10px 14px; border-radius: 6px; margin: 0 0 12px; }
-.banner.demo { border-left-color: var(--accent); }
-.banner.bad { border-left-color: var(--bad); }
-.banner.good { border-left-color: var(--good); }
-table { width: 100%; border-collapse: collapse; background: var(--panel); border: 1px solid var(--line); border-radius: 8px; overflow: hidden; }
-th, td { text-align: left; padding: 8px 10px; border-bottom: 1px solid var(--line); vertical-align: top; }
-th { font-weight: 600; color: var(--muted); font-size: 12px; white-space: nowrap; background: var(--soft); }
-th.sortable { cursor: pointer; }
+html, body { height: 100%; }
+body { margin: 0; background: var(--bg); color: var(--text); font: 14px/1.5 -apple-system, BlinkMacSystemFont, "SF Pro Text", "Segoe UI", system-ui, sans-serif; -webkit-font-smoothing: antialiased; }
+a { color: var(--accent); text-decoration: none; }
+a:hover { text-decoration: underline; }
+code, .mono { font-family: ui-monospace, "SF Mono", SFMono-Regular, Menlo, monospace; }
+code { font-size: 12px; background: var(--panel-2); border: 1px solid var(--line); padding: 1px 5px; border-radius: 6px; }
+button, select, input, textarea { font: inherit; color: var(--text); background: var(--panel-2); border: 1px solid var(--line); border-radius: 10px; }
+button { padding: 7px 14px; cursor: pointer; }
+button:hover { border-color: var(--line-2); }
+button.primary { background: var(--text); color: var(--bg); border-color: var(--text); }
+button.danger { color: var(--bad); }
+button:disabled { opacity: .45; cursor: not-allowed; }
+input, select, textarea { padding: 7px 10px; }
+
+/* layout */
+.app { display: grid; grid-template-columns: 268px 1fr; min-height: 100%; }
+.side { position: sticky; top: 0; height: 100vh; display: flex; flex-direction: column; gap: 18px; padding: 20px 16px; background: var(--side); border-right: 1px solid var(--line); overflow-y: auto; }
+.brand { display: flex; align-items: center; gap: 10px; padding: 0 6px; font-weight: 650; font-size: 16px; letter-spacing: -0.01em; }
+.brand .mark { width: 28px; height: 28px; border-radius: 8px; background: var(--text); color: var(--bg); display: grid; place-items: center; }
+.search { display: flex; align-items: center; gap: 8px; background: var(--panel); border: 1px solid var(--line); border-radius: 12px; padding: 8px 10px; }
+.search input { border: 0; background: transparent; padding: 0; outline: none; width: 100%; }
+.search .key { color: var(--faint); font-size: 12px; }
+.nav { display: flex; flex-direction: column; gap: 2px; }
+.nav a { display: flex; align-items: center; gap: 10px; padding: 8px 10px; border-radius: 10px; color: var(--text); text-decoration: none; }
+.nav a:hover { background: var(--panel-2); }
+.nav a.active { background: var(--panel); box-shadow: var(--shadow); }
+.nav .count { margin-left: auto; color: var(--muted); font-size: 13px; font-variant-numeric: tabular-nums; }
+.nav .count.live { color: var(--good); }
+.nav svg { width: 16px; height: 16px; flex: none; stroke: currentColor; fill: none; stroke-width: 1.7; stroke-linecap: round; stroke-linejoin: round; color: var(--muted); }
+.section-title { display: flex; align-items: center; justify-content: space-between; padding: 0 10px; color: var(--muted); font-size: 12.5px; font-weight: 600; }
+.skill-list { display: flex; flex-direction: column; gap: 1px; }
+.skill-list a { display: flex; align-items: center; gap: 10px; padding: 7px 10px; border-radius: 10px; color: var(--text); text-decoration: none; }
+.skill-list a:hover { background: var(--panel-2); }
+.skill-list a.active { background: var(--panel); box-shadow: var(--shadow); }
+.skill-list .uses { margin-left: auto; color: var(--faint); font-size: 12.5px; font-variant-numeric: tabular-nums; }
+.side-foot { margin-top: auto; display: flex; align-items: center; gap: 8px; padding: 10px; border-top: 1px solid var(--line); color: var(--muted); font-size: 13px; }
+.side-foot button { margin-left: auto; padding: 5px 10px; font-size: 12.5px; }
+.dot { width: 8px; height: 8px; border-radius: 50%; background: var(--faint); flex: none; }
+.dot.good { background: var(--good); box-shadow: 0 0 0 3px color-mix(in srgb, var(--good) 18%, transparent); }
+.dot.bad { background: var(--bad); box-shadow: 0 0 0 3px color-mix(in srgb, var(--bad) 18%, transparent); }
+.dot.warn { background: var(--warn); }
+.main { min-width: 0; padding: 28px 32px 48px; }
+.page-head { display: flex; align-items: flex-end; gap: 16px; margin-bottom: 22px; flex-wrap: wrap; }
+.page-head h1 { margin: 0; font-size: 26px; font-weight: 650; letter-spacing: -0.02em; }
+.page-head .sub { margin: 4px 0 0; color: var(--muted); }
+.page-head .tag { margin-left: auto; color: var(--muted); font-size: 12.5px; border: 1px solid var(--line); border-radius: 999px; padding: 3px 10px; }
+@media (max-width: 860px) {
+  .app { grid-template-columns: 1fr; }
+  .side { position: static; height: auto; border-right: 0; border-bottom: 1px solid var(--line); }
+  .main { padding: 20px 16px 40px; }
+}
+
+/* panels */
+.panel { background: var(--panel); border: 1px solid var(--line); border-radius: 18px; padding: 18px 20px; box-shadow: var(--shadow); }
+.panel + .panel, .grid + .panel, .panel + .grid, .grid + .grid { margin-top: 16px; }
+.panel-head { display: flex; align-items: center; gap: 10px; margin: -2px 0 14px; }
+.panel-head h2 { margin: 0; font-size: 15px; font-weight: 600; }
+.panel-head .meta { color: var(--muted); font-size: 13px; }
+.panel-head .right { margin-left: auto; }
+.grid { display: grid; gap: 16px; align-items: stretch; }
+.grid > .panel { margin-top: 0; }
+.kpis { grid-template-columns: repeat(auto-fit, minmax(190px, 1fr)); }
+.two { grid-template-columns: minmax(0, 1.4fr) minmax(0, 1fr); }
+@media (max-width: 1100px) { .two { grid-template-columns: 1fr; } }
+.kpi { display: flex; flex-direction: column; gap: 6px; min-height: 118px; }
+.kpi .label { color: var(--muted); font-size: 13px; cursor: help; text-decoration: underline dotted var(--line-2); text-underline-offset: 3px; width: fit-content; }
+.kpi .value { font-size: 34px; font-weight: 650; letter-spacing: -0.02em; line-height: 1.1; font-variant-numeric: tabular-nums; }
+.kpi .value .unit { font-size: 15px; font-weight: 500; color: var(--muted); margin-left: 3px; letter-spacing: 0; }
+.kpi .note { color: var(--muted); font-size: 12.5px; margin-top: auto; }
+.kpi .value.bad { color: var(--bad); }
+.bars { display: block; }
+.bars rect { fill: var(--bar); }
+.bars rect.hi { fill: var(--bar-hi); }
+.bars rect.bad { fill: var(--bar-bad); }
+.banner { border: 1px solid var(--line); background: var(--panel); border-radius: 14px; padding: 12px 16px; margin-bottom: 16px; display: flex; gap: 10px; align-items: baseline; }
+.banner::before { content: ""; width: 8px; height: 8px; border-radius: 50%; background: var(--warn); flex: none; transform: translateY(-1px); }
+.banner.good::before { background: var(--good); }
+.banner.bad::before { background: var(--bad); }
+.banner.info::before { background: var(--accent); }
+
+/* tables */
+table { width: 100%; border-collapse: collapse; }
+th, td { text-align: left; padding: 10px 10px; border-bottom: 1px solid var(--line); vertical-align: middle; }
+th { font-weight: 500; color: var(--muted); font-size: 12.5px; white-space: nowrap; }
+th[title] { cursor: help; text-decoration: underline dotted var(--line-2); text-underline-offset: 3px; }
+th.sortable { cursor: pointer; user-select: none; }
 th.sorted::after { content: " ↓"; }
 th.sorted.asc::after { content: " ↑"; }
 tr:last-child td { border-bottom: 0; }
-td strong { white-space: nowrap; }
 td.num, th.num { text-align: right; font-variant-numeric: tabular-nums; white-space: nowrap; }
 tr.row-link { cursor: pointer; }
-tr.row-link:hover td { background: var(--soft); }
-.reasons { margin: 0; padding: 0; list-style: none; font-size: 13px; }
-.reasons li { color: var(--bad); }
+tr.row-link:hover td { background: var(--panel-2); }
+tr.row-link td:first-child { border-radius: 10px 0 0 10px; }
+tr.row-link td:last-child { border-radius: 0 10px 10px 0; }
+.skill-cell { display: flex; gap: 12px; align-items: flex-start; }
+.skill-cell .dot { margin-top: 7px; }
+.skill-cell strong { font-weight: 600; white-space: nowrap; }
+.reasons { margin: 2px 0 0; padding: 0; list-style: none; font-size: 12.5px; color: var(--bad); }
 .reasons li.info { color: var(--warn); }
+.subtle { color: var(--muted); font-size: 12.5px; }
 .muted { color: var(--muted); }
-.ok { color: var(--good); }
-.bad { color: var(--bad); }
-.cards { display: grid; grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); gap: 12px; }
-.card { background: var(--panel); border: 1px solid var(--line); border-radius: 8px; padding: 12px 14px; }
-.card .label { color: var(--muted); font-size: 12px; }
-.card .value { font-size: 22px; font-weight: 600; font-variant-numeric: tabular-nums; }
-.chart { background: var(--panel); border: 1px solid var(--line); border-radius: 8px; padding: 12px; }
+.pill { display: inline-block; padding: 1px 9px; border-radius: 999px; border: 1px solid var(--line); font-size: 12px; color: var(--muted); margin-right: 4px; }
+.pill.good { color: var(--good); border-color: color-mix(in srgb, var(--good) 40%, transparent); }
+.pill.bad { color: var(--bad); border-color: color-mix(in srgb, var(--bad) 40%, transparent); }
+
+/* activity log */
+.log { margin: 0; padding: 0; list-style: none; font-size: 12.5px; max-height: 330px; overflow-y: auto; }
+.log li { display: grid; grid-template-columns: 74px 96px 1fr auto; gap: 12px; padding: 5px 2px; border-bottom: 1px solid var(--line); }
+.log li:last-child { border-bottom: 0; }
+.log .t { color: var(--faint); }
+.log .a { color: var(--muted); }
+.log .k.error { color: var(--bad); }
+.log .k.invoked { color: var(--accent); }
+.log .k.completed { color: var(--good); }
+.log .d { color: var(--faint); text-align: right; }
+
+/* charts */
 .chart svg { width: 100%; height: auto; display: block; }
-.chart .axis { fill: var(--muted); font-size: 11px; }
-.chart .grid { stroke: var(--line); }
-.chart .bar { fill: var(--bar); }
+.chart .axis { fill: var(--faint); font-size: 11px; }
+.chart .grid-line { stroke: var(--line); }
+.chart .bar { fill: var(--bar-hi); opacity: .85; }
 .chart .bar-bad { fill: var(--bar-bad); }
 .chart .line { stroke: var(--accent); fill: none; stroke-width: 2; }
-.chart .dot { fill: var(--accent); }
-.legend { color: var(--muted); font-size: 12px; margin-top: 6px; }
-.legend span { display: inline-block; width: 10px; height: 10px; border-radius: 2px; margin: 0 4px 0 10px; vertical-align: -1px; }
-.legend .swatch { background: var(--bar); }
-.legend .swatch-bad { background: var(--bar-bad); }
-.two { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
-@media (max-width: 800px) { .two { grid-template-columns: 1fr; } }
-.report { background: var(--panel); border: 1px solid var(--line); border-radius: 8px; padding: 14px; margin-bottom: 14px; }
-.report input, .report textarea { width: 100%; padding: 6px 8px; margin: 4px 0 10px; }
-.report textarea { min-height: 220px; font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: 12px; }
-.report .actions { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
-.status { font-size: 13px; }
-.pill { display: inline-block; padding: 0 8px; border-radius: 999px; border: 1px solid var(--line); font-size: 12px; color: var(--muted); margin-right: 4px; }
-.pill.good { color: var(--good); border-color: var(--good); }
-.pill.bad { color: var(--bad); border-color: var(--bad); }
-.controls { display: flex; gap: 10px; align-items: center; flex-wrap: wrap; margin-bottom: 16px; }
-.controls select { padding: 6px 8px; }
-.empty { background: var(--panel); border: 1px dashed var(--line); border-radius: 8px; padding: 20px; color: var(--muted); }
-code { font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: 12px; background: var(--soft); padding: 1px 4px; border-radius: 4px; }
+.chart .dotp { fill: var(--accent); }
+.legend { color: var(--muted); font-size: 12px; margin-top: 8px; display: flex; gap: 16px; }
+.legend i { display: inline-block; width: 9px; height: 9px; border-radius: 3px; margin-right: 6px; vertical-align: 0; }
+.legend .i-run { background: var(--bar-hi); }
+.legend .i-bad { background: var(--bar-bad); }
+
+/* forms and misc */
+.report textarea { width: 100%; min-height: 220px; font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: 12px; margin: 4px 0 12px; }
+.report input { width: 100%; margin: 4px 0 12px; }
+.report label { color: var(--muted); font-size: 12.5px; }
+.actions { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
+.controls { display: flex; gap: 12px; align-items: center; flex-wrap: wrap; margin-bottom: 16px; color: var(--muted); }
+.empty { color: var(--muted); }
+details.defs { margin-top: 16px; }
+details.defs summary { cursor: pointer; color: var(--muted); }
+details.defs dl { display: grid; grid-template-columns: 160px 1fr; gap: 8px 16px; margin: 14px 0 0; }
+details.defs dt { font-weight: 600; }
+details.defs dd { margin: 0; color: var(--muted); }
+.agent-row { display: flex; align-items: center; gap: 14px; padding: 12px 14px; border-radius: 14px; background: var(--panel-2); border: 1px solid var(--line); }
+.agent-row + .agent-row { margin-top: 10px; }
+.agent-row .name { font-weight: 600; }
+.agent-row .right { margin-left: auto; text-align: right; }
+.tips { margin: 8px 0 0 22px; padding: 0; color: var(--muted); font-size: 12.5px; }
 </style>
 </head>
 <body>
-<header>
-  <div class="brand">snaglog</div>
-  <nav id="nav">
-    <a href="#/overview" data-page="overview">Overview</a>
-    <a href="#/compare" data-page="compare">Before / after</a>
-    <a href="#/unsent" data-page="unsent">Unsent reports</a>
-    <a href="#/connections" data-page="connections">Connections</a>
-  </nav>
-  <div class="spacer"></div>
-  <button id="theme" type="button" title="Switch between light and dark">Theme</button>
-</header>
-<main id="app"><p class="muted">Loading…</p></main>
+<div class="app">
+  <aside class="side">
+    <div class="brand"><span class="mark"><svg width="16" height="16" viewBox="0 0 16 16" aria-hidden="true"><path d="M3 11.5c1.6 1.3 3.2 1.9 5 1.9 2 0 3.5-.9 3.5-2.5 0-1.5-1.2-2.1-3.4-2.6C5.8 7.8 4.6 7.2 4.6 5.6 4.6 4 6 3 8 3c1.5 0 2.8.5 3.9 1.4" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg></span>snaglog</div>
+    <label class="search"><svg width="15" height="15" viewBox="0 0 16 16" aria-hidden="true"><circle cx="7" cy="7" r="4.6" fill="none" stroke="currentColor" stroke-width="1.6"/><path d="m10.5 10.5 3 3" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg><input id="search" type="search" placeholder="Search skills" aria-label="Search skills"><span class="key">/</span></label>
+    <nav class="nav" id="nav">
+      <a href="#/overview" data-page="overview"><svg viewBox="0 0 16 16"><rect x="2" y="2" width="5" height="5" rx="1.2"/><rect x="9" y="2" width="5" height="5" rx="1.2"/><rect x="2" y="9" width="5" height="5" rx="1.2"/><rect x="9" y="9" width="5" height="5" rx="1.2"/></svg>Overview<span class="count" data-count="skills"></span></a>
+      <a href="#/compare" data-page="compare"><svg viewBox="0 0 16 16"><path d="M4 3v10M12 3v10M4 8h8M9.5 5.5 12 8l-2.5 2.5"/></svg>Before / after</a>
+      <a href="#/unsent" data-page="unsent"><svg viewBox="0 0 16 16"><path d="M2.5 4.5h11v8h-11z"/><path d="m2.5 4.5 5.5 4.5 5.5-4.5"/></svg>Unsent reports<span class="count" data-count="unsent"></span></a>
+      <a href="#/connections" data-page="connections"><svg viewBox="0 0 16 16"><path d="M8 13.5a5.5 5.5 0 1 0 0-11 5.5 5.5 0 0 0 0 11Z"/><path d="M8 5v3l2 1.5"/></svg>Connections<span class="count" data-count="live"></span></a>
+    </nav>
+    <div class="section-title"><span>Skills</span><span id="skill-total"></span></div>
+    <div class="skill-list" id="skill-list"></div>
+    <div class="side-foot"><span class="dot" id="recv-dot"></span><span id="recv-text">Receiver</span><button id="theme" type="button" title="Switch between light and dark">Theme</button></div>
+  </aside>
+  <main class="main" id="app"><p class="muted">Loading…</p></main>
+</div>
 <script nonce="__NONCE__">
 'use strict';
 const TOKEN = document.querySelector('meta[name="snaglog-token"]').content;
 const app = document.getElementById('app');
 const SVGNS = 'http://www.w3.org/2000/svg';
 let META = { demo: false };
+let ROWS = [];
 
-// ---- helpers (data is only ever inserted as text) --------------------------
+// What each metric means (shown on hover and on the skill page).
+const DEFS = {
+  runs: ['Runs', 'How many times an agent started this skill.'],
+  uses30: ['Uses (30 d)', 'Runs of this skill in the last 30 days.'],
+  errorRate: ['Tool error rate', 'Share of the tool calls made while this skill was active that failed.'],
+  cleanRate: ['Clean runs', 'Runs that finished without a single failed tool call. A run that recovered from an error does not count as clean.'],
+  retries: ['Avg retries', 'How often a failed tool call was immediately tried again, per run.'],
+  duration: ['Avg duration', 'Time from the skill starting until the agent finished that request: the whole job the skill was part of.'],
+  tokens: ['Avg tokens', 'Tokens processed per run. Includes the prompt cache, which the model re-reads on every step, so it is usually most of the total.'],
+  cost: ['Avg cost', "The agent's own estimate at API prices. On a subscription this counts toward your usage limit; it is not charged separately."],
+  snags: ['Open snags', 'Open GitHub issues reporting this skill. Repeats of the same problem are counted as reports, not as new snags.'],
+  evalScore: ['Eval score', 'Share of eval cases passing in the latest snaglog eval of this skill.'],
+  effect: ['Skill effect', 'Eval score with the skills minus without them, from a run with --ablate. Positive means the skills help.'],
+  agents: ['Agents', 'Agents that used this skill.'],
+};
+const def = (key) => DEFS[key][1];
+
+// ---- helpers: data is only ever inserted as text -------------------------
 function h(tag, props, ...children) {
   const el = document.createElement(tag);
   for (const [k, v] of Object.entries(props || {})) {
@@ -143,9 +251,12 @@ async function api(path, options = {}) {
 const pct = (v) => (v === null || v === undefined ? '—' : `${Math.round(v * 100)}%`);
 const signedPts = (v) => (v === null || v === undefined ? '—' : `${v >= 0 ? '+' : ''}${Math.round(v * 100)} pts`);
 const num = (v, digits = 0) => (v === null || v === undefined ? '—' : Number(v).toLocaleString('en-US', { maximumFractionDigits: digits }));
-const dur = (ms) => (ms === null || ms === undefined ? '—' : ms < 1000 ? `${Math.round(ms)} ms` : `${(ms / 1000).toFixed(1)} s`);
+const compact = (v) => (v === null || v === undefined ? '—' : Intl.NumberFormat('en-US', { notation: 'compact', maximumFractionDigits: 1 }).format(v));
+const durParts = (ms) => (ms === null || ms === undefined ? ['—', ''] : ms < 1000 ? [String(Math.round(ms)), 'ms'] : ms < 120000 ? [(ms / 1000).toFixed(1), 's'] : [(ms / 60000).toFixed(1), 'min']);
+const dur = (ms) => durParts(ms).join(' ').trim();
 const usd = (v) => (v === null || v === undefined ? '—' : `$${v.toFixed(v < 1 ? 3 : 2)}`);
 const day = (iso) => (iso ? iso.slice(0, 10) : '—');
+const clock = (iso) => (iso ? new Date(iso).toLocaleTimeString('en-GB', { hour12: false }) : '');
 const ago = (iso) => {
   if (!iso) return 'never';
   const m = Math.round((Date.now() - Date.parse(iso)) / 60000);
@@ -154,15 +265,36 @@ const ago = (iso) => {
   if (m < 48 * 60) return `${Math.round(m / 60)} h ago`;
   return `${Math.round(m / 1440)} days ago`;
 };
+const statusOf = (r) => (r.attention.reasons.some((x) => !x.startsWith('every eval')) ? 'bad' : r.usage30d ? 'good' : '');
 function page(title, sub, ...children) {
-  app.replaceChildren(h('h1', { text: title }), sub ? h('p', { class: 'sub', text: sub }) : null, ...children);
+  const head = h('div', { class: 'page-head' }, h('div', {}, h('h1', { text: title }), sub ? h('p', { class: 'sub', text: sub }) : null), META.demo ? h('span', { class: 'tag', text: 'Demo data · sending disabled' }) : null);
+  app.replaceChildren(head, ...children);
 }
 function failure(error) {
   app.replaceChildren(h('div', { class: 'banner bad', text: `Could not load data: ${error.message}` }));
 }
+function panel(title, meta, ...children) {
+  return h('section', { class: 'panel' }, title ? h('div', { class: 'panel-head' }, h('h2', { text: title }), meta ? h('span', { class: 'meta', text: meta }) : null) : null, ...children);
+}
+function kpi(defKey, value, unit, { cls, note } = {}) {
+  return h('div', { class: 'panel kpi', title: def(defKey) },
+    h('span', { class: 'label', text: DEFS[defKey][0] }),
+    h('span', { class: `value ${cls || ''}` }, value, unit ? h('span', { class: 'unit', text: unit }) : null),
+    note ? h('span', { class: 'note', text: note }) : null);
+}
+function miniBars(values, { width = 120, height = 26 } = {}) {
+  const max = Math.max(1, ...values);
+  const gap = 3;
+  const bw = (width - gap * (values.length - 1)) / values.length;
+  const svg = s('svg', { class: 'bars', width, height, viewBox: `0 0 ${width} ${height}`, 'aria-hidden': 'true' });
+  values.forEach((v, i) => {
+    const bh = Math.max(3, (height * v) / max);
+    svg.append(s('rect', { class: i === values.length - 1 ? 'hi' : '', x: i * (bw + gap), y: height - bh, width: bw, height: bh, rx: 1.5 }));
+  });
+  return svg;
+}
 
-// ---- theme -------------------------------------------------------------------
-const themeButton = document.getElementById('theme');
+// ---- theme ------------------------------------------------------------------
 function applyTheme(theme) {
   if (theme) document.documentElement.dataset.theme = theme;
   else delete document.documentElement.dataset.theme;
@@ -173,57 +305,100 @@ function applyTheme(theme) {
   try { saved = localStorage.getItem('snaglog-theme'); } catch { /* storage may be blocked */ }
   applyTheme(fromUrl || saved);
 })();
-themeButton.addEventListener('click', () => {
+document.getElementById('theme').addEventListener('click', () => {
   const current = document.documentElement.dataset.theme || (matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
   const next = current === 'dark' ? 'light' : 'dark';
   applyTheme(next);
   try { localStorage.setItem('snaglog-theme', next); } catch { /* ignore */ }
 });
 
-// ---- charts ------------------------------------------------------------------
+// ---- sidebar ------------------------------------------------------------------
+const searchInput = document.getElementById('search');
+document.addEventListener('keydown', (e) => {
+  if (e.key === '/' && document.activeElement !== searchInput && !/^(INPUT|TEXTAREA|SELECT)$/.test(document.activeElement.tagName)) {
+    e.preventDefault();
+    searchInput.focus();
+  }
+});
+searchInput.addEventListener('input', () => {
+  renderSkillList(currentSkill());
+  if ((location.hash || '#/overview').startsWith('#/overview') || location.hash === '') overviewPage();
+});
+const matches = (name) => name.toLowerCase().includes(searchInput.value.trim().toLowerCase());
+function currentSkill() {
+  const parts = location.hash.replace(/^#\/?/, '').split('/').map(decodeURIComponent);
+  return parts[0] === 'skill' ? parts[1] : null;
+}
+function renderSkillList(active) {
+  const list = document.getElementById('skill-list');
+  const rows = ROWS.filter((r) => matches(r.skill));
+  document.getElementById('skill-total').textContent = ROWS.length ? String(ROWS.length) : '';
+  list.replaceChildren(...rows.map((r) => h('a', { href: `#/skill/${encodeURIComponent(r.skill)}`, class: r.skill === active ? 'active' : '' },
+    h('span', { class: `dot ${statusOf(r)}` }), h('span', { text: r.skill }), h('span', { class: 'uses', text: r.usage30d ? String(r.usage30d) : '' }))));
+  if (!rows.length) list.replaceChildren(h('span', { class: 'subtle', text: ROWS.length ? 'No match' : 'No skills yet' }));
+}
+async function refreshSidebar() {
+  const [overviewData, reports, conn] = await Promise.all([api('/api/overview'), api('/api/reports'), api('/api/connections')]);
+  ROWS = overviewData.rows;
+  const counts = {
+    skills: String(ROWS.length),
+    unsent: reports.reports.length ? String(reports.reports.length) : '',
+    live: `${conn.agents.filter((a) => a.lastEventAt && Date.now() - Date.parse(a.lastEventAt) < 15 * 60000).length} live`,
+  };
+  for (const el of document.querySelectorAll('[data-count]')) {
+    el.textContent = counts[el.dataset.count];
+    el.classList.toggle('live', el.dataset.count === 'live' && !counts.live.startsWith('0'));
+  }
+  const recv = conn.receiver;
+  document.getElementById('recv-dot').className = `dot ${recv.running ? 'good' : ''}`;
+  document.getElementById('recv-text').textContent = recv.running ? `Receiver :${recv.port}` : 'Receiver off';
+  renderSkillList(currentSkill());
+}
+
+// ---- charts -------------------------------------------------------------------
 function barChart(days) {
-  const W = 1000, H = 200, L = 34, B = 24, T = 8;
+  const W = 760, H = 330, L = 30, B = 26, T = 10;
   const max = Math.max(1, ...days.map((d) => d.invocations));
   const bw = (W - L) / days.length;
-  const svg = s('svg', { viewBox: `0 0 ${W} ${H}`, role: 'img', 'aria-label': 'Invocations per day, last 30 days' });
+  const svg = s('svg', { viewBox: `0 0 ${W} ${H}`, role: 'img', 'aria-label': 'Runs per day, last 30 days' });
   for (const f of [0, 0.5, 1]) {
     const y = T + (H - T - B) * (1 - f);
-    svg.append(s('line', { class: 'grid', x1: L, x2: W, y1: y, y2: y }), s('text', { class: 'axis', x: L - 6, y: y + 4, 'text-anchor': 'end' }, String(Math.round(max * f))));
+    svg.append(s('line', { class: 'grid-line', x1: L, x2: W, y1: y, y2: y }), s('text', { class: 'axis', x: L - 8, y: y + 4, 'text-anchor': 'end' }, String(Math.round(max * f))));
   }
   days.forEach((d, i) => {
-    const x = L + i * bw + 1;
+    const x = L + i * bw + 2;
     const hTotal = ((H - T - B) * d.invocations) / max;
-    const g = s('g', {}, s('title', {}, `${d.day}: ${d.invocations} runs, ${d.failedRuns} with tool errors (${d.errors} errors)`));
-    g.append(s('rect', { class: 'bar', x, y: H - B - hTotal, width: Math.max(1, bw - 2), height: hTotal }));
+    const g = s('g', {}, s('title', {}, `${d.day}: ${d.invocations} runs, ${d.failedRuns} with tool errors`));
+    if (d.invocations) g.append(s('rect', { class: 'bar', x, y: H - B - hTotal, width: Math.max(1, bw - 4), height: hTotal, rx: 3 }));
     if (d.failedRuns) {
       const he = Math.min(hTotal, ((H - T - B) * d.failedRuns) / max);
-      g.append(s('rect', { class: 'bar-bad', x, y: H - B - he, width: Math.max(1, bw - 2), height: he }));
+      g.append(s('rect', { class: 'bar-bad', x, y: H - B - he, width: Math.max(1, bw - 4), height: he, rx: 3 }));
     }
     svg.append(g);
-    const lastLabel = i === days.length - 1;
-    if ((i % 7 === 0 && days.length - 1 - i >= 4) || lastLabel) svg.append(s('text', { class: 'axis', x: lastLabel ? x + bw - 2 : x + bw / 2, y: H - 6, 'text-anchor': lastLabel ? 'end' : 'middle' }, d.day.slice(5)));
+    const last = i === days.length - 1;
+    if ((i % 7 === 0 && days.length - 1 - i >= 4) || last) svg.append(s('text', { class: 'axis', x: last ? x + bw - 4 : x + bw / 2, y: H - 6, 'text-anchor': last ? 'end' : 'middle' }, d.day.slice(5)));
   });
-  return h('div', { class: 'chart' }, svg, h('div', { class: 'legend' }, h('span', { class: 'swatch' }), 'runs', h('span', { class: 'swatch-bad' }), 'runs with tool errors'));
+  return h('div', { class: 'chart' }, svg, h('div', { class: 'legend' }, h('span', {}, h('i', { class: 'i-run' }), 'runs'), h('span', {}, h('i', { class: 'i-bad' }), 'runs with tool errors')));
 }
 function lineChart(points) {
-  const W = 1000, H = 180, L = 44, B = 24, T = 10;
+  const W = 1000, H = 190, L = 44, B = 24, T = 10;
   const svg = s('svg', { viewBox: `0 0 ${W} ${H}`, role: 'img', 'aria-label': 'Eval score per run' });
   for (const f of [0, 0.5, 1]) {
     const y = T + (H - T - B) * (1 - f);
-    svg.append(s('line', { class: 'grid', x1: L, x2: W - 10, y1: y, y2: y }), s('text', { class: 'axis', x: L - 6, y: y + 4, 'text-anchor': 'end' }, `${f * 100}%`));
+    svg.append(s('line', { class: 'grid-line', x1: L, x2: W - 10, y1: y, y2: y }), s('text', { class: 'axis', x: L - 8, y: y + 4, 'text-anchor': 'end' }, `${f * 100}%`));
   }
   const usable = points.filter((p) => typeof p.score === 'number');
   const step = usable.length > 1 ? (W - L - 60) / (usable.length - 1) : 0;
   const xy = usable.map((p, i) => [L + 30 + i * step, T + (H - T - B) * (1 - p.score)]);
   if (xy.length > 1) svg.append(s('polyline', { class: 'line', points: xy.map((p) => p.join(',')).join(' ') }));
   usable.forEach((p, i) => {
-    svg.append(s('circle', { class: 'dot', cx: xy[i][0], cy: xy[i][1], r: 4 }, s('title', {}, `${day(p.ranAt)}: ${pct(p.score)}${p.commit ? ` at ${p.commit.slice(0, 7)}` : ''}`)));
+    svg.append(s('circle', { class: 'dotp', cx: xy[i][0], cy: xy[i][1], r: 4.5 }, s('title', {}, `${day(p.ranAt)}: ${pct(p.score)}${p.commit ? ` at ${p.commit.slice(0, 7)}` : ''}`)));
     if (i === 0 || i === usable.length - 1 || usable.length <= 6) svg.append(s('text', { class: 'axis', x: xy[i][0], y: H - 6, 'text-anchor': 'middle' }, day(p.ranAt).slice(5)));
   });
   return h('div', { class: 'chart' }, svg);
 }
 
-// ---- tables --------------------------------------------------------------------
+// ---- tables -------------------------------------------------------------------
 function sortableTable(columns, rows, { onRow, initial } = {}) {
   let sortKey = initial ?? null;
   let asc = false;
@@ -244,7 +419,7 @@ function sortableTable(columns, rows, { onRow, initial } = {}) {
     thead.replaceChildren(h('tr', {}, columns.map((c) => h('th', {
       class: [c.num ? 'num' : '', c.sort ? 'sortable' : '', c.key === sortKey ? 'sorted' : '', c.key === sortKey && asc ? 'asc' : ''].join(' ').trim(),
       text: c.label,
-      title: c.sort ? 'Sort' : undefined,
+      title: c.def ? def(c.def) : undefined,
       onclick: c.sort ? () => { asc = sortKey === c.key ? !asc : false; sortKey = c.key; render(); } : undefined,
     }))));
     tbody.replaceChildren(...sorted.map((row) => h('tr', { class: onRow ? 'row-link' : '', onclick: onRow ? () => onRow(row) : undefined }, columns.map((c) => h('td', { class: c.num ? 'num' : '' }, c.cell(row))))));
@@ -253,144 +428,160 @@ function sortableTable(columns, rows, { onRow, initial } = {}) {
   return table;
 }
 
-// ---- pages -----------------------------------------------------------------------
-async function overviewPage() {
-  const { rows } = await api('/api/overview');
-  if (!rows.length) {
-    page('Overview', null, h('div', { class: 'empty' },
+// ---- pages --------------------------------------------------------------------
+function overviewPage() {
+  const rows = ROWS.filter((r) => matches(r.skill));
+  if (!ROWS.length) {
+    page('Overview', 'Every skill your agents use, the ones that need attention first.', panel(null, null, h('div', { class: 'empty' },
       h('p', { text: 'No skill data yet.' }),
-      h('p', {}, 'Connect an agent with ', h('code', { text: 'snaglog connect claude-code' }), ', collect snags with ', h('code', { text: 'snaglog collect --repo owner/repo' }), ', or try ', h('code', { text: 'snaglog dashboard --demo' }), '.')));
+      h('p', {}, 'Connect an agent with ', h('code', { text: 'snaglog connect claude-code' }), ', collect snags with ', h('code', { text: 'snaglog collect --repo owner/repo' }), ', or try ', h('code', { text: 'snaglog dashboard --demo' }), '.'))));
     return;
   }
-  page('Overview', 'All skills, the ones that need attention first. Click a row for details.', sortableTable([
-    { key: 'skill', label: 'Skill', cell: (r) => h('strong', { text: r.skill }), sort: (r) => r.skill },
-    { key: 'attention', label: 'Needs attention', cell: (r) => r.attention.reasons.length ? h('ul', { class: 'reasons' }, r.attention.reasons.map((x) => h('li', { class: x.startsWith('every eval') ? 'info' : '', text: x }))) : h('span', { class: 'muted', text: '—' }), sort: (r) => r.attention.score },
-    { key: 'usage', label: 'Uses (30 d)', num: true, cell: (r) => num(r.usage30d), sort: (r) => r.usage30d },
-    { key: 'agents', label: 'Agents', cell: (r) => r.agents.join(', ') || '—' },
-    { key: 'errors', label: 'Tool errors', num: true, cell: (r) => pct(r.errorRate), sort: (r) => r.errorRate },
-    { key: 'retries', label: 'Avg retries', num: true, cell: (r) => num(r.avgRetries, 1), sort: (r) => r.avgRetries },
-    { key: 'duration', label: 'Avg time', num: true, cell: (r) => dur(r.avgDurationMs), sort: (r) => r.avgDurationMs },
-    { key: 'tokens', label: 'Avg tokens', num: true, cell: (r) => num(r.avgTokens), sort: (r) => r.avgTokens },
-    { key: 'snags', label: 'Open snags', num: true, cell: (r) => num(r.snags.open), sort: (r) => r.snags.open },
-    { key: 'eval', label: 'Eval', num: true, cell: (r) => pct(r.evals.lastScore), sort: (r) => r.evals.lastScore },
-    { key: 'delta', label: 'Skill effect', num: true, cell: (r) => signedPts(r.evals.ablationDelta), sort: (r) => r.evals.ablationDelta },
-  ], rows, { onRow: (r) => { location.hash = `#/skill/${encodeURIComponent(r.skill)}`; } }));
-}
-
-function card(label, value, cls) {
-  return h('div', { class: 'card' }, h('div', { class: 'label', text: label }), h('div', { class: `value ${cls || ''}`, text: value }));
+  const runs = ROWS.reduce((s2, r) => s2 + r.usage30d, 0);
+  const calls = ROWS.reduce((s2, r) => s2 + (r.toolCalls || 0), 0);
+  const errors = ROWS.reduce((s2, r) => s2 + (r.errors || 0), 0);
+  const open = ROWS.reduce((s2, r) => s2 + r.snags.open, 0);
+  const unsent = ROWS.reduce((s2, r) => s2 + r.snags.unsent, 0);
+  const attention = ROWS.filter((r) => statusOf(r) === 'bad').length;
+  const daily = Array.from({ length: 14 }, (_, i) => ROWS.reduce((s2, r) => s2 + (r.daily14?.[i] || 0), 0));
+  page('Overview', 'Every skill your agents use, the ones that need attention first.',
+    h('div', { class: 'grid kpis' },
+      h('div', { class: 'panel kpi', title: 'Skills seen in telemetry, snags, evals or the repo.' }, h('span', { class: 'label', text: 'Skills' }), h('span', { class: 'value' }, String(ROWS.length)), h('span', { class: 'note', text: attention ? `${attention} need attention` : 'none need attention' })),
+      h('div', { class: 'panel kpi', title: def('uses30') }, h('span', { class: 'label', text: 'Runs (30 d)' }), h('span', { class: 'value' }, num(runs)), miniBars(daily, { width: 150, height: 28 })),
+      kpi('errorRate', calls ? String(Math.round((errors / calls) * 100)) : '—', calls ? '%' : '', { note: calls ? `${num(errors)} of ${num(calls)} tool calls` : 'no tool calls yet' }),
+      kpi('snags', String(open), '', { cls: open ? 'bad' : '', note: unsent ? `${unsent} unsent on this machine` : 'nothing unsent' }),
+    ),
+    panel('Skills', rows.length === ROWS.length ? 'sorted by attention · click a row' : `${rows.length} of ${ROWS.length} match`, sortableTable([
+      { key: 'skill', label: 'Skill', cell: (r) => h('div', { class: 'skill-cell' }, h('span', { class: `dot ${statusOf(r)}` }), h('div', {}, h('strong', { text: r.skill }),
+        r.attention.reasons.length ? h('ul', { class: 'reasons' }, r.attention.reasons.map((x) => h('li', { class: x.startsWith('every eval') ? 'info' : '', text: x }))) : h('div', { class: 'subtle', text: r.lastUsedAt ? `last used ${ago(r.lastUsedAt)}` : 'not used yet' }))), sort: (r) => r.skill },
+      { key: 'trend', label: '14 days', cell: (r) => miniBars(r.daily14 || []) },
+      { key: 'usage', label: 'Uses (30 d)', def: 'uses30', num: true, cell: (r) => num(r.usage30d), sort: (r) => r.usage30d },
+      { key: 'errors', label: 'Tool errors', def: 'errorRate', num: true, cell: (r) => pct(r.errorRate), sort: (r) => r.errorRate },
+      { key: 'duration', label: 'Avg time', def: 'duration', num: true, cell: (r) => dur(r.avgDurationMs), sort: (r) => r.avgDurationMs },
+      { key: 'tokens', label: 'Avg tokens', def: 'tokens', num: true, cell: (r) => compact(r.avgTokens), sort: (r) => r.avgTokens },
+      { key: 'snags', label: 'Open snags', def: 'snags', num: true, cell: (r) => num(r.snags.open), sort: (r) => r.snags.open },
+      { key: 'eval', label: 'Eval', def: 'evalScore', num: true, cell: (r) => pct(r.evals.lastScore), sort: (r) => r.evals.lastScore },
+      { key: 'delta', label: 'Effect', def: 'effect', num: true, cell: (r) => signedPts(r.evals.ablationDelta), sort: (r) => r.evals.ablationDelta },
+    ], rows, { onRow: (r) => { location.hash = `#/skill/${encodeURIComponent(r.skill)}`; } })),
+  );
 }
 
 async function skillPage(name) {
   const d = await api(`/api/skill/${encodeURIComponent(name)}`);
   const sm = d.summary;
   const lastEval = d.evals.at(-1);
-  page(d.skill, 'Usage, reliability, snags, evals and SKILL.md history for this skill.',
+  const [dv, du] = durParts(sm.avgDurationMs);
+  const cacheNote = sm.avgCacheTokens ? `${compact(sm.avgCacheTokens)} from the prompt cache` : 'includes prompt-cache tokens';
+  page(d.skill, 'Usage, reliability, snags, evals and SKILL.md history.',
     ...d.warnings.map((w) => h('div', { class: 'banner', text: w })),
-    h('div', { class: 'cards' },
-      card('Invocations', num(sm.invocations)),
-      card('Tool error rate', pct(sm.errorRate), sm.errorRate > 0.2 ? 'bad' : ''),
-      card('Clean runs', pct(sm.cleanRate)),
-      card('Avg retries', num(sm.avgRetries, 1)),
-      card('Avg duration', dur(sm.avgDurationMs)),
-      card('Avg tokens', num(sm.avgTokens)),
-      card('Avg cost', usd(sm.avgCostUsd)),
-      card('Open snags', num(d.snags.open), d.snags.open ? 'bad' : ''),
-      card('Last eval', lastEval ? pct(lastEval.score) : '—'),
+    h('div', { class: 'grid kpis' },
+      kpi('runs', num(sm.invocations), ''),
+      kpi('errorRate', sm.errorRate === null ? '—' : String(Math.round(sm.errorRate * 100)), sm.errorRate === null ? '' : '%', { cls: sm.errorRate > 0.2 ? 'bad' : '', note: sm.toolCalls ? `${num(sm.errors)} of ${num(sm.toolCalls)} tool calls` : null }),
+      kpi('cleanRate', sm.cleanRate === null ? '—' : String(Math.round(sm.cleanRate * 100)), sm.cleanRate === null ? '' : '%', { note: sm.runs ? `${num(sm.runs)} finished runs` : null }),
+      kpi('retries', num(sm.avgRetries, 1), ''),
+      kpi('duration', dv, du),
+      kpi('tokens', compact(sm.avgTokens), '', { note: sm.avgTokens ? cacheNote : null }),
+      kpi('cost', usd(sm.avgCostUsd), '', { note: sm.avgCostUsd ? 'estimate at API prices' : null }),
+      kpi('snags', num(d.snags.open), '', { cls: d.snags.open ? 'bad' : '', note: d.snags.unsent ? `${d.snags.unsent} unsent` : null }),
+      kpi('evalScore', lastEval ? String(Math.round(lastEval.score * 100)) : '—', lastEval ? '%' : '', { note: lastEval ? `${day(lastEval.ranAt)}` : 'not run yet' }),
     ),
-    h('h2', { text: 'Last 30 days' }), barChart(d.daily),
-    h('h2', { text: 'By agent' }),
-    d.byAgent.length ? sortableTable([
+    h('div', { class: 'grid two' },
+      panel('Last 30 days', `${num(sm.invocations)} runs`, barChart(d.daily)),
+      panel('Recent activity', d.recent.length ? `last ${d.recent.length} events` : null,
+        d.recent.length ? h('ul', { class: 'log mono' }, d.recent.map((e) => h('li', {},
+          h('span', { class: 't', text: clock(e.time) }), h('span', { class: 'a', text: e.agent }),
+          h('span', { class: `k ${e.kind}`, text: e.kind === 'tool_call' ? 'tool call' : e.kind === 'error' ? 'tool error' : e.kind }),
+          h('span', { class: 'd', text: e.durationMs === null ? '' : dur(e.durationMs) })))) : h('p', { class: 'empty', text: 'No telemetry for this skill yet.' })),
+    ),
+    panel('By agent', null, d.byAgent.length ? sortableTable([
       { key: 'agent', label: 'Agent', cell: (a) => a.agent, sort: (a) => a.agent },
-      { key: 'inv', label: 'Invocations', num: true, cell: (a) => num(a.invocations), sort: (a) => a.invocations },
-      { key: 'err', label: 'Tool errors', num: true, cell: (a) => pct(a.errorRate), sort: (a) => a.errorRate },
-      { key: 'clean', label: 'Clean runs', num: true, cell: (a) => pct(a.cleanRate), sort: (a) => a.cleanRate },
-      { key: 'ret', label: 'Avg retries', num: true, cell: (a) => num(a.avgRetries, 1), sort: (a) => a.avgRetries },
-      { key: 'dur', label: 'Avg time', num: true, cell: (a) => dur(a.avgDurationMs), sort: (a) => a.avgDurationMs },
-      { key: 'tok', label: 'Avg tokens', num: true, cell: (a) => num(a.avgTokens), sort: (a) => a.avgTokens },
-    ], d.byAgent) : h('p', { class: 'muted', text: 'No telemetry for this skill yet.' }),
-    h('h2', { text: 'Eval history' }),
-    d.evals.length ? h('div', {}, lineChart(d.evals), h('p'), sortableTable([
+      { key: 'inv', label: 'Runs', def: 'runs', num: true, cell: (a) => num(a.invocations), sort: (a) => a.invocations },
+      { key: 'err', label: 'Tool errors', def: 'errorRate', num: true, cell: (a) => pct(a.errorRate), sort: (a) => a.errorRate },
+      { key: 'clean', label: 'Clean runs', def: 'cleanRate', num: true, cell: (a) => pct(a.cleanRate), sort: (a) => a.cleanRate },
+      { key: 'ret', label: 'Avg retries', def: 'retries', num: true, cell: (a) => num(a.avgRetries, 1), sort: (a) => a.avgRetries },
+      { key: 'dur', label: 'Avg time', def: 'duration', num: true, cell: (a) => dur(a.avgDurationMs), sort: (a) => a.avgDurationMs },
+      { key: 'tok', label: 'Avg tokens', def: 'tokens', num: true, cell: (a) => compact(a.avgTokens), sort: (a) => a.avgTokens },
+    ], d.byAgent) : h('p', { class: 'empty', text: 'No telemetry for this skill yet.' })),
+    panel('Eval history', d.evals.length ? `${d.evals.length} runs` : null, d.evals.length ? h('div', {}, lineChart(d.evals), sortableTable([
       { key: 'ran', label: 'Run', cell: (e) => day(e.ranAt), sort: (e) => e.ranAt },
       { key: 'commit', label: 'Commit', cell: (e) => e.commit ? h('code', { text: e.commit.slice(0, 7) + (e.dirty ? ' + changes' : '') }) : '—' },
       { key: 'cases', label: 'Cases', num: true, cell: (e) => num(e.cases) },
-      { key: 'score', label: 'Score', num: true, cell: (e) => pct(e.score), sort: (e) => e.score },
-      { key: 'delta', label: 'Skill effect', num: true, cell: (e) => e.ablation ? signedPts(e.meanDelta) : '—' },
+      { key: 'score', label: 'Score', def: 'evalScore', num: true, cell: (e) => pct(e.score), sort: (e) => e.score },
+      { key: 'delta', label: 'Effect', def: 'effect', num: true, cell: (e) => e.ablation ? signedPts(e.meanDelta) : '—' },
       { key: 'cost', label: 'Cost', num: true, cell: (e) => usd(e.costUsd) },
       { key: 'flags', label: '', cell: (e) => e.partial ? h('span', { class: 'pill bad', text: 'partial' }) : '' },
-    ], [...d.evals].reverse())) : h('p', { class: 'muted' }, 'No eval results yet. Run ', h('code', { text: `snaglog eval ${d.skill}` }), '.'),
-    h('h2', { text: `Snags (${d.snags.open} open, ${d.snags.closed} closed${d.snags.avgFixDays !== null ? `, fixed in ${num(d.snags.avgFixDays, 1)} days on average` : ''}${d.snags.unsent ? `, ${d.snags.unsent} unsent` : ''})` }),
-    d.snags.list.length ? sortableTable([
-      { key: 'num', label: '#', num: true, cell: (x) => h('a', { href: x.url, target: '_blank', rel: 'noopener noreferrer', text: `#${x.number}` }) },
-      { key: 'title', label: 'Title', cell: (x) => x.title },
-      { key: 'state', label: 'State', cell: (x) => h('span', { class: `pill ${x.state === 'open' ? 'bad' : 'good'}`, text: x.state }) },
-      { key: 'occ', label: 'Reports', num: true, cell: (x) => num(x.occurrences), sort: (x) => x.occurrences },
-      { key: 'opened', label: 'Opened', cell: (x) => day(x.createdAt), sort: (x) => x.createdAt },
-    ], d.snags.list) : h('p', { class: 'muted', text: 'No snags reported for this skill.' }),
-    h('h2', { text: 'SKILL.md changes' }),
-    d.changes.length ? sortableTable([
+    ], [...d.evals].reverse())) : h('p', { class: 'empty' }, 'No eval results yet. Run ', h('code', { text: `snaglog eval ${d.skill} --dry-run` }), ' to see the cost first.')),
+    panel('Snags', `${d.snags.open} open · ${d.snags.closed} closed${d.snags.avgFixDays !== null ? ` · fixed in ${num(d.snags.avgFixDays, 1)} days on average` : ''}`,
+      d.snags.list.length ? sortableTable([
+        { key: 'num', label: '#', num: true, cell: (x) => h('a', { href: x.url, target: '_blank', rel: 'noopener noreferrer', text: `#${x.number}` }) },
+        { key: 'title', label: 'Title', cell: (x) => x.title },
+        { key: 'state', label: 'State', cell: (x) => h('span', { class: `pill ${x.state === 'open' ? 'bad' : 'good'}`, text: x.state }) },
+        { key: 'occ', label: 'Reports', num: true, cell: (x) => num(x.occurrences), sort: (x) => x.occurrences },
+        { key: 'opened', label: 'Opened', cell: (x) => day(x.createdAt), sort: (x) => x.createdAt },
+      ], d.snags.list) : h('p', { class: 'empty', text: 'No snags reported for this skill.' })),
+    panel('SKILL.md changes', d.changes.length ? `${d.changes.length} commits` : null, d.changes.length ? sortableTable([
       { key: 'date', label: 'Date', cell: (c) => day(c.date) },
       { key: 'commit', label: 'Commit', cell: (c) => h('code', { text: c.commit.slice(0, 7) }) },
       { key: 'subject', label: 'Message', cell: (c) => c.subject },
-      { key: 'cmp', label: '', cell: (c) => h('a', { href: `#/compare/${encodeURIComponent(d.skill)}/${c.commit}`, text: 'Before / after' }) },
-    ], d.changes) : h('p', { class: 'muted', text: 'No SKILL.md history (start the dashboard with --path pointing at the skills repo checkout).' }),
+      { key: 'cmp', label: '', cell: (c) => h('a', { href: `#/compare/${encodeURIComponent(d.skill)}/${c.commit}`, text: 'Before / after →' }) },
+    ], d.changes) : h('p', { class: 'empty', text: 'No SKILL.md history: start the dashboard in the project or pass --path.' })),
+    h('details', { class: 'panel defs' }, h('summary', { text: 'What do these numbers mean?' }),
+      h('dl', {}, Object.values(DEFS).flatMap(([label, text]) => [h('dt', { text: label }), h('dd', { text })]))),
   );
 }
 
 async function comparePage(skill, commit) {
-  const { rows } = await api('/api/overview');
-  const skills = rows.map((r) => r.skill).sort();
+  const skills = ROWS.map((r) => r.skill).sort();
   skill = skill || skills[0];
   const changes = skill ? (await api(`/api/skill/${encodeURIComponent(skill)}`)).changes : [];
   commit = commit || changes[0]?.commit;
   const skillSelect = h('select', { 'aria-label': 'Skill', onchange: (e) => { location.hash = `#/compare/${encodeURIComponent(e.target.value)}`; } }, skills.map((x) => h('option', { value: x, selected: x === skill, text: x })));
-  const changeSelect = h('select', { 'aria-label': 'SKILL.md change', onchange: (e) => { location.hash = `#/compare/${encodeURIComponent(skill)}/${e.target.value}`; } }, changes.map((c) => h('option', { value: c.commit, selected: c.commit === commit, text: `${day(c.date)} ${c.commit.slice(0, 7)} ${c.subject}` })));
+  const changeSelect = h('select', { 'aria-label': 'SKILL.md change', onchange: (e) => { location.hash = `#/compare/${encodeURIComponent(skill)}/${e.target.value}`; } }, changes.map((c) => h('option', { value: c.commit, selected: c.commit === commit, text: `${day(c.date)} · ${c.commit.slice(0, 7)} · ${c.subject}` })));
   const controls = h('div', { class: 'controls' }, h('label', {}, 'Skill ', skillSelect), changes.length ? h('label', {}, 'Change ', changeSelect) : null);
   if (!skill || !commit) {
-    page('Before / after', 'Pick a SKILL.md change to see whether it helped.', controls, h('div', { class: 'empty', text: 'No SKILL.md changes found. Start the dashboard with --path pointing at the skills repo checkout.' }));
+    page('Before / after', 'Did a SKILL.md change help?', controls, panel(null, null, h('p', { class: 'empty', text: 'No SKILL.md changes found. Start the dashboard in the project or pass --path.' })));
     return;
   }
   const c = await api(`/api/compare/${encodeURIComponent(skill)}/${commit}`);
-  const labels = { improved: ['good', 'The change helped'], worse: ['bad', 'The change made things worse'], mixed: ['', 'Mixed result'], 'no-clear-change': ['', 'No clear change'], 'not-enough-data': ['', 'Not enough data yet'] };
+  const labels = { improved: ['good', 'The change helped'], worse: ['bad', 'The change made things worse'], mixed: ['', 'Mixed result'], 'no-clear-change': ['', 'No clear change'], 'not-enough-data': ['info', 'Not enough data yet'] };
   const [cls, title] = labels[c.verdict.result];
   const rowsDef = [
-    ['Invocations', (x) => num(x.invocations)],
-    ['Tool error rate', (x) => pct(x.errorRate)],
-    ['Clean runs', (x) => pct(x.cleanRate)],
-    ['Avg retries', (x) => num(x.avgRetries, 1)],
-    ['Avg duration', (x) => dur(x.avgDurationMs)],
-    ['Avg tokens', (x) => num(x.avgTokens)],
-    ['Snags opened', (x) => num(x.snagsOpened)],
-    ['Eval score', (x) => pct(x.evalScore)],
+    ['runs', (x) => num(x.invocations)],
+    ['errorRate', (x) => pct(x.errorRate)],
+    ['cleanRate', (x) => pct(x.cleanRate)],
+    ['retries', (x) => num(x.avgRetries, 1)],
+    ['duration', (x) => dur(x.avgDurationMs)],
+    ['tokens', (x) => compact(x.avgTokens)],
+    ['snags', (x) => num(x.snagsOpened)],
+    ['evalScore', (x) => pct(x.evalScore)],
   ];
-  page('Before / after', 'Did this SKILL.md change help? Metrics from up to 30 days on each side.', controls,
-    h('div', { class: `banner ${cls}` }, h('strong', { text: title }), c.verdict.notes.length ? ` — ${c.verdict.notes.join('; ')}` : ''),
-    h('p', { class: 'muted' }, h('code', { text: c.change.commit.slice(0, 7) }), ` ${c.change.subject} (${day(c.change.date)})`),
-    h('table', {},
-      h('thead', {}, h('tr', {}, h('th', { text: 'Metric' }), h('th', { class: 'num', text: `Before (${day(c.before.from)} – ${day(c.before.to)})` }), h('th', { class: 'num', text: `After (${day(c.after.from)} – ${day(c.after.to)})` }))),
-      h('tbody', {}, rowsDef.map(([label, f]) => h('tr', {}, h('td', { text: label }), h('td', { class: 'num', text: f(c.before) }), h('td', { class: 'num', text: f(c.after) }))))),
+  page('Before / after', 'Did this SKILL.md change help? Up to 30 days on each side.', controls,
+    h('div', { class: `banner ${cls}` }, h('div', {}, h('strong', { text: title }), c.verdict.notes.length ? h('div', { class: 'subtle', text: c.verdict.notes.join(' · ') }) : null)),
+    panel(c.change.subject, `${c.change.commit.slice(0, 7)} · ${day(c.change.date)}`, h('table', {},
+      h('thead', {}, h('tr', {}, h('th', { text: 'Metric' }), h('th', { class: 'num', text: `Before · ${day(c.before.from)} – ${day(c.before.to)}` }), h('th', { class: 'num', text: `After · ${day(c.after.from)} – ${day(c.after.to)}` }))),
+      h('tbody', {}, rowsDef.map(([key, f]) => h('tr', {}, h('td', { title: def(key), text: key === 'snags' ? 'Snags opened' : DEFS[key][0] }), h('td', { class: 'num', text: f(c.before) }), h('td', { class: 'num', text: f(c.after) })))))),
   );
 }
 
 async function unsentPage() {
   const { reports } = await api('/api/reports');
-  const intro = 'Snag reports kept on this machine (declined, unattended, or GitHub was unavailable). Nothing is sent until you press Send and confirm.';
+  const intro = 'Snag reports kept on this machine. Nothing is sent until you press Send and confirm.';
   if (!reports.length) {
-    page('Unsent reports', intro, h('div', { class: 'empty', text: 'No unsent reports.' }));
+    page('Unsent reports', intro, panel(null, null, h('p', { class: 'empty', text: 'No unsent reports.' })));
     return;
   }
   page('Unsent reports', intro, ...reports.map(reportCard));
 }
 
 function reportCard(r) {
-  const status = h('span', { class: 'status muted' });
+  const status = h('span', { class: 'subtle' });
   const title = h('input', { value: r.title, 'aria-label': 'Title' });
   const body = h('textarea', { 'aria-label': 'Body' });
   body.value = r.body;
   const repo = h('input', { value: r.repo || '', placeholder: 'owner/repo', 'aria-label': 'Target repo' });
   let approval = r.approval;
   const dirty = () => title.value !== r.title || body.value !== r.body || repo.value !== (r.repo || '');
-  const send = h('button', { class: 'primary', type: 'button', text: 'Send to GitHub', disabled: META.demo || !r.repo });
+  const send = h('button', { class: 'primary', type: 'button', text: 'Send to GitHub' });
   const save = h('button', { type: 'button', text: 'Save changes' });
   const del = h('button', { class: 'danger', type: 'button', text: 'Delete' });
   const refreshState = () => { send.disabled = META.demo || !repo.value || dirty(); send.title = dirty() ? 'Save your changes first' : ''; };
@@ -412,6 +603,7 @@ function reportCard(r) {
     try {
       const { sent } = await api(`/api/reports/${r.id}/send`, { method: 'POST', body: JSON.stringify({ approval }) });
       cardEl.replaceChildren(h('p', {}, sent.status === 'commented' ? 'Added to an existing issue: ' : 'Filed: ', h('a', { href: sent.url, target: '_blank', rel: 'noopener noreferrer', text: sent.url })));
+      refreshSidebar().catch(() => {});
     } catch (e) { status.textContent = e.message; refreshState(); }
   });
   del.addEventListener('click', async () => {
@@ -419,10 +611,11 @@ function reportCard(r) {
     try {
       await api(`/api/reports/${r.id}`, { method: 'DELETE' });
       cardEl.remove();
+      refreshSidebar().catch(() => {});
     } catch (e) { status.textContent = e.message; }
   });
-  const cardEl = h('div', { class: 'report' },
-    h('div', {}, h('span', { class: 'pill', text: r.skill }), h('span', { class: 'pill', text: r.reason }), h('span', { class: 'muted', text: ` kept ${ago(r.savedAt)}${r.agent ? ` by ${r.agent}` : ''}` })),
+  const cardEl = h('section', { class: 'panel report' },
+    h('div', { class: 'panel-head' }, h('h2', { text: r.skill }), h('span', { class: 'pill', text: r.reason }), h('span', { class: 'meta', text: `kept ${ago(r.savedAt)}${r.agent ? ` · ${r.agent}` : ''}` })),
     h('label', {}, 'Title', title), h('label', {}, 'Body', body), h('label', {}, 'Target repo', repo),
     h('div', { class: 'actions' }, save, send, del, status));
   refreshState();
@@ -432,34 +625,32 @@ function reportCard(r) {
 async function connectionsPage() {
   const d = await api('/api/connections');
   const recv = d.receiver;
-  page('Connections', 'Which agents send telemetry to snaglog, and when the last event arrived.',
-    recv.running
-      ? h('div', { class: 'banner good' }, `Receiver listening on 127.0.0.1:${recv.port}.`, recv.rejected ? ` ${recv.rejected} request(s) rejected; last reason: ${recv.lastRejectReason}.` : '')
-      : h('div', { class: `banner ${recv.error ? 'bad' : ''}`, text: recv.error ? `Receiver not running: ${recv.error}` : 'Receiver not running (demo mode or --no-receiver).' }),
-    sortableTable([
-      { key: 'agent', label: 'Agent', cell: (a) => h('strong', { text: a.label }) },
-      { key: 'state', label: 'Status', cell: (a) => h('span', { class: `pill ${a.connected ? 'good' : ''}`, text: a.connected ? 'connected' : 'not connected' }) },
-      { key: 'last', label: 'Last event', cell: (a) => ago(a.lastEventAt) },
-      { key: 'file', label: 'Settings file', cell: (a) => a.file ? h('code', { text: a.file }) : '—' },
-      { key: 'tips', label: 'If no data arrives', cell: (a) => h('ul', { class: 'reasons' }, a.tips.map((t) => h('li', { class: 'info', text: t }))) },
-    ], d.agents),
-    h('h2', { text: 'Not supported' }),
-    h('ul', {}, d.unsupported.map((u) => h('li', {}, h('strong', { text: u.agent }), ` — ${u.reason}`))),
+  const live = (a) => a.lastEventAt && Date.now() - Date.parse(a.lastEventAt) < 15 * 60000;
+  page('Connections', 'Which agents send telemetry to snaglog.',
+    h('div', { class: `banner ${recv.running ? 'good' : recv.error ? 'bad' : 'info'}` }, recv.running
+      ? h('span', {}, `Receiver listening on 127.0.0.1:${recv.port}.`, recv.rejected ? h('span', { class: 'subtle', text: ` ${recv.rejected} request(s) rejected; last reason: ${recv.lastRejectReason}.` }) : '')
+      : h('span', { text: recv.error ? `Receiver not running: ${recv.error}` : 'Receiver not running (demo mode or --no-receiver).' })),
+    panel('Agents', `${d.agents.filter(live).length} live`, ...d.agents.map((a) => h('div', { class: 'agent-row' },
+      h('span', { class: `dot ${live(a) ? 'good' : a.connected ? 'warn' : ''}` }),
+      h('div', {}, h('div', { class: 'name', text: a.label }), h('div', { class: 'subtle mono', text: a.file || 'not connected' }),
+        live(a) ? null : h('ul', { class: 'tips' }, a.tips.map((t) => h('li', { text: t })))),
+      h('div', { class: 'right' }, h('div', { text: a.connected ? (live(a) ? 'live' : 'connected') : 'not connected' }), h('div', { class: 'subtle', text: `last event ${ago(a.lastEventAt)}` }))))),
+    panel('Not supported', null, h('ul', { class: 'tips' }, d.unsupported.map((u) => h('li', {}, h('strong', { text: u.agent }), ` — ${u.reason}`)))),
   );
 }
 
-// ---- router ----------------------------------------------------------------------
+// ---- router -------------------------------------------------------------------
 async function route() {
   const parts = location.hash.replace(/^#\/?/, '').split('/').map(decodeURIComponent);
   const name = parts[0] || 'overview';
-  for (const a of document.querySelectorAll('#nav a')) a.classList.toggle('active', a.dataset.page === (name === 'skill' ? 'overview' : name));
+  for (const a of document.querySelectorAll('#nav a')) a.classList.toggle('active', a.dataset.page === name);
   try {
+    await refreshSidebar();
     if (name === 'skill' && parts[1]) await skillPage(parts[1]);
     else if (name === 'compare') await comparePage(parts[1], parts[2]);
     else if (name === 'unsent') await unsentPage();
     else if (name === 'connections') await connectionsPage();
-    else await overviewPage();
-    if (META.demo) app.prepend(h('div', { class: 'banner demo', text: 'Demo mode: generated sample data; sending to GitHub is disabled.' }));
+    else overviewPage();
   } catch (e) { failure(e); }
 }
 window.addEventListener('hashchange', route);

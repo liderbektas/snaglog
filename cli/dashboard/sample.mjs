@@ -99,7 +99,7 @@ export function createSample({ home, root, now = Date.now() }) {
           write({ ...base, time: iso(last), kind: failed ? 'error' : 'tool_call', success: !failed, durationMs: 50 + Math.floor(random() * 900) });
         }
         const tokens = 20000 + Math.floor(random() * 60000);
-        write({ ...base, time: iso(last + 2000), kind: 'completed', success: errors === 0, durationMs: last + 2000 - t, retries, tokens, ...(agent === 'claude-code' ? { costUsd: Math.round(tokens * 1.5) / 1e6 } : {}) });
+        write({ ...base, time: iso(last + 2000), kind: 'completed', success: errors === 0, durationMs: last + 2000 - t, retries, tokens, ...(agent === 'claude-code' ? { cacheTokens: Math.round(tokens * 0.9), costUsd: Math.round(tokens * 1.5) / 1e6 } : {}) });
       }
     }
   }

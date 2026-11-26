@@ -59,9 +59,11 @@ export function createAdapter({ anonymize, hints }) {
       case 'api_request': {
         const renamed = renameFrom(sessionId, scope, attrs);
         // input_tokens excludes prompt-cache tokens, which dominate real sessions.
-        const tokens = ['input_tokens', 'output_tokens', 'cache_read_tokens', 'cache_creation_tokens'].reduce((sum, key) => sum + (toNumber(attrs[key]) ?? 0), 0);
+        const sum = (keys) => keys.reduce((total, key) => total + (toNumber(attrs[key]) ?? 0), 0);
+        const cacheTokens = sum(['cache_read_tokens', 'cache_creation_tokens']);
+        const tokens = sum(['input_tokens', 'output_tokens']) + cacheTokens;
         const costUsd = toNumber(attrs.cost_usd);
-        return [...renamed, ...tracker.tokens(sessionId, { time, scope, tokens, costUsd, model: typeof attrs.model === 'string' ? attrs.model : undefined })];
+        return [...renamed, ...tracker.tokens(sessionId, { time, scope, tokens, cacheTokens, costUsd, model: typeof attrs.model === 'string' ? attrs.model : undefined })];
       }
       case 'user_prompt':
         return tracker.close(sessionId, time);

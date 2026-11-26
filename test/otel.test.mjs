@@ -62,6 +62,7 @@ describe('claude-code adapter', () => {
     assert.equal(done.success, false);
     assert.equal(done.retries, 1, 'the second failing Bash call is a retry');
     assert.equal(done.tokens, 10500, 'input + output + cache tokens');
+    assert.equal(done.cacheTokens, 9000, 'cache part reported separately');
     assert.equal(done.costUsd, 0.02);
     assert.equal(done.durationMs, 7000);
     assert.equal(done.model, 'claude-opus-5-5');
@@ -184,7 +185,7 @@ describe('privacy', () => {
   test('stored events contain only SkillEvent fields', () => {
     writeHint(CLAUDE_SESSION, T + 1200, 'deploy-preview');
     createReceiver({ env }).ingest(fixture('claude-code-skill-session'));
-    const allowed = new Set(['time', 'agent', 'model', 'skill', 'kind', 'durationMs', 'success', 'tokens', 'costUsd', 'sessionId', 'retries']);
+    const allowed = new Set(['time', 'agent', 'model', 'skill', 'kind', 'durationMs', 'success', 'tokens', 'cacheTokens', 'costUsd', 'sessionId', 'retries']);
     for (const event of storedEvents()) for (const key of Object.keys(event)) assert.ok(allowed.has(key), key);
   });
 

@@ -21,6 +21,8 @@ export function summarize(events) {
     avgRetries: mean(completed.map((e) => e.retries ?? 0)),
     avgDurationMs: mean(completed.map((e) => e.durationMs).filter((v) => typeof v === 'number')),
     avgTokens: mean(completed.map((e) => e.tokens).filter((v) => typeof v === 'number')),
+    // Older events (before cache tokens were recorded separately) have none.
+    avgCacheTokens: mean(completed.map((e) => e.cacheTokens).filter((v) => typeof v === 'number')),
     avgCostUsd: mean(completed.map((e) => e.costUsd).filter((v) => typeof v === 'number')),
   };
 }
@@ -115,14 +117,24 @@ export function overview({ events, snags, evals, reports, skills = [], now = Dat
     const snag = snagSummary(snagsBy.get(skill) ?? [], reportsBy.get(skill) ?? []);
     const ev = evalSummary(evals.get(skill));
     const agents = [...new Set(list.map((e) => e.agent))].sort();
-    return { skill, agents, usage30d: month.invocations, ...pick(all), snags: snag, evals: ev, attention: attention({ snags: snag, evals: ev, recent, previous }) };
+    return { skill, agents, usage30d: month.invocations, daily14: dailyCounts(list, now, 14), lastUsedAt: list.filter((e) => e.kind === 'invoked').at(-1)?.time ?? null, ...pick(all), snags: snag, evals: ev, attention: attention({ snags: snag, evals: ev, recent, previous }) };
   });
   return rows.sort((a, b) => b.attention.score - a.attention.score || b.usage30d - a.usage30d || a.skill.localeCompare(b.skill));
 }
 
 function pick(summary) {
-  const { errorRate, avgRetries, avgDurationMs, avgTokens, avgCostUsd, invocations, cleanRate } = summary;
-  return { invocations, errorRate, cleanRate, avgRetries, avgDurationMs, avgTokens, avgCostUsd };
+  const { errorRate, avgRetries, avgDurationMs, avgTokens, avgCacheTokens, avgCostUsd, invocations, cleanRate, toolCalls, errors } = summary;
+  return { invocations, errorRate, cleanRate, avgRetries, avgDurationMs, avgTokens, avgCacheTokens, avgCostUsd, toolCalls, errors };
+}
+
+/** Invocations per day for the last `days` days, oldest first. */
+function dailyCounts(list, now, days) {
+  const out = [];
+  for (let i = days - 1; i >= 0; i -= 1) {
+    const start = Math.floor((now - i * DAY) / DAY) * DAY;
+    out.push(within(list, start, start + DAY).filter((e) => e.kind === 'invoked').length);
+  }
+  return out;
 }
 
 /** Everything the skill page shows. */
@@ -160,6 +172,8 @@ export function skillDetail(skill, { events, snags, evals, reports, changes = []
     evals: records.map((r) => ({ ranAt: r.ranAt, score: r.score, meanDelta: r.meanDelta, ablation: Boolean(r.ablation), commit: r.commit, dirty: Boolean(r.dirty), costUsd: r.costUsd, partial: Boolean(r.partial), cases: (r.cases ?? []).length })),
     changes,
     warnings,
+    // Newest first; allow-listed fields only (events never hold content).
+    recent: list.slice(-40).reverse().map((e) => ({ time: e.time, agent: e.agent, kind: e.kind, success: e.success, durationMs: e.durationMs ?? null })),
   };
 }
 
