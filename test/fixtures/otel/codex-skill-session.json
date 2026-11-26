@@ -1,0 +1,431 @@
+{
+ "_provenance": "RECONSTRUCTED from openai/codex source (codex-rs/otel) and docs, not captured from a live agent. Replace with a captured, anonymised sample. SECRET-* values exist to prove they are never stored.",
+ "resourceLogs": [
+  {
+   "resource": {
+    "attributes": [
+     {
+      "key": "service.name",
+      "value": {
+       "stringValue": "codex_cli_rs"
+      }
+     },
+     {
+      "key": "service.version",
+      "value": {
+       "stringValue": "0.174.0"
+      }
+     },
+     {
+      "key": "env",
+      "value": {
+       "stringValue": "dev"
+      }
+     },
+     {
+      "key": "host.name",
+      "value": {
+       "stringValue": "SECRET-HOST"
+      }
+     }
+    ]
+   },
+   "scopeLogs": [
+    {
+     "logRecords": [
+      {
+       "timeUnixNano": "1764150000000000000",
+       "attributes": [
+        {
+         "key": "conversation.id",
+         "value": {
+          "stringValue": "00000000-0000-4000-8000-000000000002"
+         }
+        },
+        {
+         "key": "user.email",
+         "value": {
+          "stringValue": "SECRET-EMAIL@example.com"
+         }
+        },
+        {
+         "key": "user.account_id",
+         "value": {
+          "stringValue": "SECRET-ACCOUNT"
+         }
+        },
+        {
+         "key": "model",
+         "value": {
+          "stringValue": "gpt-5.5-codex"
+         }
+        },
+        {
+         "key": "app.version",
+         "value": {
+          "stringValue": "0.174.0"
+         }
+        },
+        {
+         "key": "event.name",
+         "value": {
+          "stringValue": "codex.user_prompt"
+         }
+        },
+        {
+         "key": "prompt",
+         "value": {
+          "stringValue": "[REDACTED]"
+         }
+        },
+        {
+         "key": "prompt_length",
+         "value": {
+          "intValue": "40"
+         }
+        }
+       ]
+      },
+      {
+       "timeUnixNano": "1764150001000000000",
+       "attributes": [
+        {
+         "key": "conversation.id",
+         "value": {
+          "stringValue": "00000000-0000-4000-8000-000000000002"
+         }
+        },
+        {
+         "key": "user.email",
+         "value": {
+          "stringValue": "SECRET-EMAIL@example.com"
+         }
+        },
+        {
+         "key": "user.account_id",
+         "value": {
+          "stringValue": "SECRET-ACCOUNT"
+         }
+        },
+        {
+         "key": "model",
+         "value": {
+          "stringValue": "gpt-5.5-codex"
+         }
+        },
+        {
+         "key": "app.version",
+         "value": {
+          "stringValue": "0.174.0"
+         }
+        },
+        {
+         "key": "event.name",
+         "value": {
+          "stringValue": "codex.skill_invocation"
+         }
+        },
+        {
+         "key": "skill.name",
+         "value": {
+          "stringValue": "deploy-preview"
+         }
+        },
+        {
+         "key": "skill.scope",
+         "value": {
+          "stringValue": "repo"
+         }
+        },
+        {
+         "key": "skill.invocation_type",
+         "value": {
+          "stringValue": "implicit"
+         }
+        },
+        {
+         "key": "turn.id",
+         "value": {
+          "stringValue": "turn-3"
+         }
+        }
+       ]
+      },
+      {
+       "timeUnixNano": "1764150002000000000",
+       "attributes": [
+        {
+         "key": "conversation.id",
+         "value": {
+          "stringValue": "00000000-0000-4000-8000-000000000002"
+         }
+        },
+        {
+         "key": "user.email",
+         "value": {
+          "stringValue": "SECRET-EMAIL@example.com"
+         }
+        },
+        {
+         "key": "user.account_id",
+         "value": {
+          "stringValue": "SECRET-ACCOUNT"
+         }
+        },
+        {
+         "key": "model",
+         "value": {
+          "stringValue": "gpt-5.5-codex"
+         }
+        },
+        {
+         "key": "app.version",
+         "value": {
+          "stringValue": "0.174.0"
+         }
+        },
+        {
+         "key": "event.name",
+         "value": {
+          "stringValue": "codex.tool_result"
+         }
+        },
+        {
+         "key": "tool_name",
+         "value": {
+          "stringValue": "exec_command"
+         }
+        },
+        {
+         "key": "call_id",
+         "value": {
+          "stringValue": "call_1"
+         }
+        },
+        {
+         "key": "success",
+         "value": {
+          "stringValue": "false"
+         }
+        },
+        {
+         "key": "duration_ms",
+         "value": {
+          "stringValue": "25"
+         }
+        },
+        {
+         "key": "arguments",
+         "value": {
+          "stringValue": "{\"cmd\":\"SECRET COMMAND\"}"
+         }
+        },
+        {
+         "key": "output",
+         "value": {
+          "stringValue": "SECRET TOOL OUTPUT"
+         }
+        },
+        {
+         "key": "output_truncated",
+         "value": {
+          "boolValue": true
+         }
+        }
+       ]
+      },
+      {
+       "timeUnixNano": "1764150003000000000",
+       "attributes": [
+        {
+         "key": "conversation.id",
+         "value": {
+          "stringValue": "00000000-0000-4000-8000-000000000002"
+         }
+        },
+        {
+         "key": "user.email",
+         "value": {
+          "stringValue": "SECRET-EMAIL@example.com"
+         }
+        },
+        {
+         "key": "user.account_id",
+         "value": {
+          "stringValue": "SECRET-ACCOUNT"
+         }
+        },
+        {
+         "key": "model",
+         "value": {
+          "stringValue": "gpt-5.5-codex"
+         }
+        },
+        {
+         "key": "app.version",
+         "value": {
+          "stringValue": "0.174.0"
+         }
+        },
+        {
+         "key": "event.name",
+         "value": {
+          "stringValue": "codex.tool_result"
+         }
+        },
+        {
+         "key": "tool_name",
+         "value": {
+          "stringValue": "exec_command"
+         }
+        },
+        {
+         "key": "call_id",
+         "value": {
+          "stringValue": "call_2"
+         }
+        },
+        {
+         "key": "success",
+         "value": {
+          "stringValue": "true"
+         }
+        },
+        {
+         "key": "duration_ms",
+         "value": {
+          "stringValue": "40"
+         }
+        },
+        {
+         "key": "arguments",
+         "value": {
+          "stringValue": "{\"cmd\":\"SECRET COMMAND 2\"}"
+         }
+        },
+        {
+         "key": "output",
+         "value": {
+          "stringValue": "SECRET TOOL OUTPUT 2"
+         }
+        }
+       ]
+      },
+      {
+       "timeUnixNano": "1764150004000000000",
+       "attributes": [
+        {
+         "key": "conversation.id",
+         "value": {
+          "stringValue": "00000000-0000-4000-8000-000000000002"
+         }
+        },
+        {
+         "key": "user.email",
+         "value": {
+          "stringValue": "SECRET-EMAIL@example.com"
+         }
+        },
+        {
+         "key": "user.account_id",
+         "value": {
+          "stringValue": "SECRET-ACCOUNT"
+         }
+        },
+        {
+         "key": "model",
+         "value": {
+          "stringValue": "gpt-5.5-codex"
+         }
+        },
+        {
+         "key": "app.version",
+         "value": {
+          "stringValue": "0.174.0"
+         }
+        },
+        {
+         "key": "event.name",
+         "value": {
+          "stringValue": "codex.sse_event"
+         }
+        },
+        {
+         "key": "event.kind",
+         "value": {
+          "stringValue": "response.completed"
+         }
+        },
+        {
+         "key": "input_token_count",
+         "value": {
+          "stringValue": "800"
+         }
+        },
+        {
+         "key": "output_token_count",
+         "value": {
+          "stringValue": "200"
+         }
+        }
+       ]
+      },
+      {
+       "timeUnixNano": "1764150030000000000",
+       "attributes": [
+        {
+         "key": "conversation.id",
+         "value": {
+          "stringValue": "00000000-0000-4000-8000-000000000002"
+         }
+        },
+        {
+         "key": "user.email",
+         "value": {
+          "stringValue": "SECRET-EMAIL@example.com"
+         }
+        },
+        {
+         "key": "user.account_id",
+         "value": {
+          "stringValue": "SECRET-ACCOUNT"
+         }
+        },
+        {
+         "key": "model",
+         "value": {
+          "stringValue": "gpt-5.5-codex"
+         }
+        },
+        {
+         "key": "app.version",
+         "value": {
+          "stringValue": "0.174.0"
+         }
+        },
+        {
+         "key": "event.name",
+         "value": {
+          "stringValue": "codex.user_prompt"
+         }
+        },
+        {
+         "key": "prompt",
+         "value": {
+          "stringValue": "[REDACTED]"
+         }
+        },
+        {
+         "key": "prompt_length",
+         "value": {
+          "intValue": "12"
+         }
+        }
+       ]
+      }
+     ]
+    }
+   ]
+  }
+ ]
+}
