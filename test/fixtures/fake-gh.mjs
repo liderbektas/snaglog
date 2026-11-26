@@ -58,6 +58,9 @@ if (a === '--version') {
 } else if (a === 'label' && b === 'create') {
   if (scenario.labelCreateFails) fail('HTTP 403: Resource not accessible by integration');
   process.stdout.write('');
+} else if (a === 'pr' && b === 'create') {
+  if (scenario.prCreateFails) fail('pull request create failed: GraphQL: No commits between main and branch');
+  process.stdout.write(`https://github.com/${flag('--repo')}/pull/7\n`);
 } else if (a === 'issue' && b === 'comment') {
   process.stdout.write(`https://github.com/${flag('--repo')}/issues/${args[2]}#issuecomment-1\n`);
 } else {
