@@ -31,6 +31,23 @@ Rules that apply to every adapter:
 4. **`sessionId`** is `sha256(localSalt + agentSessionId)` truncated; the salt lives in `.snaglog/` and never leaves the machine.
 5. **Attribution window.** Neither agent tags every tool call with the active skill, so adapters keep a small per-session state: after an `invoked` event, tool results in the same session (and, for Claude Code, the same `prompt.id`) are attributed to that skill until the window closes. Window close produces the `completed` event. `completed` and skill-level `durationMs` are therefore **inferred**, not reported by the agent.
 
+## Storage
+
+Telemetry is machine-wide, so snaglog keeps its data in `~/.snaglog/` (or `$SNAGLOG_HOME`), directories `0700`, files `0600`:
+
+| Path | Content |
+|---|---|
+| `events/<UTC day>.jsonl` | `SkillEvent`s (the only telemetry stored) |
+| `hints/claude-code.jsonl` | `{ t, s, k }` lines from the Claude Code hook |
+| `connections.json` | last event time per agent, `connect` state |
+| `backups/` | agent config files as they were before `connect` |
+| `collected/snags/<owner>__<repo>.json` | snag issue summaries (no bodies) |
+| `evals/<skill>/<time>.json` | eval summaries (no prompts or transcripts) |
+| `snags.jsonl` | unsent local snag reports (from `log-snag`) |
+| `salt`, `config.json` | hashing salt; remembered repos |
+
+The receiver (`cli/collect/otel/receiver.mjs`) listens on `127.0.0.1` only, rejects requests whose `Host` header is not loopback (DNS rebinding), accepts `application/json` bodies up to 5 MB (gzip and deflate allowed), answers protobuf with `415` and never logs or stores request bodies.
+
 ## Recognition reliability
 
 | Agent | Skill invocation event | Real skill name by default | Tool calls linked to skill | Verdict |
@@ -46,28 +63,33 @@ Sources: [Monitoring usage](https://code.claude.com/docs/en/monitoring-usage), [
 
 ### Configuration written by `snaglog connect claude-code`
 
-Set in the `env` block of the **user** settings file `~/.claude/settings.json`. Project-level `.claude/settings.json` and `.claude/settings.local.json` ignore OTel exporter variables (they can only turn a signal off), and managed settings override user values — `connect` must detect and report a managed `OTEL_EXPORTER_OTLP_ENDPOINT`.
+Set in the `env` block of the **user** settings file `~/.claude/settings.json` (or `$CLAUDE_CONFIG_DIR/settings.json`). Project-level `.claude/settings.json` and `.claude/settings.local.json` ignore OTel exporter variables, and managed settings override user values — `connect` warns when a managed settings file sets `OTEL_*` variables. Implemented in `cli/connect/claude-code.mjs`.
 
 ```json
 {
   "env": {
     "CLAUDE_CODE_ENABLE_TELEMETRY": "1",
     "OTEL_LOGS_EXPORTER": "otlp",
-    "OTEL_METRICS_EXPORTER": "none",
-    "OTEL_TRACES_EXPORTER": "none",
-    "OTEL_EXPORTER_OTLP_PROTOCOL": "http/json",
-    "OTEL_EXPORTER_OTLP_ENDPOINT": "http://127.0.0.1:4318",
+    "OTEL_EXPORTER_OTLP_LOGS_PROTOCOL": "http/json",
+    "OTEL_EXPORTER_OTLP_LOGS_ENDPOINT": "http://127.0.0.1:4318/v1/logs",
     "OTEL_LOGS_EXPORT_INTERVAL": "5000",
     "OTEL_LOG_USER_PROMPTS": "0",
     "OTEL_LOG_ASSISTANT_RESPONSES": "0",
-    "OTEL_LOG_TOOL_DETAILS": "0"
+    "OTEL_LOG_TOOL_DETAILS": "0",
+    "OTEL_LOG_TOOL_CONTENT": "0",
+    "OTEL_LOG_RAW_API_BODIES": "0"
+  },
+  "hooks": {
+    "PreToolUse": [{ "matcher": "Skill", "hooks": [{ "type": "command", "command": "\"<node>\" \"~/.snaglog/hooks/claude-skill-hint.mjs\"", "async": true, "timeout": 10 }] }],
+    "UserPromptExpansion": [{ "hooks": [{ "type": "command", "command": "…same…", "async": true, "timeout": 10 }] }]
   }
 }
 ```
 
+- **Logs only.** snaglog sets the *log-specific* exporter variables, so metrics and traces the user already sends to another backend keep going there. `connect` warns when it redirects log events that previously went elsewhere.
 - `http/json` must be set explicitly: since v2.1.323 the default for an `http(s)://` endpoint is `http/protobuf`.
-- With a base endpoint the SDK appends `/v1/logs` (standard OTel behaviour; inferred, not stated in the docs). The receiver still answers `/v1/metrics` and `/v1/traces` with `200` and discards the body, so a user who enables those signals gets no export errors.
-- Metrics are disabled because the `api_request` log event already carries tokens and cost, with `skill.name` attribution.
+- All five content-logging switches are set to `0`, even if they were on; `disconnect` restores the previous values.
+- The receiver answers `/v1/metrics` and `/v1/traces` with `200` and discards the body, so enabling those signals causes no export errors.
 - `OTEL_*` variables are not passed to Bash, hooks or MCP subprocesses, so connecting does not leak into the user's tools.
 
 ### Events used
@@ -92,7 +114,14 @@ Everything else (`assistant_response`, `api_request_body`, hooks, plugins, …) 
 
 **Why snaglog does not enable the flag:** `OTEL_LOG_TOOL_DETAILS=1` also exports the untruncated Bash `full_command`, `tool_input` (file paths, URLs, up to ~4 KB) and error text for *every* tool call. Even pointed at `127.0.0.1`, that data would sit in the agent's export pipeline and could be redirected by a managed setting or by another local tool that rewrites agent endpoints. snaglog keeps the flag at `0` and sets it explicitly so another tool cannot have turned it on unnoticed.
 
-**Skill name via a hook (planned, to be verified in M3).** `snaglog connect claude-code` adds one Claude Code hook — a snaglog-owned Node script with no dependencies — that fires only for Skill tool calls (and for user slash commands). The script extracts the skill name and session id, posts `{ skill, sessionId, time }` to `127.0.0.1`, and discards everything else in memory; it never writes prompt text or tool input anywhere. The adapter joins that name to the anonymous `skill_activated` event on session and time. The exact hook event, matcher and input fields must be confirmed against the Claude Code hooks documentation and a live capture before this is built.
+**Skill name via a hook.** `snaglog connect claude-code` installs `cli/connect/hooks/claude-skill-hint.mjs` as `~/.snaglog/hooks/claude-skill-hint.mjs` and registers it for two [hook events](https://code.claude.com/docs/en/hooks):
+
+- `PreToolUse` with matcher `Skill` — fires when Claude calls the Skill tool;
+- `UserPromptExpansion` — fires when the user types a slash command, and carries `command_name`, so the hook never needs the prompt text.
+
+The hook runs `async` (it cannot slow the agent down), prints nothing (stdout of prompt hooks would reach the model's context), always exits 0 (exit 2 would block the action) and uses no network. It appends `{ t, s, k }` — time, salted hash of `session_id`, skill name — to `~/.snaglog/hints/claude-code.jsonl`. The adapter replaces `custom_skill` with the hint from the same hashed session closest in time (within 60 s), each hint used once (`cli/collect/otel/hints.mjs`).
+
+`UNVERIFIED` until a live capture: the `tool_input` field that holds the skill name (not documented; the hook tries `skill`, `skill_name`, `name`, `command`), and whether the hook's `session_id` equals the OTel `session.id` (not documented). If they differ, names stay `custom_skill` — the safe failure.
 
 ### PII handling
 
@@ -158,12 +187,11 @@ In `~/.codex/config.toml` (or `$CODEX_HOME/config.toml`). `[otel]` is ignored in
 
 ```toml
 [otel]
-environment = "dev"
 log_user_prompt = false
 exporter = { otlp-http = { endpoint = "http://127.0.0.1:4318/v1/logs", protocol = "json" } }
-trace_exporter = "none"
-# metrics_exporter is left as the user had it; see note below
 ```
+
+Only these two keys are set; every other key in `[otel]` (`environment`, `trace_exporter`, `metrics_exporter`, …) is kept as the user had it. The edit is line-based (no TOML library) and refuses layouts it cannot edit safely, such as a root-level `otel = …` key or `[otel.exporter.*]` sub-tables. Implemented in `cli/connect/codex.mjs`.
 
 - The endpoint must be the **full signal path** (`/v1/logs`); Codex does not append it.
 - `tool_result.max_bytes = 0` is proposed (not forced) to stop the 2 KB tool-output preview from being exported; whether `0` fully disables it is `UNVERIFIED`.
@@ -241,10 +269,17 @@ Codex exports some sensitive fields **by default**, so dropping them at ingest i
 
 ## Writing a new adapter
 
-To be expanded in `CONTRIBUTING.md` (M8). In short: export `{ agent, match(resource), toEvents(record, state) }` from `cli/collect/otel/adapters/<agent>.mjs`; only copy allow-listed fields; add anonymised captured fixtures under `test/fixtures/otel/<agent>/`, plus a test proving prompt and tool content never reach the output.
+To be expanded in `CONTRIBUTING.md` (M8). In short: a module in `cli/collect/otel/adapters/<agent>.mjs` exports `agent`, `matches({ resource, attrs })` and `createAdapter({ anonymize, hints })`, which returns `{ handle(item) → SkillEvent[], sweep(now) }`; use `SkillTracker` (`cli/collect/otel/tracker.mjs`) for attribution windows and `safeSkillName` for names; read only allow-listed attributes; add anonymised fixtures under `test/fixtures/otel/` with `SECRET-*` values and a test proving none reach disk; register the module in `ADAPTERS` (`receiver.mjs`).
+
+## `connect` / `disconnect` guarantees
+
+- Every change is printed first; nothing is written without confirmation (`--yes` skips the question, `--dry-run` only prints). With no terminal and no `--yes`, nothing is written.
+- The existing file is copied to `~/.snaglog/backups/` before the first write.
+- `disconnect` restores the original bytes when the file is exactly as `connect` left it (or removes it if `connect` created it). If the user edited the file since, only snaglog's keys are reverted — to their previous values — and the user's edits, including changes to snaglog's keys, are kept.
+- Endpoints are loopback-only until team mode exists.
 
 ## Open items
 
-1. **Claude Code custom skill names.** Without `OTEL_LOG_TOOL_DETAILS=1`, private team skills all appear as `custom_skill`. Decision: the flag stays off for security; the skill name comes from a snaglog-owned local hook (see above), to be verified in M3. If the hook cannot be made reliable, the fallback is aggregate "custom skill" numbers, not enabling the flag. In team mode, each machine runs a local snaglog relay that forwards only `SkillEvent`s, never raw OTel records.
+1. **Claude Code custom skill names.** `OTEL_LOG_TOOL_DETAILS` stays off; names come from the local hook (implemented, two fields `UNVERIFIED`, see above). If the hook cannot be made reliable, the fallback is aggregate "custom skill" numbers, not enabling the flag. In team mode, each machine runs a local snaglog relay that forwards only `SkillEvent`s, never raw OTel records.
 2. **Live samples.** Capture real, anonymised payloads from Claude Code and Codex (one short scripted session each, telemetry pointed at a throwaway local capture server via environment variables only) to replace the reconstructed examples and resolve every `UNVERIFIED` field. Codex is not installed on the development machine yet.
 3. **Protobuf.** Claude Code and Copilot can both be told to use JSON, but other local tools can force protobuf through shared environment variables. Until protobuf lands, the receiver returns `415` for protobuf and the Connections page explains why.
