@@ -69,13 +69,13 @@ select { height: 32px; }
 .app { display: grid; grid-template-columns: 252px minmax(0, 1fr); gap: 8px; padding: 8px; height: 100vh; }
 .side, .main { background: var(--page); border: 1px solid var(--line); border-radius: 12px; }
 .side { display: flex; flex-direction: column; padding: 12px 10px; gap: 2px; overflow-y: auto; }
+.side > * { flex-shrink: 0; }
 .wordmark { display: block; padding: 6px 8px 14px; color: var(--text); font: 700 21px/1 ui-rounded, "SF Pro Rounded", -apple-system, BlinkMacSystemFont, "Segoe UI", system-ui, sans-serif; letter-spacing: -0.04em; text-decoration: none; }
 .wordmark:hover { text-decoration: none; }
 .search { display: flex; align-items: center; gap: 8px; height: 34px; margin: 0 0 10px; padding: 0 10px; background: var(--sunken); border: 1px solid var(--line); border-radius: 8px; color: var(--muted); }
 .search:focus-within { border-color: var(--line-strong); }
 .search input { flex: 1; min-width: 0; border: 0; background: transparent; padding: 0; outline: none; color: var(--text); }
 .search input::-webkit-search-cancel-button { display: none; }
-.search kbd { font: 11px ui-monospace, monospace; color: var(--faint); border: 1px solid var(--line-strong); border-radius: 4px; padding: 0 5px; }
 .nav-item { display: flex; align-items: center; gap: 10px; height: 34px; padding: 0 10px; border-radius: 8px; color: var(--muted); text-decoration: none; font-weight: 500; }
 .nav-item:hover { background: var(--hover); color: var(--text); text-decoration: none; }
 .nav-item.active { background: var(--hover); color: var(--text); }
@@ -255,7 +255,7 @@ dl.defs dd { margin: 0; color: var(--muted); }
 <div class="app">
   <aside class="side">
     <a class="wordmark" href="#/overview" aria-label="snaglog home">snaglog</a>
-    <label class="search"><span data-icon="search"></span><input id="search" type="search" placeholder="Search skills" aria-label="Search skills"><kbd>/</kbd></label>
+    <label class="search"><span data-icon="search"></span><input id="search" type="search" placeholder="Search skills" aria-label="Search skills"></label>
     <a class="nav-item" href="#/overview" data-page="overview"><span data-icon="layout-dashboard"></span>Skills<span class="count" data-count="skills"></span></a>
     <a class="nav-item" href="#/compare" data-page="compare"><span data-icon="git-compare-arrows"></span>Before / after</a>
     <a class="nav-item" href="#/unsent" data-page="unsent"><span data-icon="inbox"></span>Unsent reports<span class="count" data-count="unsent"></span></a>
