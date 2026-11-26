@@ -10,6 +10,7 @@ Security is the first requirement: snaglog handles private skill repositories, a
 2. **Everything snaglog builds on is official:** the agents' own built-in OpenTelemetry export, hooks and eval command, published standards (Agent Skills, OpenTelemetry OTLP), GitHub's official `gh` CLI, and Node.js built-in modules. Community plugins, hook bridges, third-party collectors and third-party eval runners are not used, even where they would add agent coverage.
 3. **No npm or PyPI dependencies** unless the project owner approves one explicitly; any candidate must be an official package from the vendor it integrates with.
 4. **No third-party code is copied.** Secret-masking patterns are written from each vendor's official token-format documentation (for example GitHub's token prefixes and AWS access key ID prefixes) and tested in snaglog.
+5. **One embedded asset:** the dashboard's icons are shape data from [Lucide](https://lucide.dev) (ISC, `lucide-static` 1.72.0, a release at least two weeks old when taken), sanitized to plain drawing elements and embedded in the page; nothing is loaded at runtime. See [THIRD_PARTY_NOTICES.md](../THIRD_PARTY_NOTICES.md).
 
 ## Skill metadata: `metadata.snaglog-repo`
 

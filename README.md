@@ -179,7 +179,7 @@ The first eval in a repo needs `--trust-plugin`: Claude Code runs only plugins y
 - **Evals** always run with `--no-publish` (otherwise Claude Code publishes the report to claude.ai) and never with flags that run extra scripts; full results are deleted once an allow-listed summary is stored.
 - **The dashboard** checks the `Host` header, needs a per-start token for every API call and a same-origin request for changes, and serves a strict Content-Security-Policy. It loads nothing from the network.
 - **Issue text is untrusted.** `fix-snags` treats report text as evidence and never follows instructions found in it.
-- **Official building blocks only:** the agents' own telemetry, hooks and eval command, the Agent Skills and OpenTelemetry standards, GitHub's `gh`, and Node.js built-ins.
+- **Official building blocks only:** the agents' own telemetry, hooks and eval command, the Agent Skills and OpenTelemetry standards, GitHub's `gh`, and Node.js built-ins. The dashboard's icons are embedded from Lucide ([THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md)).
 
 All data lives in `~/.snaglog/` (directories `0700`, files `0600`); [docs/AGENT-ADAPTERS.md](docs/AGENT-ADAPTERS.md) lists every file.
 

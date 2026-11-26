@@ -7,232 +7,299 @@
 <title>snaglog</title>
 <style nonce="__NONCE__">
 :root {
-  --bg: #eef0f3; --side: #f8f9fb; --panel: #ffffff; --panel-2: #f4f5f7; --line: #e1e4e8; --line-2: #d3d7dd;
-  --text: #15171a; --muted: #5d646d; --faint: #8a919a;
-  --accent: #1f6feb; --good: #1a7f37; --bad: #cf3a33; --warn: #9a6700;
-  --bar: #d5d9df; --bar-hi: #15171a; --bar-bad: #e5534b;
-  --shadow: 0 1px 2px rgb(0 0 0 / 4%), 0 8px 24px rgb(0 0 0 / 5%);
+  --page: #ffffff; --side: #fafafa; --card: #ffffff; --hover: #f4f4f6; --sunken: #f6f6f8;
+  --line: #e8e8ec; --line-strong: #d9d9df;
+  --text: #1c1d21; --muted: #676b75; --faint: #9a9ea8;
+  --accent: #4f46e5; --accent-soft: #eef0ff; --accent-line: #c7cbff;
+  --ok: #1a7f37; --ok-bg: #e9f7ee; --ok-line: #c3e8cf;
+  --bad: #c42b1c; --bad-bg: #fdeeed; --bad-line: #f6cdca;
+  --warn: #9a6700; --warn-bg: #fff6e3; --warn-line: #f2deb0;
+  --neutral-bg: #f2f2f4; --neutral-line: #e2e2e7;
+  --chart-run: #4f46e5; --chart-bad: #e5484d; --chart-ok: #30a46c; --chart-track: #ececf1;
   color-scheme: light;
 }
 :root[data-theme="dark"] {
-  --bg: #07080a; --side: #0d0f12; --panel: #121418; --panel-2: #181b20; --line: #22262c; --line-2: #2c3138;
-  --text: #eceef1; --muted: #9aa1aa; --faint: #6b727b;
-  --accent: #6cb6ff; --good: #3fb950; --bad: #f47067; --warn: #d9a43a;
-  --bar: #2b3037; --bar-hi: #eceef1; --bar-bad: #f47067;
-  --shadow: 0 1px 0 rgb(255 255 255 / 3%) inset, 0 12px 32px rgb(0 0 0 / 35%);
+  --page: #101113; --side: #0c0d0f; --card: #16171a; --hover: #1d1f23; --sunken: #131417;
+  --line: #26282d; --line-strong: #33363c;
+  --text: #ececee; --muted: #a0a3ab; --faint: #6e727b;
+  --accent: #8b8cff; --accent-soft: #1e1f3a; --accent-line: #3b3d75;
+  --ok: #4cc38a; --ok-bg: #12261b; --ok-line: #1f4a33;
+  --bad: #ff7b72; --bad-bg: #2d1515; --bad-line: #5a2421;
+  --warn: #e3b341; --warn-bg: #2a2110; --warn-line: #574313;
+  --neutral-bg: #1d1f23; --neutral-line: #2c2e34;
+  --chart-run: #8b8cff; --chart-bad: #ff6369; --chart-ok: #4cc38a; --chart-track: #24262b;
   color-scheme: dark;
 }
 @media (prefers-color-scheme: dark) {
   :root:not([data-theme="light"]) {
-    --bg: #07080a; --side: #0d0f12; --panel: #121418; --panel-2: #181b20; --line: #22262c; --line-2: #2c3138;
-    --text: #eceef1; --muted: #9aa1aa; --faint: #6b727b;
-    --accent: #6cb6ff; --good: #3fb950; --bad: #f47067; --warn: #d9a43a;
-    --bar: #2b3037; --bar-hi: #eceef1; --bar-bad: #f47067;
-    --shadow: 0 1px 0 rgb(255 255 255 / 3%) inset, 0 12px 32px rgb(0 0 0 / 35%);
+    --page: #101113; --side: #0c0d0f; --card: #16171a; --hover: #1d1f23; --sunken: #131417;
+    --line: #26282d; --line-strong: #33363c;
+    --text: #ececee; --muted: #a0a3ab; --faint: #6e727b;
+    --accent: #8b8cff; --accent-soft: #1e1f3a; --accent-line: #3b3d75;
+    --ok: #4cc38a; --ok-bg: #12261b; --ok-line: #1f4a33;
+    --bad: #ff7b72; --bad-bg: #2d1515; --bad-line: #5a2421;
+    --warn: #e3b341; --warn-bg: #2a2110; --warn-line: #574313;
+    --neutral-bg: #1d1f23; --neutral-line: #2c2e34;
+    --chart-run: #8b8cff; --chart-bad: #ff6369; --chart-ok: #4cc38a; --chart-track: #24262b;
     color-scheme: dark;
   }
 }
 * { box-sizing: border-box; }
 html, body { height: 100%; }
-body { margin: 0; background: var(--bg); color: var(--text); font: 14px/1.5 -apple-system, BlinkMacSystemFont, "SF Pro Text", "Segoe UI", system-ui, sans-serif; -webkit-font-smoothing: antialiased; }
+body { margin: 0; background: var(--page); color: var(--text); font: 14px/1.45 -apple-system, BlinkMacSystemFont, "Segoe UI", Inter, system-ui, sans-serif; -webkit-font-smoothing: antialiased; }
 a { color: var(--accent); text-decoration: none; }
 a:hover { text-decoration: underline; }
 code, .mono { font-family: ui-monospace, "SF Mono", SFMono-Regular, Menlo, monospace; }
-code { font-size: 12px; background: var(--panel-2); border: 1px solid var(--line); padding: 1px 5px; border-radius: 6px; }
-button, select, input, textarea { font: inherit; color: var(--text); background: var(--panel-2); border: 1px solid var(--line); border-radius: 10px; }
-button { padding: 7px 14px; cursor: pointer; }
-button:hover { border-color: var(--line-2); }
-button.primary { background: var(--text); color: var(--bg); border-color: var(--text); }
-button.danger { color: var(--bad); }
-button:disabled { opacity: .45; cursor: not-allowed; }
-input, select, textarea { padding: 7px 10px; }
+code { font-size: 12px; background: var(--sunken); border: 1px solid var(--line); padding: 1px 6px; border-radius: 6px; }
+.ic { width: 16px; height: 16px; flex: none; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+.ic.sm { width: 14px; height: 14px; }
+button, select, input, textarea { font: inherit; color: var(--text); }
+.btn { display: inline-flex; align-items: center; gap: 6px; height: 32px; padding: 0 12px; border-radius: 8px; border: 1px solid var(--line-strong); background: var(--card); cursor: pointer; font-weight: 500; }
+.btn:hover { background: var(--hover); }
+.btn.primary { background: var(--accent); border-color: var(--accent); color: #fff; }
+.btn.primary:hover { filter: brightness(1.05); }
+.btn.danger { color: var(--bad); }
+.btn:disabled { opacity: .45; cursor: not-allowed; }
+.icon-btn { width: 32px; padding: 0; justify-content: center; }
+select, input[type="text"], input:not([type]), textarea { background: var(--card); border: 1px solid var(--line-strong); border-radius: 8px; padding: 6px 10px; }
+select { height: 32px; }
 
-/* layout */
-.app { display: grid; grid-template-columns: 268px 1fr; min-height: 100%; }
-.side { position: sticky; top: 0; height: 100vh; display: flex; flex-direction: column; gap: 18px; padding: 20px 16px; background: var(--side); border-right: 1px solid var(--line); overflow-y: auto; }
-.brand { display: flex; align-items: center; gap: 10px; padding: 0 6px; font-weight: 650; font-size: 16px; letter-spacing: -0.01em; }
-.brand .mark { width: 28px; height: 28px; border-radius: 8px; background: var(--text); color: var(--bg); display: grid; place-items: center; }
-.search { display: flex; align-items: center; gap: 8px; background: var(--panel); border: 1px solid var(--line); border-radius: 12px; padding: 8px 10px; }
-.search input { border: 0; background: transparent; padding: 0; outline: none; width: 100%; }
-.search .key { color: var(--faint); font-size: 12px; }
-.nav { display: flex; flex-direction: column; gap: 2px; }
-.nav a { display: flex; align-items: center; gap: 10px; padding: 8px 10px; border-radius: 10px; color: var(--text); text-decoration: none; }
-.nav a:hover { background: var(--panel-2); }
-.nav a.active { background: var(--panel); box-shadow: var(--shadow); }
-.nav .count { margin-left: auto; color: var(--muted); font-size: 13px; font-variant-numeric: tabular-nums; }
-.nav .count.live { color: var(--good); }
-.nav svg { width: 16px; height: 16px; flex: none; stroke: currentColor; fill: none; stroke-width: 1.7; stroke-linecap: round; stroke-linejoin: round; color: var(--muted); }
-.section-title { display: flex; align-items: center; justify-content: space-between; padding: 0 10px; color: var(--muted); font-size: 12.5px; font-weight: 600; }
-.skill-list { display: flex; flex-direction: column; gap: 1px; }
-.skill-list a { display: flex; align-items: center; gap: 10px; padding: 7px 10px; border-radius: 10px; color: var(--text); text-decoration: none; }
-.skill-list a:hover { background: var(--panel-2); }
-.skill-list a.active { background: var(--panel); box-shadow: var(--shadow); }
-.skill-list .uses { margin-left: auto; color: var(--faint); font-size: 12.5px; font-variant-numeric: tabular-nums; }
-.side-foot { margin-top: auto; display: flex; align-items: center; gap: 8px; padding: 10px; border-top: 1px solid var(--line); color: var(--muted); font-size: 13px; }
-.side-foot .icon-btn { margin-left: auto; width: 32px; height: 32px; padding: 0; display: grid; place-items: center; border-radius: 10px; }
-.icon-btn svg { width: 16px; height: 16px; stroke: currentColor; fill: none; stroke-width: 1.7; stroke-linecap: round; stroke-linejoin: round; }
-.icon-btn .moon { display: none; }
-:root[data-theme="light"] .icon-btn .sun { display: none; }
-:root[data-theme="light"] .icon-btn .moon { display: block; }
-@media (prefers-color-scheme: light) {
-  :root:not([data-theme="dark"]) .icon-btn .sun { display: none; }
-  :root:not([data-theme="dark"]) .icon-btn .moon { display: block; }
-}
-.side-foot .recv { cursor: default; }
-.dot { width: 8px; height: 8px; border-radius: 50%; background: var(--faint); flex: none; }
-.dot.good { background: var(--good); box-shadow: 0 0 0 3px color-mix(in srgb, var(--good) 18%, transparent); }
-.dot.bad { background: var(--bad); box-shadow: 0 0 0 3px color-mix(in srgb, var(--bad) 18%, transparent); }
+/* shell */
+.app { display: grid; grid-template-columns: 248px 1fr; min-height: 100%; }
+.side { position: sticky; top: 0; height: 100vh; display: flex; flex-direction: column; background: var(--side); border-right: 1px solid var(--line); padding: 14px 12px; gap: 4px; overflow-y: auto; }
+.workspace { display: flex; align-items: center; gap: 10px; padding: 6px 8px 14px; }
+.workspace .logo { width: 28px; height: 28px; border-radius: 7px; background: var(--text); color: var(--page); display: grid; place-items: center; font-weight: 700; font-size: 14px; }
+.workspace .name { font-weight: 600; line-height: 1.2; }
+.workspace .sub { color: var(--muted); font-size: 12px; }
+.nav-item { display: flex; align-items: center; gap: 10px; height: 34px; padding: 0 10px; border-radius: 8px; color: var(--text); text-decoration: none; }
+.nav-item:hover { background: var(--hover); text-decoration: none; }
+.nav-item.active { background: var(--hover); color: var(--accent); font-weight: 500; }
+.nav-item .ic { color: var(--muted); }
+.nav-item.active .ic { color: var(--accent); }
+.nav-item .count { margin-left: auto; font-size: 12px; color: var(--muted); font-variant-numeric: tabular-nums; }
+.nav-item .count.live { color: var(--ok); }
+.side-label { display: flex; justify-content: space-between; color: var(--muted); font-size: 12px; font-weight: 500; padding: 16px 10px 6px; }
+.side-skill { display: flex; align-items: center; gap: 10px; height: 30px; padding: 0 10px; border-radius: 8px; color: var(--text); text-decoration: none; font-size: 13.5px; }
+.side-skill:hover { background: var(--hover); text-decoration: none; }
+.side-skill.active { background: var(--hover); font-weight: 500; }
+.side-skill span:nth-child(2) { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.side-foot { margin-top: auto; display: flex; align-items: center; gap: 8px; padding: 10px; border-top: 1px solid var(--line); color: var(--muted); font-size: 12.5px; }
+.dot { width: 7px; height: 7px; border-radius: 50%; background: var(--faint); flex: none; }
+.dot.ok { background: var(--ok); }
+.dot.bad { background: var(--bad); }
 .dot.warn { background: var(--warn); }
-.main { min-width: 0; padding: 28px 32px 48px; }
-.page-head { display: flex; align-items: flex-end; gap: 16px; margin-bottom: 22px; flex-wrap: wrap; }
-.page-head h1 { margin: 0; font-size: 26px; font-weight: 650; letter-spacing: -0.02em; }
-.page-head .sub { margin: 4px 0 0; color: var(--muted); }
-.page-head .tag { margin-left: auto; color: var(--muted); font-size: 12.5px; border: 1px solid var(--line); border-radius: 999px; padding: 3px 10px; }
-@media (max-width: 860px) {
+.main { min-width: 0; display: flex; flex-direction: column; }
+.topbar { position: sticky; top: 0; z-index: 2; display: flex; align-items: center; gap: 12px; height: 60px; padding: 0 32px; background: color-mix(in srgb, var(--page) 92%, transparent); backdrop-filter: blur(6px); border-bottom: 1px solid var(--line); }
+.search { display: flex; align-items: center; gap: 8px; height: 36px; width: min(520px, 100%); padding: 0 12px; background: var(--sunken); border: 1px solid var(--line); border-radius: 8px; color: var(--muted); }
+.search input { flex: 1; border: 0; background: transparent; padding: 0; outline: none; color: var(--text); }
+.search kbd { font: 11px ui-monospace, monospace; color: var(--faint); border: 1px solid var(--line-strong); border-radius: 4px; padding: 0 5px; }
+.topbar .right { margin-left: auto; display: flex; align-items: center; gap: 10px; }
+.status-pill { display: inline-flex; align-items: center; gap: 7px; height: 28px; padding: 0 10px; border-radius: 999px; border: 1px solid var(--line); color: var(--muted); font-size: 12.5px; cursor: default; }
+.content { width: 100%; max-width: 1280px; padding: 28px 32px 56px; }
+@media (max-width: 900px) {
   .app { grid-template-columns: 1fr; }
   .side { position: static; height: auto; border-right: 0; border-bottom: 1px solid var(--line); }
-  .main { padding: 20px 16px 40px; }
+  .topbar, .content { padding-left: 16px; padding-right: 16px; }
 }
 
-/* panels */
-.panel { background: var(--panel); border: 1px solid var(--line); border-radius: 18px; padding: 18px 20px; box-shadow: var(--shadow); }
-.panel + .panel, .grid + .panel, .panel + .grid, .grid + .grid { margin-top: 16px; }
-.panel-head { display: flex; align-items: center; gap: 10px; margin: -2px 0 14px; }
-.panel-head h2 { margin: 0; font-size: 15px; font-weight: 600; }
-.panel-head .meta { color: var(--muted); font-size: 13px; }
-.panel-head .right { margin-left: auto; }
-.grid { display: grid; gap: 16px; align-items: stretch; }
-.grid > .panel { margin-top: 0; }
-.kpis { grid-template-columns: repeat(auto-fit, minmax(190px, 1fr)); }
-.two { grid-template-columns: minmax(0, 1.4fr) minmax(0, 1fr); }
-@media (max-width: 1100px) { .two { grid-template-columns: 1fr; } }
-.kpi { display: flex; flex-direction: column; gap: 6px; min-height: 118px; }
-.kpi .label { color: var(--muted); font-size: 13px; cursor: help; text-decoration: underline dotted var(--line-2); text-underline-offset: 3px; width: fit-content; }
-.kpi .value { font-size: 34px; font-weight: 650; letter-spacing: -0.02em; line-height: 1.1; font-variant-numeric: tabular-nums; }
-.kpi .value .unit { font-size: 15px; font-weight: 500; color: var(--muted); margin-left: 3px; letter-spacing: 0; }
-.kpi .note { color: var(--muted); font-size: 12.5px; margin-top: auto; }
-.kpi .value.bad { color: var(--bad); }
-.bars { display: block; }
-.bars rect { fill: var(--bar); }
-.bars rect.hi { fill: var(--bar-hi); }
-.bars rect.bad { fill: var(--bar-bad); }
-.banner { border: 1px solid var(--line); background: var(--panel); border-radius: 14px; padding: 12px 16px; margin-bottom: 16px; display: flex; gap: 10px; align-items: baseline; }
-.banner::before { content: ""; width: 8px; height: 8px; border-radius: 50%; background: var(--warn); flex: none; transform: translateY(-1px); }
-.banner.good::before { background: var(--good); }
-.banner.bad::before { background: var(--bad); }
-.banner.info::before { background: var(--accent); }
+/* page header */
+.crumbs { display: flex; align-items: center; gap: 6px; color: var(--muted); font-size: 13px; margin-bottom: 6px; }
+.crumbs a { color: var(--muted); }
+.page-title { display: flex; align-items: center; gap: 12px; margin: 0 0 20px; }
+.page-title h1 { margin: 0; font-size: 28px; font-weight: 700; letter-spacing: -0.02em; }
+.lead { color: var(--muted); margin: -12px 0 20px; }
+h2 { font-size: 16px; font-weight: 600; margin: 28px 0 12px; }
 
-/* tables */
+/* notice bar (Stripe-like) */
+.notice { display: flex; align-items: center; gap: 10px; padding: 10px 14px; border-radius: 8px; background: var(--sunken); border: 1px solid var(--line); margin-bottom: 16px; font-size: 13.5px; }
+.notice .ic { color: var(--muted); }
+.notice strong { font-weight: 600; }
+.notice.ok { background: var(--ok-bg); border-color: var(--ok-line); }
+.notice.ok .ic { color: var(--ok); }
+.notice.bad { background: var(--bad-bg); border-color: var(--bad-line); }
+.notice.bad .ic { color: var(--bad); }
+.notice.warn { background: var(--warn-bg); border-color: var(--warn-line); }
+.notice.warn .ic { color: var(--warn); }
+
+/* stat cards (Plane-like) */
+.stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(210px, 1fr)); gap: 12px; }
+.stat { display: flex; gap: 14px; align-items: center; padding: 16px 18px; background: var(--card); border: 1px solid var(--line); border-radius: 10px; }
+.stat .icon { width: 36px; height: 36px; border-radius: 9px; background: var(--sunken); border: 1px solid var(--line); display: grid; place-items: center; color: var(--muted); flex: none; }
+.stat .icon .ic { width: 18px; height: 18px; }
+.stat .label { color: var(--muted); font-size: 13px; }
+.stat .label[title] { cursor: help; text-decoration: underline dotted var(--line-strong); text-underline-offset: 3px; }
+.stat .value { font-size: 22px; font-weight: 600; font-variant-numeric: tabular-nums; letter-spacing: -0.01em; line-height: 1.25; }
+.stat .value .unit { font-size: 14px; font-weight: 500; color: var(--muted); margin-left: 2px; }
+.stat .value.bad { color: var(--bad); }
+.stat .note { color: var(--faint); font-size: 12px; }
+
+/* status tabs (Stripe-like) */
+.tabs-cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 10px; margin: 20px 0 16px; }
+.tab-card { text-align: left; padding: 10px 14px; border-radius: 8px; border: 1px solid var(--line); background: var(--card); cursor: pointer; }
+.tab-card:hover { border-color: var(--line-strong); }
+.tab-card .t { color: var(--muted); font-size: 13px; }
+.tab-card .n { font-size: 18px; font-weight: 600; font-variant-numeric: tabular-nums; }
+.tab-card.active { border: 1.5px solid var(--accent); }
+.tab-card.active .t, .tab-card.active .n { color: var(--accent); }
+
+/* underline tabs (Plane-like) */
+.tabs { display: flex; gap: 4px; border-bottom: 1px solid var(--line); margin: 4px 0 20px; }
+.tabs button { background: none; border: 0; padding: 10px 12px; margin-bottom: -1px; border-bottom: 2px solid transparent; color: var(--muted); cursor: pointer; font-weight: 500; }
+.tabs button:hover { color: var(--text); }
+.tabs button.active { color: var(--accent); border-bottom-color: var(--accent); }
+
+/* badges */
+.badge { display: inline-flex; align-items: center; gap: 4px; height: 22px; padding: 0 8px; border-radius: 6px; font-size: 12.5px; font-weight: 500; border: 1px solid var(--neutral-line); background: var(--neutral-bg); color: var(--muted); white-space: nowrap; }
+.badge .ic { width: 13px; height: 13px; stroke-width: 2.5; }
+.badge.ok { background: var(--ok-bg); border-color: var(--ok-line); color: var(--ok); }
+.badge.bad { background: var(--bad-bg); border-color: var(--bad-line); color: var(--bad); }
+.badge.warn { background: var(--warn-bg); border-color: var(--warn-line); color: var(--warn); }
+.badge.accent { background: var(--accent-soft); border-color: var(--accent-line); color: var(--accent); }
+
+/* tables (Stripe-like) */
+.table-wrap { border-top: 1px solid var(--line); overflow-x: auto; }
 table { width: 100%; border-collapse: collapse; }
-th, td { text-align: left; padding: 10px 10px; border-bottom: 1px solid var(--line); vertical-align: middle; }
-th { font-weight: 500; color: var(--muted); font-size: 12.5px; white-space: nowrap; }
-th[title] { cursor: help; text-decoration: underline dotted var(--line-2); text-underline-offset: 3px; }
+th, td { text-align: left; padding: 11px 12px; border-bottom: 1px solid var(--line); vertical-align: middle; white-space: nowrap; }
+th { font-weight: 600; font-size: 13px; color: var(--text); }
+th[title] { cursor: help; text-decoration: underline dotted var(--line-strong); text-underline-offset: 3px; }
 th.sortable { cursor: pointer; user-select: none; }
-th.sorted::after { content: " ↓"; }
+th.sorted::after { content: " ↓"; color: var(--muted); }
 th.sorted.asc::after { content: " ↑"; }
-tr:last-child td { border-bottom: 0; }
-td.num, th.num { text-align: right; font-variant-numeric: tabular-nums; white-space: nowrap; }
+td.num, th.num { text-align: right; font-variant-numeric: tabular-nums; }
+td.wrap { white-space: normal; }
 tr.row-link { cursor: pointer; }
-tr.row-link:hover td { background: var(--panel-2); }
-tr.row-link td:first-child { border-radius: 10px 0 0 10px; }
-tr.row-link td:last-child { border-radius: 0 10px 10px 0; }
-.skill-cell { display: flex; gap: 12px; align-items: flex-start; }
-.skill-cell .dot { margin-top: 7px; }
-.skill-cell strong { font-weight: 600; white-space: nowrap; }
-.reasons { margin: 2px 0 0; padding: 0; list-style: none; font-size: 12.5px; color: var(--bad); }
-.reasons li.info { color: var(--warn); }
-.subtle { color: var(--muted); font-size: 12.5px; }
+tr.row-link:hover td { background: var(--hover); }
+.cell-skill { display: flex; flex-direction: column; gap: 2px; min-width: 180px; }
+.cell-skill strong { font-weight: 600; }
+.cell-skill .why { color: var(--bad); font-size: 12.5px; white-space: normal; }
+.cell-skill .why.info { color: var(--warn); }
+.results { color: var(--muted); font-size: 13px; padding: 12px 2px; }
 .muted { color: var(--muted); }
-.pill { display: inline-block; padding: 1px 9px; border-radius: 999px; border: 1px solid var(--line); font-size: 12px; color: var(--muted); margin-right: 4px; }
-.pill.good { color: var(--good); border-color: color-mix(in srgb, var(--good) 40%, transparent); }
-.pill.bad { color: var(--bad); border-color: color-mix(in srgb, var(--bad) 40%, transparent); }
+.faint { color: var(--faint); }
+.bars rect { fill: var(--chart-track); }
+.bars rect.on { fill: var(--chart-run); opacity: .55; }
+.bars rect.last { fill: var(--chart-run); opacity: 1; }
+.agents { display: inline-flex; align-items: center; gap: 6px; color: var(--muted); }
 
-/* activity log */
-.log { margin: 0; padding: 0; list-style: none; font-size: 12.5px; max-height: 330px; overflow-y: auto; }
-.log li { display: grid; grid-template-columns: 74px 96px 1fr auto; gap: 12px; padding: 5px 2px; border-bottom: 1px solid var(--line); }
-.log li:last-child { border-bottom: 0; }
-.log .t { color: var(--faint); }
-.log .a { color: var(--muted); }
-.log .k.error { color: var(--bad); }
-.log .k.invoked { color: var(--accent); }
-.log .k.completed { color: var(--good); }
-.log .d { color: var(--faint); text-align: right; }
-
-/* charts */
+/* cards and charts */
+.grid2 { display: grid; grid-template-columns: minmax(0, 1.5fr) minmax(0, 1fr); gap: 16px; }
+@media (max-width: 1100px) { .grid2 { grid-template-columns: 1fr; } }
+.card { background: var(--card); border: 1px solid var(--line); border-radius: 10px; padding: 18px; }
+.card h3 { margin: 0 0 14px; font-size: 15px; font-weight: 600; display: flex; align-items: center; gap: 8px; }
+.card h3 .meta { margin-left: auto; font-weight: 400; font-size: 13px; color: var(--muted); }
 .chart svg { width: 100%; height: auto; display: block; }
-.chart .axis { fill: var(--faint); font-size: 11px; }
+.chart .axis { fill: var(--faint); font-size: 12px; }
 .chart .grid-line { stroke: var(--line); }
-.chart .bar { fill: var(--bar-hi); opacity: .85; }
-.chart .bar-bad { fill: var(--bar-bad); }
-.chart .line { stroke: var(--accent); fill: none; stroke-width: 2; }
-.chart .dotp { fill: var(--accent); }
-.legend { color: var(--muted); font-size: 12px; margin-top: 8px; display: flex; gap: 16px; }
-.legend i { display: inline-block; width: 9px; height: 9px; border-radius: 3px; margin-right: 6px; vertical-align: 0; }
-.legend .i-run { background: var(--bar-hi); }
-.legend .i-bad { background: var(--bar-bad); }
+.chart .run { fill: var(--chart-run); }
+.chart .bad { fill: var(--chart-bad); }
+.chart .line { stroke: var(--chart-run); fill: none; stroke-width: 2.5; }
+.chart .pt { fill: var(--card); stroke: var(--chart-run); stroke-width: 2.5; }
+.legend { display: flex; flex-direction: column; gap: 12px; font-size: 13px; }
+.legend .row { display: flex; align-items: center; gap: 10px; }
+.legend .sw { width: 10px; height: 10px; border-radius: 3px; background: var(--chart-track); }
+.legend .v { margin-left: auto; font-variant-numeric: tabular-nums; color: var(--muted); }
+.legend-inline { display: flex; gap: 16px; color: var(--muted); font-size: 12.5px; margin-top: 10px; }
+.legend-inline span { display: inline-flex; align-items: center; gap: 6px; }
+.legend-inline i { width: 10px; height: 10px; border-radius: 3px; display: inline-block; }
+.sw.run, .legend-inline i.run { background: var(--chart-run); }
+.sw.bad, .legend-inline i.bad { background: var(--chart-bad); }
+.sw.ok { background: var(--chart-ok); }
+.donut-wrap { display: flex; align-items: center; gap: 28px; padding: 18px 4px; }
+.donut-wrap svg { width: 150px; height: 150px; flex: none; }
+.donut-wrap .legend { flex: 1; }
+.donut .track { stroke: var(--chart-track); }
+.donut .ok { stroke: var(--chart-ok); }
+.donut .bad { stroke: var(--chart-bad); }
+.donut-center { fill: var(--text); font-size: 22px; font-weight: 600; }
+.donut-sub { fill: var(--muted); font-size: 11px; }
 
-/* forms and misc */
-.report textarea { width: 100%; min-height: 220px; font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: 12px; margin: 4px 0 12px; }
-.report input { width: 100%; margin: 4px 0 12px; }
-.report label { color: var(--muted); font-size: 12.5px; }
-.actions { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
-.controls { display: flex; gap: 12px; align-items: center; flex-wrap: wrap; margin-bottom: 16px; color: var(--muted); }
-.empty { color: var(--muted); }
-details.defs { margin-top: 16px; }
-details.defs summary { cursor: pointer; color: var(--muted); }
-details.defs dl { display: grid; grid-template-columns: 160px 1fr; gap: 8px 16px; margin: 14px 0 0; }
-details.defs dt { font-weight: 600; }
-details.defs dd { margin: 0; color: var(--muted); }
-.agent-row { display: flex; align-items: center; gap: 14px; padding: 12px 14px; border-radius: 14px; background: var(--panel-2); border: 1px solid var(--line); }
-.agent-row + .agent-row { margin-top: 10px; }
-.agent-row .name { font-weight: 600; }
-.agent-row .right { margin-left: auto; text-align: right; }
-.tips { margin: 8px 0 0 22px; padding: 0; color: var(--muted); font-size: 12.5px; }
+/* activity (Plane-like) */
+.activity { list-style: none; margin: 0; padding: 0; }
+.activity li { display: flex; align-items: center; gap: 12px; padding: 10px 4px; border-bottom: 1px solid var(--line); }
+.activity li:last-child { border-bottom: 0; }
+.activity .av { width: 28px; height: 28px; border-radius: 50%; display: grid; place-items: center; background: var(--sunken); border: 1px solid var(--line); color: var(--muted); flex: none; }
+.activity .av.bad { color: var(--bad); background: var(--bad-bg); border-color: var(--bad-line); }
+.activity .av.ok { color: var(--ok); background: var(--ok-bg); border-color: var(--ok-line); }
+.activity .av.accent { color: var(--accent); background: var(--accent-soft); border-color: var(--accent-line); }
+.activity .av .ic { width: 14px; height: 14px; }
+.activity .what strong { font-weight: 600; }
+.activity .when { margin-left: auto; color: var(--faint); font-size: 12.5px; white-space: nowrap; }
+
+/* forms, lists */
+.form-card { background: var(--card); border: 1px solid var(--line); border-radius: 10px; padding: 18px; margin-bottom: 16px; }
+.form-card .head { display: flex; align-items: center; gap: 8px; margin-bottom: 14px; }
+.form-card .head strong { font-size: 15px; }
+.form-card label { display: block; color: var(--muted); font-size: 12.5px; font-weight: 500; margin-bottom: 4px; }
+.form-card input, .form-card textarea { width: 100%; margin-bottom: 12px; }
+.form-card textarea { min-height: 200px; font: 12px/1.5 ui-monospace, SFMono-Regular, Menlo, monospace; }
+.row-actions { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
+.controls { display: flex; gap: 12px; align-items: center; flex-wrap: wrap; margin-bottom: 16px; }
+.controls label { display: inline-flex; align-items: center; gap: 8px; color: var(--muted); }
+.empty { padding: 36px 16px; text-align: center; color: var(--muted); border: 1px dashed var(--line-strong); border-radius: 10px; }
+.empty .ic { width: 22px; height: 22px; color: var(--faint); margin-bottom: 6px; }
+dl.defs { display: grid; grid-template-columns: 170px 1fr; gap: 10px 18px; margin: 0; }
+dl.defs dt { font-weight: 600; }
+dl.defs dd { margin: 0; color: var(--muted); }
+.delta.better { color: var(--ok); }
+.delta.worse { color: var(--bad); }
+.agent-list .agent { display: flex; align-items: center; gap: 14px; padding: 14px 4px; border-bottom: 1px solid var(--line); }
+.agent-list .agent:last-child { border-bottom: 0; }
+.agent-list .icon { width: 36px; height: 36px; border-radius: 9px; background: var(--sunken); border: 1px solid var(--line); display: grid; place-items: center; color: var(--muted); flex: none; }
+.agent-list .meta { margin-left: auto; text-align: right; display: flex; flex-direction: column; align-items: flex-end; gap: 4px; }
+.tips { margin: 6px 0 0; padding-left: 18px; color: var(--muted); font-size: 12.5px; }
 </style>
 </head>
 <body>
 <div class="app">
   <aside class="side">
-    <div class="brand"><span class="mark"><svg width="16" height="16" viewBox="0 0 16 16" aria-hidden="true"><path d="M3 11.5c1.6 1.3 3.2 1.9 5 1.9 2 0 3.5-.9 3.5-2.5 0-1.5-1.2-2.1-3.4-2.6C5.8 7.8 4.6 7.2 4.6 5.6 4.6 4 6 3 8 3c1.5 0 2.8.5 3.9 1.4" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg></span>snaglog</div>
-    <label class="search"><svg width="15" height="15" viewBox="0 0 16 16" aria-hidden="true"><circle cx="7" cy="7" r="4.6" fill="none" stroke="currentColor" stroke-width="1.6"/><path d="m10.5 10.5 3 3" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg><input id="search" type="search" placeholder="Search skills" aria-label="Search skills"><span class="key">/</span></label>
-    <nav class="nav" id="nav">
-      <a href="#/overview" data-page="overview"><svg viewBox="0 0 16 16"><rect x="2" y="2" width="5" height="5" rx="1.2"/><rect x="9" y="2" width="5" height="5" rx="1.2"/><rect x="2" y="9" width="5" height="5" rx="1.2"/><rect x="9" y="9" width="5" height="5" rx="1.2"/></svg>Overview<span class="count" data-count="skills"></span></a>
-      <a href="#/compare" data-page="compare"><svg viewBox="0 0 16 16"><path d="M4 3v10M12 3v10M4 8h8M9.5 5.5 12 8l-2.5 2.5"/></svg>Before / after</a>
-      <a href="#/unsent" data-page="unsent"><svg viewBox="0 0 16 16"><path d="M2.5 4.5h11v8h-11z"/><path d="m2.5 4.5 5.5 4.5 5.5-4.5"/></svg>Unsent reports<span class="count" data-count="unsent"></span></a>
-      <a href="#/connections" data-page="connections"><svg viewBox="0 0 16 16"><path d="M8 13.5a5.5 5.5 0 1 0 0-11 5.5 5.5 0 0 0 0 11Z"/><path d="M8 5v3l2 1.5"/></svg>Connections<span class="count" data-count="live"></span></a>
-    </nav>
-    <div class="section-title"><span>Skills</span><span id="skill-total"></span></div>
-    <div class="skill-list" id="skill-list"></div>
-    <div class="side-foot"><span class="dot" id="recv-dot"></span><span class="recv" id="recv-text">Receiver</span><button id="theme" class="icon-btn" type="button" title="Switch between light and dark" aria-label="Switch between light and dark"><svg class="sun" viewBox="0 0 16 16" aria-hidden="true"><circle cx="8" cy="8" r="3"/><path d="M8 1.5v1.6M8 12.9v1.6M1.5 8h1.6M12.9 8h1.6M3.4 3.4l1.1 1.1M11.5 11.5l1.1 1.1M3.4 12.6l1.1-1.1M11.5 4.5l1.1-1.1"/></svg><svg class="moon" viewBox="0 0 16 16" aria-hidden="true"><path d="M13.5 9.6A5.6 5.6 0 0 1 6.4 2.5a5.6 5.6 0 1 0 7.1 7.1Z"/></svg></button></div>
+    <div class="workspace"><span class="logo">s</span><div><div class="name">snaglog</div><div class="sub" id="ws-sub">local dashboard</div></div></div>
+    <a class="nav-item" href="#/overview" data-page="overview"><span data-icon="layout-dashboard"></span>Skills<span class="count" data-count="skills"></span></a>
+    <a class="nav-item" href="#/compare" data-page="compare"><span data-icon="git-compare-arrows"></span>Before / after</a>
+    <a class="nav-item" href="#/unsent" data-page="unsent"><span data-icon="inbox"></span>Unsent reports<span class="count" data-count="unsent"></span></a>
+    <a class="nav-item" href="#/connections" data-page="connections"><span data-icon="plug"></span>Connections<span class="count" data-count="live"></span></a>
+    <div class="side-label"><span>Skills</span><span id="skill-total"></span></div>
+    <div id="skill-list"></div>
+    <div class="side-foot"><span data-icon="layers"></span><span>Data stays on this machine</span></div>
   </aside>
-  <main class="main" id="app"><p class="muted">Loading…</p></main>
+  <div class="main">
+    <header class="topbar">
+      <label class="search"><span data-icon="search"></span><input id="search" type="search" placeholder="Search skills" aria-label="Search skills"><kbd>/</kbd></label>
+      <div class="right">
+        <span class="status-pill" id="recv"><span class="dot" id="recv-dot"></span><span id="recv-text">Receiver</span></span>
+        <button class="btn icon-btn" id="theme" type="button" title="Switch between light and dark" aria-label="Switch between light and dark"></button>
+      </div>
+    </header>
+    <main class="content" id="app"><p class="muted">Loading…</p></main>
+  </div>
 </div>
 <script nonce="__NONCE__">
 'use strict';
+// Icons: Lucide (https://lucide.dev), ISC license, version 1.72.0.
+// See THIRD_PARTY_NOTICES.md. Shape data only; built with createElementNS.
+const ICONS = {"layout-dashboard":[["rect",{"width":"7","height":"9","x":"3","y":"3","rx":"1"}],["rect",{"width":"7","height":"5","x":"14","y":"3","rx":"1"}],["rect",{"width":"7","height":"9","x":"14","y":"12","rx":"1"}],["rect",{"width":"7","height":"5","x":"3","y":"16","rx":"1"}]],"git-compare-arrows":[["circle",{"cx":"5","cy":"6","r":"3"}],["path",{"d":"M12 6h5a2 2 0 0 1 2 2v7"}],["path",{"d":"m15 9-3-3 3-3"}],["circle",{"cx":"19","cy":"18","r":"3"}],["path",{"d":"M12 18H7a2 2 0 0 1-2-2V9"}],["path",{"d":"m9 15 3 3-3 3"}]],"inbox":[["polyline",{"points":"22 12 16 12 14 15 10 15 8 12 2 12"}],["path",{"d":"M5.45 5.11 2 12v6a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-6l-3.45-6.89A2 2 0 0 0 16.76 4H7.24a2 2 0 0 0-1.79 1.11z"}]],"plug":[["path",{"d":"M12 22v-5"}],["path",{"d":"M15 8V2"}],["path",{"d":"M17 8a1 1 0 0 1 1 1v4a4 4 0 0 1-4 4h-4a4 4 0 0 1-4-4V9a1 1 0 0 1 1-1z"}],["path",{"d":"M9 8V2"}]],"search":[["path",{"d":"m21 21-4.34-4.34"}],["circle",{"cx":"11","cy":"11","r":"8"}]],"sun":[["circle",{"cx":"12","cy":"12","r":"4"}],["path",{"d":"M12 2v2"}],["path",{"d":"M12 20v2"}],["path",{"d":"m4.93 4.93 1.41 1.41"}],["path",{"d":"m17.66 17.66 1.41 1.41"}],["path",{"d":"M2 12h2"}],["path",{"d":"M20 12h2"}],["path",{"d":"m6.34 17.66-1.41 1.41"}],["path",{"d":"m19.07 4.93-1.41 1.41"}]],"moon":[["path",{"d":"M20.985 12.486a9 9 0 1 1-9.473-9.472c.405-.022.617.46.402.803a6 6 0 0 0 8.268 8.268c.344-.215.825-.004.803.401"}]],"check":[["path",{"d":"M20 6 9 17l-5-5"}]],"x":[["path",{"d":"M18 6 6 18"}],["path",{"d":"m6 6 12 12"}]],"clock":[["circle",{"cx":"12","cy":"12","r":"10"}],["path",{"d":"M12 6v6l4 2"}]],"triangle-alert":[["path",{"d":"m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3"}],["path",{"d":"M12 9v4"}],["path",{"d":"M12 17h.01"}]],"activity":[["path",{"d":"M22 12h-2.48a2 2 0 0 0-1.93 1.46l-2.35 8.36a.25.25 0 0 1-.48 0L9.24 2.18a.25.25 0 0 0-.48 0l-2.35 8.36A2 2 0 0 1 4.49 12H2"}]],"timer":[["line",{"x1":"10","x2":"14","y1":"2","y2":"2"}],["line",{"x1":"12","x2":"15","y1":"14","y2":"11"}],["circle",{"cx":"12","cy":"14","r":"8"}]],"coins":[["path",{"d":"M13.744 17.736a6 6 0 1 1-7.48-7.48"}],["path",{"d":"M15 6h1v4"}],["path",{"d":"m6.134 14.768.866-.5 2 3.464"}],["circle",{"cx":"16","cy":"8","r":"6"}]],"bug":[["path",{"d":"M12 20v-9"}],["path",{"d":"M14 7a4 4 0 0 1 4 4v3a6 6 0 0 1-12 0v-3a4 4 0 0 1 4-4z"}],["path",{"d":"M14.12 3.88 16 2"}],["path",{"d":"M21 21a4 4 0 0 0-3.81-4"}],["path",{"d":"M21 5a4 4 0 0 1-3.55 3.97"}],["path",{"d":"M22 13h-4"}],["path",{"d":"M3 21a4 4 0 0 1 3.81-4"}],["path",{"d":"M3 5a4 4 0 0 0 3.55 3.97"}],["path",{"d":"M6 13H2"}],["path",{"d":"m8 2 1.88 1.88"}],["path",{"d":"M9 7.13V6a3 3 0 1 1 6 0v1.13"}]],"flask-conical":[["path",{"d":"M14 2v6a2 2 0 0 0 .245.96l5.51 10.08A2 2 0 0 1 18 22H6a2 2 0 0 1-1.755-2.96l5.51-10.08A2 2 0 0 0 10 8V2"}],["path",{"d":"M6.453 15h11.094"}],["path",{"d":"M8.5 2h7"}]],"git-commit-horizontal":[["circle",{"cx":"12","cy":"12","r":"3"}],["line",{"x1":"3","x2":"9","y1":"12","y2":"12"}],["line",{"x1":"15","x2":"21","y1":"12","y2":"12"}]],"bot":[["path",{"d":"M12 8V4H8"}],["rect",{"width":"16","height":"12","x":"4","y":"8","rx":"2"}],["path",{"d":"M2 14h2"}],["path",{"d":"M20 14h2"}],["path",{"d":"M15 13v2"}],["path",{"d":"M9 13v2"}]],"chevron-right":[["path",{"d":"m9 18 6-6-6-6"}]],"external-link":[["path",{"d":"M15 3h6v6"}],["path",{"d":"M10 14 21 3"}],["path",{"d":"M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"}]],"send":[["path",{"d":"M14.536 21.686a.5.5 0 0 0 .937-.024l6.5-19a.496.496 0 0 0-.635-.635l-19 6.5a.5.5 0 0 0-.024.937l7.93 3.18a2 2 0 0 1 1.112 1.11z"}],["path",{"d":"m21.854 2.147-10.94 10.939"}]],"trash-2":[["path",{"d":"M10 11v6"}],["path",{"d":"M14 11v6"}],["path",{"d":"M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6"}],["path",{"d":"M3 6h18"}],["path",{"d":"M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"}]],"info":[["circle",{"cx":"12","cy":"12","r":"10"}],["path",{"d":"M12 16v-4"}],["path",{"d":"M12 8h.01"}]],"zap":[["path",{"d":"M15.914 4a1.5 1.5 0 00-2.474-1.561l-9 9A1.5 1.5 0 005.5 14h4.002a.5.5 0 01.471.666L8.086 20a1.5 1.5 0 002.475 1.56l9-9A1.5 1.5 0 0018.5 10h-3.997a.5.5 0 01-.472-.667z"}]],"circle-check":[["circle",{"cx":"12","cy":"12","r":"10"}],["path",{"d":"m16 9-5.5 5.5L8 12"}]],"circle-x":[["circle",{"cx":"12","cy":"12","r":"10"}],["path",{"d":"m15 9-6 6"}],["path",{"d":"m9 9 6 6"}]],"circle-dashed":[["path",{"d":"M10.1 2.182a10 10 0 0 1 3.8 0"}],["path",{"d":"M13.9 21.818a10 10 0 0 1-3.8 0"}],["path",{"d":"M17.609 3.721a10 10 0 0 1 2.69 2.7"}],["path",{"d":"M2.182 13.9a10 10 0 0 1 0-3.8"}],["path",{"d":"M20.279 17.609a10 10 0 0 1-2.7 2.69"}],["path",{"d":"M21.818 10.1a10 10 0 0 1 0 3.8"}],["path",{"d":"M3.721 6.391a10 10 0 0 1 2.7-2.69"}],["path",{"d":"M6.391 20.279a10 10 0 0 1-2.69-2.7"}]],"rotate-ccw":[["path",{"d":"M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"}],["path",{"d":"M3 3v5h5"}]],"file-text":[["path",{"d":"M6 22a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h8a2.4 2.4 0 0 1 1.704.706l3.588 3.588A2.4 2.4 0 0 1 20 8v12a2 2 0 0 1-2 2z"}],["path",{"d":"M14 2v5a1 1 0 0 0 1 1h5"}],["path",{"d":"M10 9H8"}],["path",{"d":"M16 13H8"}],["path",{"d":"M16 17H8"}]],"save":[["path",{"d":"M15.2 3a2 2 0 0 1 1.4.6l3.8 3.8a2 2 0 0 1 .6 1.4V19a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2z"}],["path",{"d":"M17 21v-7a1 1 0 0 0-1-1H8a1 1 0 0 0-1 1v7"}],["path",{"d":"M7 3v4a1 1 0 0 0 1 1h7"}]],"radio":[["path",{"d":"M16.247 7.761a6 6 0 0 1 0 8.478"}],["path",{"d":"M19.075 4.933a10 10 0 0 1 0 14.134"}],["path",{"d":"M4.925 19.067a10 10 0 0 1 0-14.134"}],["path",{"d":"M7.753 16.239a6 6 0 0 1 0-8.478"}],["circle",{"cx":"12","cy":"12","r":"2"}]],"layers":[["path",{"d":"M12.83 2.18a2 2 0 0 0-1.66 0L2.6 6.08a1 1 0 0 0 0 1.83l8.58 3.91a2 2 0 0 0 1.66 0l8.58-3.9a1 1 0 0 0 0-1.83z"}],["path",{"d":"M2 12a1 1 0 0 0 .58.91l8.6 3.91a2 2 0 0 0 1.65 0l8.58-3.9A1 1 0 0 0 22 12"}],["path",{"d":"M2 17a1 1 0 0 0 .58.91l8.6 3.91a2 2 0 0 0 1.65 0l8.58-3.9A1 1 0 0 0 22 17"}]]};
 const TOKEN = document.querySelector('meta[name="snaglog-token"]').content;
 const app = document.getElementById('app');
 const SVGNS = 'http://www.w3.org/2000/svg';
 let META = { demo: false };
 let ROWS = [];
+let FILTER = 'all';
 
-// What each metric means (shown on hover and on the skill page).
 const DEFS = {
   runs: ['Runs', 'How many times an agent started this skill.'],
-  uses30: ['Uses (30 d)', 'Runs of this skill in the last 30 days.'],
+  uses30: ['Runs (30 days)', 'Runs of this skill in the last 30 days.'],
   errorRate: ['Tool error rate', 'Share of the tool calls made while this skill was active that failed.'],
   cleanRate: ['Clean runs', 'Runs that finished without a single failed tool call. A run that recovered from an error does not count as clean.'],
   retries: ['Avg retries', 'How often a failed tool call was immediately tried again, per run.'],
   duration: ['Avg duration', 'Time from the skill starting until the agent finished that request: the whole job the skill was part of.'],
   tokens: ['Avg tokens', 'Tokens processed per run. Includes the prompt cache, which the model re-reads on every step, so it is usually most of the total.'],
   cost: ['Avg cost', "The agent's own estimate at API prices. On a subscription this counts toward your usage limit; it is not charged separately."],
-  snags: ['Open snags', 'Open GitHub issues reporting this skill. Repeats of the same problem are counted as reports, not as new snags.'],
+  snags: ['Open snags', 'Open GitHub issues reporting this skill. Repeats of the same problem count as reports, not as new snags.'],
   evalScore: ['Eval score', 'Share of eval cases passing in the latest snaglog eval of this skill.'],
   effect: ['Skill effect', 'Eval score with the skills minus without them, from a run with --ablate. Positive means the skills help.'],
-  agents: ['Agents', 'Agents that used this skill.'],
 };
 const def = (key) => DEFS[key][1];
 
-// ---- helpers: data is only ever inserted as text -------------------------
+// ---- helpers: data is only ever inserted as text ---------------------------
 function h(tag, props, ...children) {
   const el = document.createElement(tag);
   for (const [k, v] of Object.entries(props || {})) {
@@ -251,6 +318,12 @@ function s(tag, attrs, ...children) {
   for (const c of children.flat()) if (c !== null && c !== undefined) el.append(c instanceof Node ? c : document.createTextNode(String(c)));
   return el;
 }
+function icon(name, cls = '') {
+  const svg = s('svg', { class: `ic ${cls}`.trim(), viewBox: '0 0 24 24', 'aria-hidden': 'true' });
+  for (const [tag, attrs] of ICONS[name] || []) svg.append(s(tag, attrs));
+  return svg;
+}
+for (const el of document.querySelectorAll('[data-icon]')) el.replaceWith(icon(el.dataset.icon));
 async function api(path, options = {}) {
   const res = await fetch(path, { ...options, headers: { 'content-type': 'application/json', 'x-snaglog-token': TOKEN, ...(options.headers || {}) } });
   const body = await res.json().catch(() => ({}));
@@ -264,8 +337,8 @@ const compact = (v) => (v === null || v === undefined ? '—' : Intl.NumberForma
 const durParts = (ms) => (ms === null || ms === undefined ? ['—', ''] : ms < 1000 ? [String(Math.round(ms)), 'ms'] : ms < 120000 ? [(ms / 1000).toFixed(1), 's'] : [(ms / 60000).toFixed(1), 'min']);
 const dur = (ms) => durParts(ms).join(' ').trim();
 const usd = (v) => (v === null || v === undefined ? '—' : `$${v.toFixed(v < 1 ? 3 : 2)}`);
-const day = (iso) => (iso ? iso.slice(0, 10) : '—');
-const clock = (iso) => (iso ? new Date(iso).toLocaleTimeString('en-GB', { hour12: false }) : '');
+const day = (iso) => (iso ? new Date(iso).toLocaleDateString('en-GB', { day: 'numeric', month: 'short' }) : '—');
+const dayYear = (iso) => (iso ? new Date(iso).toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' }) : '—');
 const ago = (iso) => {
   if (!iso) return 'never';
   const m = Math.round((Date.now() - Date.parse(iso)) / 60000);
@@ -274,39 +347,51 @@ const ago = (iso) => {
   if (m < 48 * 60) return `${Math.round(m / 60)} h ago`;
   return `${Math.round(m / 1440)} days ago`;
 };
-const statusOf = (r) => (r.attention.reasons.some((x) => !x.startsWith('every eval')) ? 'bad' : r.usage30d ? 'good' : '');
-function page(title, sub, ...children) {
-  const head = h('div', { class: 'page-head' }, h('div', {}, h('h1', { text: title }), sub ? h('p', { class: 'sub', text: sub }) : null), META.demo ? h('span', { class: 'tag', text: 'Demo data · sending disabled' }) : null);
-  app.replaceChildren(head, ...children);
+const needsAttention = (r) => r.attention.reasons.some((x) => !x.startsWith('every eval'));
+const statusOf = (r) => (needsAttention(r) ? 'attention' : r.usage30d ? 'healthy' : 'idle');
+function statusBadge(r) {
+  const st = statusOf(r);
+  if (st === 'attention') return h('span', { class: 'badge bad', title: r.attention.reasons.join(' · ') }, 'Needs attention', icon('x'));
+  if (st === 'healthy') return h('span', { class: 'badge ok' }, 'Healthy', icon('check'));
+  return h('span', { class: 'badge' }, 'Not used', icon('clock'));
 }
-function failure(error) {
-  app.replaceChildren(h('div', { class: 'banner bad', text: `Could not load data: ${error.message}` }));
+const dotClass = (r) => ({ attention: 'bad', healthy: 'ok', idle: '' })[statusOf(r)];
+function title(text, { crumbs, badge, lead } = {}) {
+  return [
+    crumbs ? h('div', { class: 'crumbs' }, crumbs) : null,
+    h('div', { class: 'page-title' }, h('h1', { text }), badge || null, META.demo ? h('span', { class: 'badge accent' }, icon('info'), 'Demo data · sending disabled') : null),
+    lead ? h('p', { class: 'lead', text: lead }) : null,
+  ];
 }
-function panel(title, meta, ...children) {
-  return h('section', { class: 'panel' }, title ? h('div', { class: 'panel-head' }, h('h2', { text: title }), meta ? h('span', { class: 'meta', text: meta }) : null) : null, ...children);
+function render(...children) { app.replaceChildren(...children.flat().filter(Boolean)); }
+function stat(iconName, defKey, value, unit, { cls, note, label } = {}) {
+  return h('div', { class: 'stat' }, h('span', { class: 'icon' }, icon(iconName)),
+    h('div', {}, h('div', { class: 'label', title: defKey ? def(defKey) : undefined, text: label || DEFS[defKey][0] }),
+      h('div', { class: `value ${cls || ''}` }, value, unit ? h('span', { class: 'unit', text: unit }) : null),
+      note ? h('div', { class: 'note', text: note }) : null));
 }
-function kpi(defKey, value, unit, { cls, note } = {}) {
-  return h('div', { class: 'panel kpi', title: def(defKey) },
-    h('span', { class: 'label', text: DEFS[defKey][0] }),
-    h('span', { class: `value ${cls || ''}` }, value, unit ? h('span', { class: 'unit', text: unit }) : null),
-    note ? h('span', { class: 'note', text: note }) : null);
+function empty(iconName, text, ...extra) {
+  return h('div', { class: 'empty' }, icon(iconName), h('div', { text }), ...extra);
 }
-function miniBars(values, { width = 120, height = 26 } = {}) {
+function miniBars(values, { width = 104, height = 22 } = {}) {
   const max = Math.max(1, ...values);
-  const gap = 3;
+  const gap = 2;
   const bw = (width - gap * (values.length - 1)) / values.length;
   const svg = s('svg', { class: 'bars', width, height, viewBox: `0 0 ${width} ${height}`, 'aria-hidden': 'true' });
   values.forEach((v, i) => {
-    const bh = Math.max(3, (height * v) / max);
-    svg.append(s('rect', { class: i === values.length - 1 ? 'hi' : '', x: i * (bw + gap), y: height - bh, width: bw, height: bh, rx: 1.5 }));
+    const bh = Math.max(2, (height * v) / max);
+    svg.append(s('rect', { class: i === values.length - 1 ? 'last' : v ? 'on' : '', x: i * (bw + gap), y: height - bh, width: bw, height: bh, rx: 1.5 }));
   });
   return svg;
 }
 
 // ---- theme ------------------------------------------------------------------
+const themeBtn = document.getElementById('theme');
+const isDark = () => (document.documentElement.dataset.theme || (matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light')) === 'dark';
 function applyTheme(theme) {
   if (theme) document.documentElement.dataset.theme = theme;
   else delete document.documentElement.dataset.theme;
+  themeBtn.replaceChildren(icon(isDark() ? 'sun' : 'moon'));
 }
 (function initTheme() {
   const fromUrl = new URLSearchParams(location.search).get('theme');
@@ -314,24 +399,23 @@ function applyTheme(theme) {
   try { saved = localStorage.getItem('snaglog-theme'); } catch { /* storage may be blocked */ }
   applyTheme(fromUrl || saved);
 })();
-document.getElementById('theme').addEventListener('click', () => {
-  const current = document.documentElement.dataset.theme || (matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
-  const next = current === 'dark' ? 'light' : 'dark';
+themeBtn.addEventListener('click', () => {
+  const next = isDark() ? 'light' : 'dark';
   applyTheme(next);
   try { localStorage.setItem('snaglog-theme', next); } catch { /* ignore */ }
 });
 
-// ---- sidebar ------------------------------------------------------------------
+// ---- sidebar and top bar -----------------------------------------------------
 const searchInput = document.getElementById('search');
 document.addEventListener('keydown', (e) => {
-  if (e.key === '/' && document.activeElement !== searchInput && !/^(INPUT|TEXTAREA|SELECT)$/.test(document.activeElement.tagName)) {
+  if (e.key === '/' && !/^(INPUT|TEXTAREA|SELECT)$/.test(document.activeElement.tagName)) {
     e.preventDefault();
     searchInput.focus();
   }
 });
 searchInput.addEventListener('input', () => {
   renderSkillList(currentSkill());
-  if ((location.hash || '#/overview').startsWith('#/overview') || location.hash === '') overviewPage();
+  if (!location.hash || location.hash.startsWith('#/overview')) overviewPage();
 });
 const matches = (name) => name.toLowerCase().includes(searchInput.value.trim().toLowerCase());
 function currentSkill() {
@@ -342,75 +426,88 @@ function renderSkillList(active) {
   const list = document.getElementById('skill-list');
   const rows = ROWS.filter((r) => matches(r.skill));
   document.getElementById('skill-total').textContent = ROWS.length ? String(ROWS.length) : '';
-  list.replaceChildren(...rows.map((r) => h('a', { href: `#/skill/${encodeURIComponent(r.skill)}`, class: r.skill === active ? 'active' : '' },
-    h('span', { class: `dot ${statusOf(r)}` }), h('span', { text: r.skill }), h('span', { class: 'uses', text: r.usage30d ? String(r.usage30d) : '' }))));
-  if (!rows.length) list.replaceChildren(h('span', { class: 'subtle', text: ROWS.length ? 'No match' : 'No skills yet' }));
+  list.replaceChildren(...rows.map((r) => h('a', { class: `side-skill ${r.skill === active ? 'active' : ''}`, href: `#/skill/${encodeURIComponent(r.skill)}` },
+    h('span', { class: `dot ${dotClass(r)}` }), h('span', { text: r.skill }))));
+  if (!rows.length) list.replaceChildren(h('div', { class: 'side-skill faint', text: ROWS.length ? 'No match' : 'No skills yet' }));
 }
-async function refreshSidebar() {
+async function refreshChrome() {
   const [overviewData, reports, conn] = await Promise.all([api('/api/overview'), api('/api/reports'), api('/api/connections')]);
   ROWS = overviewData.rows;
-  const counts = {
-    skills: String(ROWS.length),
-    unsent: reports.reports.length ? String(reports.reports.length) : '',
-    live: `${conn.agents.filter((a) => a.lastEventAt && Date.now() - Date.parse(a.lastEventAt) < 15 * 60000).length} live`,
-  };
+  const live = conn.agents.filter((a) => a.lastEventAt && Date.now() - Date.parse(a.lastEventAt) < 15 * 60000).length;
+  const counts = { skills: String(ROWS.length), unsent: reports.reports.length ? String(reports.reports.length) : '', live: live ? `${live} live` : '' };
   for (const el of document.querySelectorAll('[data-count]')) {
     el.textContent = counts[el.dataset.count];
-    el.classList.toggle('live', el.dataset.count === 'live' && !counts.live.startsWith('0'));
+    el.classList.toggle('live', el.dataset.count === 'live' && live > 0);
   }
-  // Receiver state: collecting, demo (off on purpose) or really off, with the reason on hover.
+  if (META.root) document.getElementById('ws-sub').textContent = META.demo ? 'demo workspace' : META.root.split(/[\\/]/).filter(Boolean).pop();
   const recv = conn.receiver;
-  const recvText = document.getElementById('recv-text');
-  const [dotClass, label, hint] = recv.running
-    ? ['good', `Receiver :${recv.port}`, `Collecting telemetry on 127.0.0.1:${recv.port}`]
+  const [dc, label, hint] = recv.running
+    ? ['ok', `Receiving on :${recv.port}`, `Collecting telemetry on 127.0.0.1:${recv.port}`]
     : META.demo
       ? ['', 'Demo data', 'Demo mode shows generated data; no telemetry is collected']
       : ['bad', 'Receiver off', recv.error ? `Not collecting telemetry: ${recv.error}` : 'Not collecting telemetry (started with --no-receiver)'];
-  document.getElementById('recv-dot').className = `dot ${dotClass}`;
-  recvText.textContent = label;
-  recvText.title = hint;
+  document.getElementById('recv-dot').className = `dot ${dc}`;
+  document.getElementById('recv-text').textContent = label;
+  document.getElementById('recv').title = hint;
   renderSkillList(currentSkill());
 }
 
 // ---- charts -------------------------------------------------------------------
 function barChart(days) {
-  const W = 760, H = 330, L = 30, B = 26, T = 10;
+  const W = 640, H = 250, L = 30, B = 28, T = 10;
   const max = Math.max(1, ...days.map((d) => d.invocations));
-  const bw = (W - L) / days.length;
+  const step = (W - L) / days.length;
+  const bw = Math.min(12, step * 0.62);
   const svg = s('svg', { viewBox: `0 0 ${W} ${H}`, role: 'img', 'aria-label': 'Runs per day, last 30 days' });
-  for (const f of [0, 0.5, 1]) {
-    const y = T + (H - T - B) * (1 - f);
-    svg.append(s('line', { class: 'grid-line', x1: L, x2: W, y1: y, y2: y }), s('text', { class: 'axis', x: L - 8, y: y + 4, 'text-anchor': 'end' }, String(Math.round(max * f))));
+  for (const t of [...new Set([0, Math.round(max / 2), max])]) {
+    const y = T + (H - T - B) * (1 - t / max);
+    svg.append(s('line', { class: 'grid-line', x1: L, x2: W, y1: y, y2: y }), s('text', { class: 'axis', x: L - 8, y: y + 4, 'text-anchor': 'end' }, String(t)));
   }
   days.forEach((d, i) => {
-    const x = L + i * bw + 2;
-    const hTotal = ((H - T - B) * d.invocations) / max;
+    const x = L + i * step + (step - bw) / 2;
+    const hRun = ((H - T - B) * d.invocations) / max;
     const g = s('g', {}, s('title', {}, `${d.day}: ${d.invocations} runs, ${d.failedRuns} with tool errors`));
-    if (d.invocations) g.append(s('rect', { class: 'bar', x, y: H - B - hTotal, width: Math.max(1, bw - 4), height: hTotal, rx: 3 }));
+    if (d.invocations) g.append(s('rect', { class: 'run', x, y: H - B - hRun, width: bw, height: hRun, rx: 3 }));
     if (d.failedRuns) {
-      const he = Math.min(hTotal, ((H - T - B) * d.failedRuns) / max);
-      g.append(s('rect', { class: 'bar-bad', x, y: H - B - he, width: Math.max(1, bw - 4), height: he, rx: 3 }));
+      const hb = Math.min(hRun, ((H - T - B) * d.failedRuns) / max);
+      g.append(s('rect', { class: 'bad', x, y: H - B - hb, width: bw, height: hb, rx: 3 }));
     }
     svg.append(g);
     const last = i === days.length - 1;
-    if ((i % 7 === 0 && days.length - 1 - i >= 4) || last) svg.append(s('text', { class: 'axis', x: last ? x + bw - 4 : x + bw / 2, y: H - 6, 'text-anchor': last ? 'end' : 'middle' }, d.day.slice(5)));
+    if ((i % 7 === 0 && days.length - 1 - i >= 4) || last) svg.append(s('text', { class: 'axis', x: last ? x + bw : x + bw / 2, y: H - 8, 'text-anchor': last ? 'end' : 'middle' }, day(d.day)));
   });
-  return h('div', { class: 'chart' }, svg, h('div', { class: 'legend' }, h('span', {}, h('i', { class: 'i-run' }), 'runs'), h('span', {}, h('i', { class: 'i-bad' }), 'runs with tool errors')));
+  return h('div', { class: 'chart' }, svg, h('div', { class: 'legend-inline' }, h('span', {}, h('i', { class: 'run' }), 'Runs'), h('span', {}, h('i', { class: 'bad' }), 'Runs with tool errors')));
+}
+function donut(clean, withErrors) {
+  const total = clean + withErrors;
+  const r = 52, c = 2 * Math.PI * r;
+  const svg = s('svg', { viewBox: '0 0 150 150', role: 'img', 'aria-label': 'Runs by outcome', class: 'donut' });
+  svg.append(s('circle', { class: 'track', cx: 75, cy: 75, r, fill: 'none', 'stroke-width': 18 }));
+  if (total) {
+    const okLen = (clean / total) * c;
+    if (clean) svg.append(s('circle', { class: 'ok', cx: 75, cy: 75, r, fill: 'none', 'stroke-width': 18, 'stroke-dasharray': `${okLen} ${c - okLen}`, transform: 'rotate(-90 75 75)' }));
+    if (withErrors) svg.append(s('circle', { class: 'bad', cx: 75, cy: 75, r, fill: 'none', 'stroke-width': 18, 'stroke-dasharray': `${c - okLen} ${okLen}`, 'stroke-dashoffset': -okLen, transform: 'rotate(-90 75 75)' }));
+  }
+  svg.append(s('text', { class: 'donut-center', x: 75, y: 78, 'text-anchor': 'middle' }, total ? pct(clean / total) : '—'), s('text', { class: 'donut-sub', x: 75, y: 96, 'text-anchor': 'middle' }, 'clean'));
+  return h('div', { class: 'donut-wrap' }, svg, h('div', { class: 'legend' },
+    h('div', { class: 'row', title: def('cleanRate') }, h('span', { class: 'sw ok' }), 'Clean runs', h('span', { class: 'v', text: num(clean) })),
+    h('div', { class: 'row' }, h('span', { class: 'sw bad' }), 'With tool errors', h('span', { class: 'v', text: num(withErrors) })),
+    h('div', { class: 'row' }, h('span', { class: 'sw' }), h('span', { class: 'muted', text: 'Finished runs' }), h('span', { class: 'v', text: num(total) }))));
 }
 function lineChart(points) {
-  const W = 1000, H = 190, L = 44, B = 24, T = 10;
+  const W = 640, H = 220, L = 44, B = 28, T = 12;
   const svg = s('svg', { viewBox: `0 0 ${W} ${H}`, role: 'img', 'aria-label': 'Eval score per run' });
   for (const f of [0, 0.5, 1]) {
     const y = T + (H - T - B) * (1 - f);
     svg.append(s('line', { class: 'grid-line', x1: L, x2: W - 10, y1: y, y2: y }), s('text', { class: 'axis', x: L - 8, y: y + 4, 'text-anchor': 'end' }, `${f * 100}%`));
   }
   const usable = points.filter((p) => typeof p.score === 'number');
-  const step = usable.length > 1 ? (W - L - 60) / (usable.length - 1) : 0;
-  const xy = usable.map((p, i) => [L + 30 + i * step, T + (H - T - B) * (1 - p.score)]);
+  const stepX = usable.length > 1 ? (W - L - 60) / (usable.length - 1) : 0;
+  const xy = usable.map((p, i) => [L + 30 + i * stepX, T + (H - T - B) * (1 - p.score)]);
   if (xy.length > 1) svg.append(s('polyline', { class: 'line', points: xy.map((p) => p.join(',')).join(' ') }));
   usable.forEach((p, i) => {
-    svg.append(s('circle', { class: 'dotp', cx: xy[i][0], cy: xy[i][1], r: 4.5 }, s('title', {}, `${day(p.ranAt)}: ${pct(p.score)}${p.commit ? ` at ${p.commit.slice(0, 7)}` : ''}`)));
-    if (i === 0 || i === usable.length - 1 || usable.length <= 6) svg.append(s('text', { class: 'axis', x: xy[i][0], y: H - 6, 'text-anchor': 'middle' }, day(p.ranAt).slice(5)));
+    svg.append(s('circle', { class: 'pt', cx: xy[i][0], cy: xy[i][1], r: 5 }, s('title', {}, `${dayYear(p.ranAt)}: ${pct(p.score)}${p.commit ? ` at ${p.commit.slice(0, 7)}` : ''}`)));
+    if (i === 0 || i === usable.length - 1 || usable.length <= 6) svg.append(s('text', { class: 'axis', x: xy[i][0], y: H - 8, 'text-anchor': 'middle' }, day(p.ranAt)));
   });
   return h('div', { class: 'chart' }, svg);
 }
@@ -423,7 +520,7 @@ function sortableTable(columns, rows, { onRow, initial } = {}) {
   const thead = h('thead');
   const tbody = h('tbody');
   table.append(thead, tbody);
-  function render() {
+  function draw() {
     const sorted = sortKey === null ? rows : [...rows].sort((a, b) => {
       const col = columns.find((c) => c.key === sortKey);
       const va = col.sort(a);
@@ -437,113 +534,142 @@ function sortableTable(columns, rows, { onRow, initial } = {}) {
       class: [c.num ? 'num' : '', c.sort ? 'sortable' : '', c.key === sortKey ? 'sorted' : '', c.key === sortKey && asc ? 'asc' : ''].join(' ').trim(),
       text: c.label,
       title: c.def ? def(c.def) : undefined,
-      onclick: c.sort ? () => { asc = sortKey === c.key ? !asc : false; sortKey = c.key; render(); } : undefined,
+      onclick: c.sort ? () => { asc = sortKey === c.key ? !asc : false; sortKey = c.key; draw(); } : undefined,
     }))));
-    tbody.replaceChildren(...sorted.map((row) => h('tr', { class: onRow ? 'row-link' : '', onclick: onRow ? () => onRow(row) : undefined }, columns.map((c) => h('td', { class: c.num ? 'num' : '' }, c.cell(row))))));
+    tbody.replaceChildren(...sorted.map((row) => h('tr', { class: onRow ? 'row-link' : '', onclick: onRow ? () => onRow(row) : undefined }, columns.map((c) => h('td', { class: [c.num ? 'num' : '', c.wrap ? 'wrap' : ''].join(' ').trim() }, c.cell(row))))));
   }
-  render();
-  return table;
+  draw();
+  return h('div', { class: 'table-wrap' }, table);
 }
 
 // ---- pages --------------------------------------------------------------------
 function overviewPage() {
-  const rows = ROWS.filter((r) => matches(r.skill));
   if (!ROWS.length) {
-    page('Overview', 'Every skill your agents use, the ones that need attention first.', panel(null, null, h('div', { class: 'empty' },
-      h('p', { text: 'No skill data yet.' }),
-      h('p', {}, 'Connect an agent with ', h('code', { text: 'snaglog connect claude-code' }), ', collect snags with ', h('code', { text: 'snaglog collect --repo owner/repo' }), ', or try ', h('code', { text: 'snaglog dashboard --demo' }), '.'))));
+    render(title('Skills'), empty('layers', 'No skill data yet.',
+      h('p', {}, 'Connect an agent with ', h('code', { text: 'snaglog connect claude-code' }), ', or try ', h('code', { text: 'snaglog dashboard --demo' }), '.')));
     return;
   }
-  const runs = ROWS.reduce((s2, r) => s2 + r.usage30d, 0);
-  const calls = ROWS.reduce((s2, r) => s2 + (r.toolCalls || 0), 0);
-  const errors = ROWS.reduce((s2, r) => s2 + (r.errors || 0), 0);
-  const open = ROWS.reduce((s2, r) => s2 + r.snags.open, 0);
-  const unsent = ROWS.reduce((s2, r) => s2 + r.snags.unsent, 0);
-  const attention = ROWS.filter((r) => statusOf(r) === 'bad').length;
-  const daily = Array.from({ length: 14 }, (_, i) => ROWS.reduce((s2, r) => s2 + (r.daily14?.[i] || 0), 0));
-  page('Overview', 'Every skill your agents use, the ones that need attention first.',
-    h('div', { class: 'grid kpis' },
-      h('div', { class: 'panel kpi', title: 'Skills seen in telemetry, snags, evals or the repo.' }, h('span', { class: 'label', text: 'Skills' }), h('span', { class: 'value' }, String(ROWS.length)), h('span', { class: 'note', text: attention ? `${attention} need attention` : 'none need attention' })),
-      h('div', { class: 'panel kpi', title: def('uses30') }, h('span', { class: 'label', text: 'Runs (30 d)' }), h('span', { class: 'value' }, num(runs)), miniBars(daily, { width: 150, height: 28 })),
-      kpi('errorRate', calls ? String(Math.round((errors / calls) * 100)) : '—', calls ? '%' : '', { note: calls ? `${num(errors)} of ${num(calls)} tool calls` : 'no tool calls yet' }),
-      kpi('snags', String(open), '', { cls: open ? 'bad' : '', note: unsent ? `${unsent} unsent on this machine` : 'nothing unsent' }),
+  const runs = ROWS.reduce((a, r) => a + r.usage30d, 0);
+  const calls = ROWS.reduce((a, r) => a + (r.toolCalls || 0), 0);
+  const errors = ROWS.reduce((a, r) => a + (r.errors || 0), 0);
+  const open = ROWS.reduce((a, r) => a + r.snags.open, 0);
+  const unsent = ROWS.reduce((a, r) => a + r.snags.unsent, 0);
+  const groups = { all: ROWS, attention: ROWS.filter((r) => statusOf(r) === 'attention'), healthy: ROWS.filter((r) => statusOf(r) === 'healthy'), idle: ROWS.filter((r) => statusOf(r) === 'idle') };
+  const rows = groups[FILTER].filter((r) => matches(r.skill));
+  const tab = (key, label) => h('button', { class: `tab-card ${FILTER === key ? 'active' : ''}`, type: 'button', onclick: () => { FILTER = key; overviewPage(); } },
+    h('div', { class: 't', text: label }), h('div', { class: 'n', text: String(groups[key].length) }));
+  render(
+    title('Skills'),
+    h('div', { class: 'stats' },
+      stat('zap', 'uses30', num(runs), ''),
+      stat('triangle-alert', 'errorRate', calls ? String(Math.round((errors / calls) * 100)) : '—', calls ? '%' : '', { note: calls ? `${num(errors)} of ${num(calls)} tool calls` : null }),
+      stat('bug', 'snags', num(open), '', { cls: open ? 'bad' : '' }),
+      stat('inbox', null, num(unsent), '', { label: 'Unsent reports', note: unsent ? 'kept on this machine' : null }),
     ),
-    panel('Skills', rows.length === ROWS.length ? 'sorted by attention · click a row' : `${rows.length} of ${ROWS.length} match`, sortableTable([
-      { key: 'skill', label: 'Skill', cell: (r) => h('div', { class: 'skill-cell' }, h('span', { class: `dot ${statusOf(r)}` }), h('div', {}, h('strong', { text: r.skill }),
-        r.attention.reasons.length ? h('ul', { class: 'reasons' }, r.attention.reasons.map((x) => h('li', { class: x.startsWith('every eval') ? 'info' : '', text: x }))) : h('div', { class: 'subtle', text: r.lastUsedAt ? `last used ${ago(r.lastUsedAt)}` : 'not used yet' }))), sort: (r) => r.skill },
-      { key: 'trend', label: '14 days', cell: (r) => miniBars(r.daily14 || []) },
-      { key: 'usage', label: 'Uses (30 d)', def: 'uses30', num: true, cell: (r) => num(r.usage30d), sort: (r) => r.usage30d },
+    h('div', { class: 'tabs-cards' }, tab('all', 'All'), tab('attention', 'Needs attention'), tab('healthy', 'Healthy'), tab('idle', 'Not used')),
+    rows.length ? sortableTable([
+      { key: 'skill', label: 'Skill', wrap: true, cell: (r) => h('div', { class: 'cell-skill' }, h('strong', { text: r.skill }),
+        needsAttention(r) ? h('span', { class: 'why', text: r.attention.reasons.filter((x) => !x.startsWith('every eval')).join(' · ') }) : r.evals.allPassed ? h('span', { class: 'why info', text: 'every eval case passes; may miss regressions' }) : null), sort: (r) => r.skill },
+      { key: 'status', label: 'Status', cell: statusBadge, sort: (r) => r.attention.score },
+      { key: 'trend', label: 'Last 14 days', cell: (r) => miniBars(r.daily14 || []) },
+      { key: 'usage', label: 'Runs', def: 'uses30', num: true, cell: (r) => num(r.usage30d), sort: (r) => r.usage30d },
       { key: 'errors', label: 'Tool errors', def: 'errorRate', num: true, cell: (r) => pct(r.errorRate), sort: (r) => r.errorRate },
       { key: 'duration', label: 'Avg time', def: 'duration', num: true, cell: (r) => dur(r.avgDurationMs), sort: (r) => r.avgDurationMs },
       { key: 'tokens', label: 'Avg tokens', def: 'tokens', num: true, cell: (r) => compact(r.avgTokens), sort: (r) => r.avgTokens },
       { key: 'snags', label: 'Open snags', def: 'snags', num: true, cell: (r) => num(r.snags.open), sort: (r) => r.snags.open },
       { key: 'eval', label: 'Eval', def: 'evalScore', num: true, cell: (r) => pct(r.evals.lastScore), sort: (r) => r.evals.lastScore },
-      { key: 'delta', label: 'Effect', def: 'effect', num: true, cell: (r) => signedPts(r.evals.ablationDelta), sort: (r) => r.evals.ablationDelta },
-    ], rows, { onRow: (r) => { location.hash = `#/skill/${encodeURIComponent(r.skill)}`; } })),
+      { key: 'last', label: 'Last used', cell: (r) => h('span', { class: 'muted', text: ago(r.lastUsedAt) }), sort: (r) => r.lastUsedAt },
+    ], rows, { onRow: (r) => { location.hash = `#/skill/${encodeURIComponent(r.skill)}`; } }) : empty('search', 'No skills match.'),
+    rows.length ? h('div', { class: 'results', text: `${rows.length} result${rows.length === 1 ? '' : 's'}` }) : null,
   );
 }
 
-async function skillPage(name) {
+async function skillPage(name, tabName = 'summary') {
   const d = await api(`/api/skill/${encodeURIComponent(name)}`);
+  const row = ROWS.find((r) => r.skill === name);
   const sm = d.summary;
   const lastEval = d.evals.at(-1);
+  const finished = sm.runs || 0;
+  const clean = Math.round((sm.cleanRate || 0) * finished);
   const [dv, du] = durParts(sm.avgDurationMs);
-  const cacheNote = sm.avgCacheTokens ? `${compact(sm.avgCacheTokens)} from the prompt cache` : 'includes prompt-cache tokens';
-  page(d.skill, 'Usage, reliability, snags, evals and SKILL.md history.',
-    ...d.warnings.map((w) => h('div', { class: 'banner', text: w })),
-    h('div', { class: 'grid kpis' },
-      kpi('runs', num(sm.invocations), ''),
-      kpi('errorRate', sm.errorRate === null ? '—' : String(Math.round(sm.errorRate * 100)), sm.errorRate === null ? '' : '%', { cls: sm.errorRate > 0.2 ? 'bad' : '', note: sm.toolCalls ? `${num(sm.errors)} of ${num(sm.toolCalls)} tool calls` : null }),
-      kpi('cleanRate', sm.cleanRate === null ? '—' : String(Math.round(sm.cleanRate * 100)), sm.cleanRate === null ? '' : '%', { note: sm.runs ? `${num(sm.runs)} finished runs` : null }),
-      kpi('retries', num(sm.avgRetries, 1), ''),
-      kpi('duration', dv, du),
-      kpi('tokens', compact(sm.avgTokens), '', { note: sm.avgTokens ? cacheNote : null }),
-      kpi('cost', usd(sm.avgCostUsd), '', { note: sm.avgCostUsd ? 'estimate at API prices' : null }),
-      kpi('snags', num(d.snags.open), '', { cls: d.snags.open ? 'bad' : '', note: d.snags.unsent ? `${d.snags.unsent} unsent` : null }),
-      kpi('evalScore', lastEval ? String(Math.round(lastEval.score * 100)) : '—', lastEval ? '%' : '', { note: lastEval ? `${day(lastEval.ranAt)}` : 'not run yet' }),
-    ),
-    h('div', { class: 'grid two' },
-      panel('Last 30 days', `${num(sm.invocations)} runs`, barChart(d.daily)),
-      panel('Recent activity', d.recent.length ? `last ${d.recent.length} events` : null,
-        d.recent.length ? h('ul', { class: 'log mono' }, d.recent.map((e) => h('li', {},
-          h('span', { class: 't', text: clock(e.time) }), h('span', { class: 'a', text: e.agent }),
-          h('span', { class: `k ${e.kind}`, text: e.kind === 'tool_call' ? 'tool call' : e.kind === 'error' ? 'tool error' : e.kind }),
-          h('span', { class: 'd', text: e.durationMs === null ? '' : dur(e.durationMs) })))) : h('p', { class: 'empty', text: 'No telemetry for this skill yet.' })),
-    ),
-    panel('By agent', null, d.byAgent.length ? sortableTable([
-      { key: 'agent', label: 'Agent', cell: (a) => a.agent, sort: (a) => a.agent },
-      { key: 'inv', label: 'Runs', def: 'runs', num: true, cell: (a) => num(a.invocations), sort: (a) => a.invocations },
-      { key: 'err', label: 'Tool errors', def: 'errorRate', num: true, cell: (a) => pct(a.errorRate), sort: (a) => a.errorRate },
-      { key: 'clean', label: 'Clean runs', def: 'cleanRate', num: true, cell: (a) => pct(a.cleanRate), sort: (a) => a.cleanRate },
-      { key: 'ret', label: 'Avg retries', def: 'retries', num: true, cell: (a) => num(a.avgRetries, 1), sort: (a) => a.avgRetries },
-      { key: 'dur', label: 'Avg time', def: 'duration', num: true, cell: (a) => dur(a.avgDurationMs), sort: (a) => a.avgDurationMs },
-      { key: 'tok', label: 'Avg tokens', def: 'tokens', num: true, cell: (a) => compact(a.avgTokens), sort: (a) => a.avgTokens },
-    ], d.byAgent) : h('p', { class: 'empty', text: 'No telemetry for this skill yet.' })),
-    panel('Eval history', d.evals.length ? `${d.evals.length} runs` : null, d.evals.length ? h('div', {}, lineChart(d.evals), sortableTable([
-      { key: 'ran', label: 'Run', cell: (e) => day(e.ranAt), sort: (e) => e.ranAt },
-      { key: 'commit', label: 'Commit', cell: (e) => e.commit ? h('code', { text: e.commit.slice(0, 7) + (e.dirty ? ' + changes' : '') }) : '—' },
-      { key: 'cases', label: 'Cases', num: true, cell: (e) => num(e.cases) },
-      { key: 'score', label: 'Score', def: 'evalScore', num: true, cell: (e) => pct(e.score), sort: (e) => e.score },
-      { key: 'delta', label: 'Effect', def: 'effect', num: true, cell: (e) => e.ablation ? signedPts(e.meanDelta) : '—' },
-      { key: 'cost', label: 'Cost', num: true, cell: (e) => usd(e.costUsd) },
-      { key: 'flags', label: '', cell: (e) => e.partial ? h('span', { class: 'pill bad', text: 'partial' }) : '' },
-    ], [...d.evals].reverse())) : h('p', { class: 'empty' }, 'No eval results yet. Run ', h('code', { text: `snaglog eval ${d.skill} --dry-run` }), ' to see the cost first.')),
-    panel('Snags', `${d.snags.open} open · ${d.snags.closed} closed${d.snags.avgFixDays !== null ? ` · fixed in ${num(d.snags.avgFixDays, 1)} days on average` : ''}`,
+  const TABS = [['summary', 'Summary'], ['activity', 'Activity'], ['evals', 'Evals'], ['snags', 'Snags'], ['changes', 'Changes']];
+  const go = (t) => { location.hash = `#/skill/${encodeURIComponent(name)}/${t}`; };
+  const tabs = h('div', { class: 'tabs' }, TABS.map(([key, label]) => h('button', { type: 'button', class: key === tabName ? 'active' : '', onclick: () => go(key), text: label })));
+  const sections = {
+    summary: () => [
+      h('div', { class: 'stats' },
+        stat('zap', 'runs', num(sm.invocations), ''),
+        stat('triangle-alert', 'errorRate', sm.errorRate === null ? '—' : String(Math.round(sm.errorRate * 100)), sm.errorRate === null ? '' : '%', { cls: sm.errorRate > 0.2 ? 'bad' : '', note: sm.toolCalls ? `${num(sm.errors)} of ${num(sm.toolCalls)} tool calls` : null }),
+        stat('timer', 'duration', dv, du),
+        stat('coins', 'cost', usd(sm.avgCostUsd), '', { note: sm.avgCostUsd ? 'estimate at API prices' : null }),
+        stat('activity', 'tokens', compact(sm.avgTokens), '', { note: sm.avgTokens ? (sm.avgCacheTokens ? `${compact(sm.avgCacheTokens)} from the prompt cache` : 'includes prompt-cache tokens') : null }),
+        stat('rotate-ccw', 'retries', num(sm.avgRetries, 1), ''),
+        stat('bug', 'snags', num(d.snags.open), '', { cls: d.snags.open ? 'bad' : '', note: d.snags.unsent ? `${d.snags.unsent} unsent` : null }),
+        stat('flask-conical', 'evalScore', lastEval ? String(Math.round(lastEval.score * 100)) : '—', lastEval ? '%' : '', { note: lastEval ? `last run ${day(lastEval.ranAt)}` : 'not run yet' }),
+      ),
+      h('h2', { text: 'Usage' }),
+      h('div', { class: 'grid2' },
+        h('div', { class: 'card' }, h('h3', {}, 'Runs by day', h('span', { class: 'meta', text: 'last 30 days' })), barChart(d.daily)),
+        h('div', { class: 'card' }, h('h3', {}, 'Runs by outcome', h('span', { class: 'meta', text: 'all time' })), donut(clean, finished - clean)),
+      ),
+      h('h2', { text: 'By agent' }),
+      d.byAgent.length ? sortableTable([
+        { key: 'agent', label: 'Agent', cell: (a) => h('span', { class: 'agents' }, icon('bot', 'sm'), a.agent), sort: (a) => a.agent },
+        { key: 'inv', label: 'Runs', def: 'runs', num: true, cell: (a) => num(a.invocations), sort: (a) => a.invocations },
+        { key: 'err', label: 'Tool errors', def: 'errorRate', num: true, cell: (a) => pct(a.errorRate), sort: (a) => a.errorRate },
+        { key: 'clean', label: 'Clean runs', def: 'cleanRate', num: true, cell: (a) => pct(a.cleanRate), sort: (a) => a.cleanRate },
+        { key: 'ret', label: 'Avg retries', def: 'retries', num: true, cell: (a) => num(a.avgRetries, 1), sort: (a) => a.avgRetries },
+        { key: 'dur', label: 'Avg time', def: 'duration', num: true, cell: (a) => dur(a.avgDurationMs), sort: (a) => a.avgDurationMs },
+        { key: 'tok', label: 'Avg tokens', def: 'tokens', num: true, cell: (a) => compact(a.avgTokens), sort: (a) => a.avgTokens },
+      ], d.byAgent) : empty('bot', 'No telemetry for this skill yet.'),
+      h('h2', { text: 'What do these numbers mean?' }),
+      h('div', { class: 'card' }, h('dl', { class: 'defs' }, Object.values(DEFS).flatMap(([label, text]) => [h('dt', { text: label }), h('dd', { text })]))),
+    ],
+    activity: () => [
+      d.recent.length ? h('div', { class: 'card' }, h('h3', {}, 'Recent activity', h('span', { class: 'meta', text: `last ${d.recent.length} events` })),
+        h('ul', { class: 'activity' }, d.recent.map((e) => {
+          const map = { invoked: ['zap', 'accent', 'started the skill'], completed: [e.success ? 'circle-check' : 'circle-x', e.success ? 'ok' : 'bad', e.success ? 'finished cleanly' : 'finished with tool errors'], error: ['triangle-alert', 'bad', 'tool call failed'], tool_call: ['check', '', 'tool call'] };
+          const [ic, cls, what] = map[e.kind] || ['info', '', e.kind];
+          return h('li', {}, h('span', { class: `av ${cls}` }, icon(ic)), h('span', { class: 'what' }, h('strong', { text: e.agent }), ` ${what}`, e.durationMs !== null ? h('span', { class: 'faint', text: ` · ${dur(e.durationMs)}` }) : ''), h('span', { class: 'when', title: new Date(e.time).toLocaleString(), text: ago(e.time) }));
+        }))) : empty('activity', 'No telemetry for this skill yet.'),
+    ],
+    evals: () => [
+      d.evals.length ? h('div', { class: 'card' }, h('h3', {}, 'Eval score', h('span', { class: 'meta', text: `${d.evals.length} runs` })), lineChart(d.evals)) : empty('flask-conical', 'No eval results yet.', h('p', {}, 'Run ', h('code', { text: `snaglog eval ${d.skill} --dry-run` }), ' to see the cost first.')),
+      d.evals.length ? h('h2', { text: 'Runs' }) : null,
+      d.evals.length ? sortableTable([
+        { key: 'ran', label: 'Date', cell: (e) => dayYear(e.ranAt), sort: (e) => e.ranAt },
+        { key: 'commit', label: 'Commit', cell: (e) => e.commit ? h('code', { text: e.commit.slice(0, 7) + (e.dirty ? ' + changes' : '') }) : '—' },
+        { key: 'cases', label: 'Cases', num: true, cell: (e) => num(e.cases) },
+        { key: 'score', label: 'Score', def: 'evalScore', num: true, cell: (e) => pct(e.score), sort: (e) => e.score },
+        { key: 'delta', label: 'Skill effect', def: 'effect', num: true, cell: (e) => e.ablation ? signedPts(e.meanDelta) : '—' },
+        { key: 'cost', label: 'Cost', num: true, cell: (e) => usd(e.costUsd) },
+        { key: 'flags', label: '', cell: (e) => e.partial ? h('span', { class: 'badge warn' }, 'Partial') : '' },
+      ], [...d.evals].reverse()) : null,
+    ],
+    snags: () => [
       d.snags.list.length ? sortableTable([
-        { key: 'num', label: '#', num: true, cell: (x) => h('a', { href: x.url, target: '_blank', rel: 'noopener noreferrer', text: `#${x.number}` }) },
-        { key: 'title', label: 'Title', cell: (x) => x.title },
-        { key: 'state', label: 'State', cell: (x) => h('span', { class: `pill ${x.state === 'open' ? 'bad' : 'good'}`, text: x.state }) },
+        { key: 'num', label: 'Issue', cell: (x) => h('a', { href: x.url, target: '_blank', rel: 'noopener noreferrer' }, `#${x.number}`), sort: (x) => x.number },
+        { key: 'title', label: 'Title', wrap: true, cell: (x) => x.title.replace(/^\[snag\][^:]*:\s*/, '') },
+        { key: 'state', label: 'Status', cell: (x) => x.state === 'open' ? h('span', { class: 'badge bad' }, 'Open', icon('circle-dashed')) : h('span', { class: 'badge ok' }, 'Closed', icon('check')) },
         { key: 'occ', label: 'Reports', num: true, cell: (x) => num(x.occurrences), sort: (x) => x.occurrences },
-        { key: 'opened', label: 'Opened', cell: (x) => day(x.createdAt), sort: (x) => x.createdAt },
-      ], d.snags.list) : h('p', { class: 'empty', text: 'No snags reported for this skill.' })),
-    panel('SKILL.md changes', d.changes.length ? `${d.changes.length} commits` : null, d.changes.length ? sortableTable([
-      { key: 'date', label: 'Date', cell: (c) => day(c.date) },
-      { key: 'commit', label: 'Commit', cell: (c) => h('code', { text: c.commit.slice(0, 7) }) },
-      { key: 'subject', label: 'Message', cell: (c) => c.subject },
-      { key: 'cmp', label: '', cell: (c) => h('a', { href: `#/compare/${encodeURIComponent(d.skill)}/${c.commit}`, text: 'Before / after →' }) },
-    ], d.changes) : h('p', { class: 'empty', text: 'No SKILL.md history: start the dashboard in the project or pass --path.' })),
-    h('details', { class: 'panel defs' }, h('summary', { text: 'What do these numbers mean?' }),
-      h('dl', {}, Object.values(DEFS).flatMap(([label, text]) => [h('dt', { text: label }), h('dd', { text })]))),
+        { key: 'opened', label: 'Opened', cell: (x) => dayYear(x.createdAt), sort: (x) => x.createdAt },
+      ], d.snags.list) : empty('bug', 'No snags reported for this skill.'),
+      d.snags.list.length ? h('div', { class: 'results', text: `${d.snags.open} open · ${d.snags.closed} closed${d.snags.avgFixDays !== null ? ` · fixed in ${num(d.snags.avgFixDays, 1)} days on average` : ''}` }) : null,
+    ],
+    changes: () => [
+      d.changes.length ? sortableTable([
+        { key: 'date', label: 'Date', cell: (c) => dayYear(c.date) },
+        { key: 'commit', label: 'Commit', cell: (c) => h('code', { text: c.commit.slice(0, 7) }) },
+        { key: 'subject', label: 'Message', wrap: true, cell: (c) => c.subject },
+        { key: 'cmp', label: '', cell: (c) => h('a', { href: `#/compare/${encodeURIComponent(d.skill)}/${c.commit}` }, 'Before / after') },
+      ], d.changes) : empty('git-commit-horizontal', 'No SKILL.md history.', h('p', {}, 'Start the dashboard in the project, or pass ', h('code', { text: '--path' }), '.')),
+    ],
+  };
+  render(
+    title(d.skill, { crumbs: [h('a', { href: '#/overview', text: 'Skills' }), icon('chevron-right', 'sm'), h('span', { text: d.skill })], badge: row ? statusBadge(row) : null }),
+    ...d.warnings.map((w) => h('div', { class: 'notice warn' }, icon('triangle-alert'), h('span', { text: w }))),
+    tabs,
+    ...(sections[tabName] || sections.summary)(),
   );
 }
 
@@ -553,61 +679,69 @@ async function comparePage(skill, commit) {
   const changes = skill ? (await api(`/api/skill/${encodeURIComponent(skill)}`)).changes : [];
   commit = commit || changes[0]?.commit;
   const skillSelect = h('select', { 'aria-label': 'Skill', onchange: (e) => { location.hash = `#/compare/${encodeURIComponent(e.target.value)}`; } }, skills.map((x) => h('option', { value: x, selected: x === skill, text: x })));
-  const changeSelect = h('select', { 'aria-label': 'SKILL.md change', onchange: (e) => { location.hash = `#/compare/${encodeURIComponent(skill)}/${e.target.value}`; } }, changes.map((c) => h('option', { value: c.commit, selected: c.commit === commit, text: `${day(c.date)} · ${c.commit.slice(0, 7)} · ${c.subject}` })));
-  const controls = h('div', { class: 'controls' }, h('label', {}, 'Skill ', skillSelect), changes.length ? h('label', {}, 'Change ', changeSelect) : null);
+  const changeSelect = h('select', { 'aria-label': 'SKILL.md change', onchange: (e) => { location.hash = `#/compare/${encodeURIComponent(skill)}/${e.target.value}`; } }, changes.map((c) => h('option', { value: c.commit, selected: c.commit === commit, text: `${dayYear(c.date)} · ${c.commit.slice(0, 7)} · ${c.subject}` })));
+  const controls = h('div', { class: 'controls' }, h('label', {}, 'Skill', skillSelect), changes.length ? h('label', {}, 'Change', changeSelect) : null);
   if (!skill || !commit) {
-    page('Before / after', 'Did a SKILL.md change help?', controls, panel(null, null, h('p', { class: 'empty', text: 'No SKILL.md changes found. Start the dashboard in the project or pass --path.' })));
+    render(title('Before / after', { lead: 'Did a SKILL.md change help?' }), controls, empty('git-compare-arrows', 'No SKILL.md changes found.', h('p', {}, 'Start the dashboard in the project, or pass ', h('code', { text: '--path' }), '.')));
     return;
   }
   const c = await api(`/api/compare/${encodeURIComponent(skill)}/${commit}`);
-  const labels = { improved: ['good', 'The change helped'], worse: ['bad', 'The change made things worse'], mixed: ['', 'Mixed result'], 'no-clear-change': ['', 'No clear change'], 'not-enough-data': ['info', 'Not enough data yet'] };
-  const [cls, title] = labels[c.verdict.result];
+  const verdicts = { improved: ['ok', 'circle-check', 'The change helped'], worse: ['bad', 'circle-x', 'The change made things worse'], mixed: ['warn', 'info', 'Mixed result'], 'no-clear-change': ['', 'info', 'No clear change'], 'not-enough-data': ['', 'clock', 'Not enough data yet'] };
+  const [cls, ic, text] = verdicts[c.verdict.result];
+  // Lower is better for error rate, retries, duration, tokens and snags.
   const rowsDef = [
-    ['runs', (x) => num(x.invocations)],
-    ['errorRate', (x) => pct(x.errorRate)],
-    ['cleanRate', (x) => pct(x.cleanRate)],
-    ['retries', (x) => num(x.avgRetries, 1)],
-    ['duration', (x) => dur(x.avgDurationMs)],
-    ['tokens', (x) => compact(x.avgTokens)],
-    ['snags', (x) => num(x.snagsOpened)],
-    ['evalScore', (x) => pct(x.evalScore)],
+    ['runs', 'invocations', num, null],
+    ['errorRate', 'errorRate', pct, 'lower'],
+    ['cleanRate', 'cleanRate', pct, 'higher'],
+    ['retries', 'avgRetries', (v) => num(v, 1), 'lower'],
+    ['duration', 'avgDurationMs', dur, 'lower'],
+    ['tokens', 'avgTokens', compact, 'lower'],
+    ['snags', 'snagsOpened', num, 'lower'],
+    ['evalScore', 'evalScore', pct, 'higher'],
   ];
-  page('Before / after', 'Did this SKILL.md change help? Up to 30 days on each side.', controls,
-    h('div', { class: `banner ${cls}` }, h('div', {}, h('strong', { text: title }), c.verdict.notes.length ? h('div', { class: 'subtle', text: c.verdict.notes.join(' · ') }) : null)),
-    panel(c.change.subject, `${c.change.commit.slice(0, 7)} · ${day(c.change.date)}`, h('table', {},
-      h('thead', {}, h('tr', {}, h('th', { text: 'Metric' }), h('th', { class: 'num', text: `Before · ${day(c.before.from)} – ${day(c.before.to)}` }), h('th', { class: 'num', text: `After · ${day(c.after.from)} – ${day(c.after.to)}` }))),
-      h('tbody', {}, rowsDef.map(([key, f]) => h('tr', {}, h('td', { title: def(key), text: key === 'snags' ? 'Snags opened' : DEFS[key][0] }), h('td', { class: 'num', text: f(c.before) }), h('td', { class: 'num', text: f(c.after) })))))),
+  const delta = (key, better) => {
+    const a = c.before[key];
+    const b = c.after[key];
+    if (a === null || a === undefined || b === null || b === undefined || a === b || !better) return h('span', { class: 'faint', text: '—' });
+    const up = b > a;
+    const good = (better === 'higher') === up;
+    return h('span', { class: `delta ${good ? 'better' : 'worse'}`, text: up ? '↑' : '↓' });
+  };
+  render(
+    title('Before / after', { lead: 'Did this SKILL.md change help? Up to 30 days on each side.' }),
+    controls,
+    h('div', { class: `notice ${cls}` }, icon(ic), h('strong', { text }), c.verdict.notes.length ? h('span', { class: 'muted', text: c.verdict.notes.join(' · ') }) : null),
+    h('div', { class: 'card' }, h('h3', {}, icon('git-commit-horizontal'), c.change.subject, h('span', { class: 'meta', text: `${c.change.commit.slice(0, 7)} · ${dayYear(c.change.date)}` })),
+      h('div', { class: 'table-wrap' }, h('table', {},
+        h('thead', {}, h('tr', {}, h('th', { text: 'Metric' }), h('th', { class: 'num', text: `Before · ${day(c.before.from)} – ${day(c.before.to)}` }), h('th', { class: 'num', text: `After · ${day(c.after.from)} – ${day(c.after.to)}` }), h('th', { class: 'num', text: 'Change' }))),
+        h('tbody', {}, rowsDef.map(([defKey, key, f, better]) => h('tr', {}, h('td', { title: def(defKey), text: defKey === 'snags' ? 'Snags opened' : DEFS[defKey][0] }), h('td', { class: 'num', text: f(c.before[key]) }), h('td', { class: 'num', text: f(c.after[key]) }), h('td', { class: 'num' }, delta(key, better)))))))),
   );
 }
 
 async function unsentPage() {
   const { reports } = await api('/api/reports');
-  const intro = 'Snag reports kept on this machine. Nothing is sent until you press Send and confirm.';
-  if (!reports.length) {
-    page('Unsent reports', intro, panel(null, null, h('p', { class: 'empty', text: 'No unsent reports.' })));
-    return;
-  }
-  page('Unsent reports', intro, ...reports.map(reportCard));
+  const lead = 'Snag reports kept on this machine. Nothing is sent until you press Send and confirm.';
+  render(title('Unsent reports', { lead }), reports.length ? reports.map(reportCard) : empty('inbox', 'No unsent reports.'));
 }
 
 function reportCard(r) {
-  const status = h('span', { class: 'subtle' });
-  const title = h('input', { value: r.title, 'aria-label': 'Title' });
+  const status = h('span', { class: 'muted' });
+  const titleIn = h('input', { value: r.title, 'aria-label': 'Title' });
   const body = h('textarea', { 'aria-label': 'Body' });
   body.value = r.body;
   const repo = h('input', { value: r.repo || '', placeholder: 'owner/repo', 'aria-label': 'Target repo' });
   let approval = r.approval;
-  const dirty = () => title.value !== r.title || body.value !== r.body || repo.value !== (r.repo || '');
-  const send = h('button', { class: 'primary', type: 'button', text: 'Send to GitHub' });
-  const save = h('button', { type: 'button', text: 'Save changes' });
-  const del = h('button', { class: 'danger', type: 'button', text: 'Delete' });
+  const dirty = () => titleIn.value !== r.title || body.value !== r.body || repo.value !== (r.repo || '');
+  const send = h('button', { class: 'btn primary', type: 'button' }, icon('send'), 'Send to GitHub');
+  const save = h('button', { class: 'btn', type: 'button' }, icon('save'), 'Save changes');
+  const del = h('button', { class: 'btn danger', type: 'button' }, icon('trash-2'), 'Delete');
   const refreshState = () => { send.disabled = META.demo || !repo.value || dirty(); send.title = dirty() ? 'Save your changes first' : ''; };
-  for (const el of [title, body, repo]) el.addEventListener('input', refreshState);
+  for (const el of [titleIn, body, repo]) el.addEventListener('input', refreshState);
   save.addEventListener('click', async () => {
     try {
-      const { report } = await api(`/api/reports/${r.id}`, { method: 'PUT', body: JSON.stringify({ title: title.value, body: body.value, repo: repo.value }) });
+      const { report } = await api(`/api/reports/${r.id}`, { method: 'PUT', body: JSON.stringify({ title: titleIn.value, body: body.value, repo: repo.value }) });
       Object.assign(r, report);
-      title.value = report.title; body.value = report.body; repo.value = report.repo || '';
+      titleIn.value = report.title; body.value = report.body; repo.value = report.repo || '';
       approval = report.approval;
       status.textContent = 'Saved (masked again).';
       refreshState();
@@ -619,40 +753,42 @@ function reportCard(r) {
     status.textContent = 'Sending…';
     try {
       const { sent } = await api(`/api/reports/${r.id}/send`, { method: 'POST', body: JSON.stringify({ approval }) });
-      cardEl.replaceChildren(h('p', {}, sent.status === 'commented' ? 'Added to an existing issue: ' : 'Filed: ', h('a', { href: sent.url, target: '_blank', rel: 'noopener noreferrer', text: sent.url })));
-      refreshSidebar().catch(() => {});
+      card.replaceChildren(h('div', { class: 'notice ok' }, icon('circle-check'), sent.status === 'commented' ? 'Added to an existing issue: ' : 'Filed: ', h('a', { href: sent.url, target: '_blank', rel: 'noopener noreferrer', text: sent.url })));
+      refreshChrome().catch(() => {});
     } catch (e) { status.textContent = e.message; refreshState(); }
   });
   del.addEventListener('click', async () => {
     if (!confirm('Delete this report from this machine? This cannot be undone.')) return;
     try {
       await api(`/api/reports/${r.id}`, { method: 'DELETE' });
-      cardEl.remove();
-      refreshSidebar().catch(() => {});
+      card.remove();
+      refreshChrome().catch(() => {});
     } catch (e) { status.textContent = e.message; }
   });
-  const cardEl = h('section', { class: 'panel report' },
-    h('div', { class: 'panel-head' }, h('h2', { text: r.skill }), h('span', { class: 'pill', text: r.reason }), h('span', { class: 'meta', text: `kept ${ago(r.savedAt)}${r.agent ? ` · ${r.agent}` : ''}` })),
-    h('label', {}, 'Title', title), h('label', {}, 'Body', body), h('label', {}, 'Target repo', repo),
-    h('div', { class: 'actions' }, save, send, del, status));
+  const reasons = { unattended: 'No one to approve', rejected: 'Declined', 'no-target': 'No target repo', 'gh-missing': 'gh not installed', 'gh-not-authenticated': 'gh not logged in', 'no-access': 'No repo access', 'issues-disabled': 'Issues disabled', 'gh-error': 'gh failed' };
+  const card = h('section', { class: 'form-card' },
+    h('div', { class: 'head' }, h('strong', { text: r.skill }), h('span', { class: 'badge warn' }, reasons[r.reason] || r.reason), h('span', { class: 'muted', text: `kept ${ago(r.savedAt)}${r.agent ? ` · ${r.agent}` : ''}` })),
+    h('label', { text: 'Title' }), titleIn, h('label', { text: 'Body' }), body, h('label', { text: 'Target repo' }), repo,
+    h('div', { class: 'row-actions' }, send, save, del, status));
   refreshState();
-  return cardEl;
+  return card;
 }
 
 async function connectionsPage() {
   const d = await api('/api/connections');
   const recv = d.receiver;
   const live = (a) => a.lastEventAt && Date.now() - Date.parse(a.lastEventAt) < 15 * 60000;
-  page('Connections', 'Which agents send telemetry to snaglog.',
-    h('div', { class: `banner ${recv.running ? 'good' : recv.error ? 'bad' : 'info'}` }, recv.running
-      ? h('span', {}, `Receiver listening on 127.0.0.1:${recv.port}.`, recv.rejected ? h('span', { class: 'subtle', text: ` ${recv.rejected} request(s) rejected; last reason: ${recv.lastRejectReason}.` }) : '')
-      : h('span', { text: recv.error ? `Receiver not running: ${recv.error}` : 'Receiver not running (demo mode or --no-receiver).' })),
-    panel('Agents', `${d.agents.filter(live).length} live`, ...d.agents.map((a) => h('div', { class: 'agent-row' },
-      h('span', { class: `dot ${live(a) ? 'good' : a.connected ? 'warn' : ''}` }),
-      h('div', {}, h('div', { class: 'name', text: a.label }), h('div', { class: 'subtle mono', text: a.file || 'not connected' }),
-        live(a) ? null : h('ul', { class: 'tips' }, a.tips.map((t) => h('li', { text: t })))),
-      h('div', { class: 'right' }, h('div', { text: a.connected ? (live(a) ? 'live' : 'connected') : 'not connected' }), h('div', { class: 'subtle', text: `last event ${ago(a.lastEventAt)}` }))))),
-    panel('Not supported', null, h('ul', { class: 'tips' }, d.unsupported.map((u) => h('li', {}, h('strong', { text: u.agent }), ` — ${u.reason}`)))),
+  render(
+    title('Connections', { lead: 'Which agents send telemetry to snaglog.' }),
+    recv.running
+      ? h('div', { class: 'notice ok' }, icon('radio'), h('strong', { text: `Receiving on 127.0.0.1:${recv.port}` }), recv.rejected ? h('span', { class: 'muted', text: `${recv.rejected} request(s) rejected; last reason: ${recv.lastRejectReason}` }) : h('span', { class: 'muted', text: 'Telemetry stays on this machine.' }))
+      : h('div', { class: `notice ${recv.error ? 'bad' : ''}` }, icon('radio'), h('strong', { text: META.demo && !recv.error ? 'Demo data' : 'Receiver off' }), h('span', { class: 'muted', text: recv.error || (META.demo ? 'Demo mode shows generated data; no telemetry is collected.' : 'Started with --no-receiver.') })),
+    h('div', { class: 'card agent-list' }, d.agents.map((a) => h('div', { class: 'agent' },
+      h('span', { class: 'icon' }, icon('bot')),
+      h('div', {}, h('strong', { text: a.label }), h('div', { class: 'muted mono', text: a.file || 'Not connected' }), live(a) ? null : h('ul', { class: 'tips' }, a.tips.map((t) => h('li', { text: t })))),
+      h('div', { class: 'meta' }, live(a) ? h('span', { class: 'badge ok' }, 'Live', icon('check')) : a.connected ? h('span', { class: 'badge' }, 'Connected', icon('clock')) : h('span', { class: 'badge' }, 'Not connected'), h('div', { class: 'muted', text: `last event ${ago(a.lastEventAt)}` }))))),
+    h('h2', { text: 'Not supported' }),
+    h('div', { class: 'card' }, h('ul', { class: 'tips' }, d.unsupported.map((u) => h('li', {}, h('strong', { text: u.agent }), ` — ${u.reason}`)))),
   );
 }
 
@@ -660,15 +796,18 @@ async function connectionsPage() {
 async function route() {
   const parts = location.hash.replace(/^#\/?/, '').split('/').map(decodeURIComponent);
   const name = parts[0] || 'overview';
-  for (const a of document.querySelectorAll('#nav a')) a.classList.toggle('active', a.dataset.page === name);
+  for (const a of document.querySelectorAll('.nav-item')) a.classList.toggle('active', a.dataset.page === (name === 'skill' ? 'overview' : name));
   try {
-    await refreshSidebar();
-    if (name === 'skill' && parts[1]) await skillPage(parts[1]);
+    await refreshChrome();
+    if (name === 'skill' && parts[1]) await skillPage(parts[1], parts[2]);
     else if (name === 'compare') await comparePage(parts[1], parts[2]);
     else if (name === 'unsent') await unsentPage();
     else if (name === 'connections') await connectionsPage();
     else overviewPage();
-  } catch (e) { failure(e); }
+    window.scrollTo(0, 0);
+  } catch (e) {
+    render(h('div', { class: 'notice bad' }, icon('circle-x'), h('span', { text: `Could not load data: ${e.message}` })));
+  }
 }
 window.addEventListener('hashchange', route);
 api('/api/meta').then((m) => { META = m; }).catch(() => {}).finally(route);
