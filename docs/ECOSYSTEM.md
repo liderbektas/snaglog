@@ -7,9 +7,9 @@ The standards, official agent features and tools snaglog builds on, and the rule
 Security is the first requirement: snaglog handles private skill repositories, agent telemetry and issue text. Therefore:
 
 1. **No data leaves the machine except what the user explicitly approves** (a snag report shown in full before filing). The receiver and dashboard bind `127.0.0.1` only; snaglog sends no telemetry; any child process snaglog starts runs with its telemetry and any report publishing switched off.
-2. **snaglog builds only on official, built-in agent features** — the agents' own OpenTelemetry export, hook and eval systems — and on the `gh` CLI. Community plugins, hook bridges and third-party collectors are not used, even where they would add agent coverage.
-3. **A third-party project may become a dependency only if it is established:** an OSI license file in the repository, an organisation or several active maintainers, real adoption, a stable release line, and no data sent anywhere by default (or a documented, enforceable off switch).
-4. **No third-party code is copied.** Secret-masking patterns follow the public rule set of [gitleaks](https://github.com/gitleaks/gitleaks), an established secret scanner, and are re-implemented and tested in snaglog.
+2. **Everything snaglog builds on is official:** the agents' own built-in OpenTelemetry export, hooks and eval command, published standards (Agent Skills, OpenTelemetry OTLP), GitHub's official `gh` CLI, and Node.js built-in modules. Community plugins, hook bridges, third-party collectors and third-party eval runners are not used, even where they would add agent coverage.
+3. **No npm or PyPI dependencies** unless the project owner approves one explicitly; any candidate must be an official package from the vendor it integrates with.
+4. **No third-party code is copied.** Secret-masking patterns are written from each vendor's official token-format documentation (for example GitHub's token prefixes and AWS access key ID prefixes) and tested in snaglog.
 
 ## Skill metadata: `metadata.snaglog-repo`
 
@@ -35,34 +35,62 @@ These rules come from the M0 review of how skill-friction reporting can go wrong
 - **Never file unattended.** Auto-filing from an agent is a prompt-injection vector; without an explicit user approval the report goes to the local file.
 - **No local context in the body:** no project names, paths under the home directory, internal URLs or hostnames.
 
-## Evals
+## Evals: Claude Code `claude plugin eval`
 
-The brief names caliper as the eval runner. Measured against the trust policy it falls short, and Claude Code turns out to ship an official eval runner. Both are documented here; **the choice is pending the project owner's decision.**
+snaglog uses Claude Code's official, built-in eval command and does not ship its own runner. Source: [Test plugins with evals](https://code.claude.com/docs/en/plugin-evals.md); format confirmed locally with `claude plugin eval init --bare` on Claude Code 2.1.291.
 
-### caliper (`caliper-eval`)
+**Requirements:** Claude Code ≥ 2.1.269 (`disallowed_tools` needs ≥ 2.1.299); git ≥ 2.31 if git is installed. `snaglog eval` checks both before running.
 
-- **Package:** PyPI [`caliper-eval`](https://pypi.org/project/caliper-eval/) 0.24.0 (2026-11-15), Python ≥ 3.10, MIT, command `caliper`.
-- **Spec file:** `<skill>.eval.yaml` next to `SKILL.md`; tasks with `name`, `prompt`, and `expect` (LLM rubric), `assert` (Python) or `activates`. No tags field.
-- **Ablation:** `--ablate <skill-name>` records a run without the skill; comparison is a separate `caliper compare … --format json` step.
-- **Results:** JSON per run, including per-task scores and token usage — and also prompts, agent output and transcripts.
-- **Exit codes:** 0 even when every task fails.
-- **Backends:** agent CLIs — `claude-code`, `codex`, `opencode` and others.
-- **Trust problems:** one dominant maintainer (346 of ~353 commits), pre-1.0 with breaking schema changes between minors, usage metrics sent to PostHog **by default** (`CALIPER_TELEMETRY_DISABLED=1` turns them off).
+### Case format
 
-### Claude Code `claude plugin eval` (official)
+A case is a directory under the eval dir (`evals/` by default; `<eval dir>/**` is searched recursively) holding `prompt.md`, `case.yaml` or both, plus at least one grader.
 
-Built into Claude Code (present in 2.1.291; `claude plugin eval --help`):
+```markdown
+<!-- evals/deploy-preview/snag-42-missing-flag/prompt.md -->
+---
+name: snag-42-missing-flag
+description: Reproduces snag #42 (documented --env flag rejected)
+tags: [skill:deploy-preview, real-usage, snag:42]
+runs: 3
+max_turns: 10
+allowed_tools: [Read, Glob, Grep, Skill]
+---
 
-- Runs eval cases (`evals/**/case.yaml`, or `prompt.md` + `graders/*.md`) against a plugin or a skills directory, on the local machine, as the user.
-- **Ablation built in:** `--ablation with-without` (the default when a plugin resolves) runs a no-plugin baseline arm and reports the score delta.
-- **Tags:** `--tag` filters cases, which maps directly onto the golden / real-usage / owner-reviewed split.
-- **Cost control:** `--max-cost-usd` is a hard ceiling; `--runs` and `--concurrency` bound the work.
-- **Exit code:** `--threshold <0..1>` makes a run exit 1 when any case scores below it.
-- **Results:** `--json [path]` and `aggregate-result.json` under `--output-dir`.
-- **Data risk:** the HTML report (scores, prompts, grader verdicts) is **published to claude.ai by default** when the account supports it. snaglog must always pass `--no-publish` and never `--publish-report`. Scaffold scripts and real MCP servers run only on explicit opt-in flags, which snaglog never passes by default.
-- **Limit:** evaluates with Claude Code only; there is no Codex equivalent known yet.
+Deploy a preview of the current branch to the staging environment.
+```
 
-Case schema details (`case.yaml` fields, grader types, result JSON shape) are still to be verified before M4.
+```markdown
+<!-- evals/deploy-preview/snag-42-missing-flag/graders/uses-skill.md -->
+---
+type: tool_used
+tool: Skill
+arm: both
+---
+```
+
+- **`prompt.md` frontmatter:** `name`, `description`, `tags`, `plugins`, `runs` (default 3), `expected_outcome`, `model`, `max_turns`, `timeout_seconds`, `allowed_tools`, `disallowed_tools`, `append_system_prompt`, `env` (`EVAL_*` keys only). Unknown keys are errors.
+- **`case.yaml`** (`schema_version: "1.1"`) adds `context.scaffold_script`, `context.history_file`, `context.add_dirs` and inline `graders`.
+- **Graders** (`graders/<name>.md`, fields `type`, `weight`, `arm`):
+  - free, computed from transcript and files: `regex`, `tool_used`, `tool_order`, `file_exists`;
+  - paid, judge model: `llm`, `baseline`.
+  - There are no custom-code graders.
+
+### How snaglog uses it
+
+1. **Layout:** one folder per skill, `evals/<skill>/<case>/`. Every case is tagged `skill:<name>` plus exactly one category tag — `golden` (~5 %), `real-usage` (~80 %, includes every snag-derived case, which also gets `snag:<issue>`), or `owner-reviewed` (~15 %). `snaglog eval <skill>` runs with `--tag skill:<name>`; the dashboard reports the category mix against the recommended split.
+2. **Free graders first:** snag cases prefer `regex`, `tool_used`, `tool_order` and `file_exists`; `llm` graders are added only when a deterministic check is impossible.
+3. **Ablation:** `snaglog eval <skill> --ablate` passes `--ablation with-without` and records `meanDelta` / per-case `delta`; without `--ablate` it passes `--ablation none` to halve cost.
+4. **Data never leaves the machine:** snaglog always passes `--no-publish` (by default the report is published to claude.ai as a private artifact) and never `--publish-report`, `--scaffold`, `--allow-real-servers`, `--mocks off` or `--trust-plugin`; a test asserts the exact argument list. Agent and judge calls use the user's own Claude credentials, as any Claude Code session does.
+5. **What is stored:** from `aggregate-result.json` (`schemaVersion: 1`) snaglog keeps only `aggregates` (`overallScore`, `casesPassed`, `casesTotal`, `meanDelta`), per-case `name`, `score`, `delta`, error/aborted flags, `costUsd`, `durationSeconds`, `claudeVersion`, plus the skill's git commit. Prompts, grader explanations and evidence are dropped. Claude Code's own results folder stays git-ignored and is never committed or attached to a PR.
+6. **Pass/fail and exit codes:** 0 = all cases ≥ `--threshold`, 1 = below threshold or could not run, 2 = partial (cost ceiling or credential), 130/143 = interrupted. snaglog reads scores from the JSON and uses the exit code only to tell "ran" from "partial" or "failed to run".
+7. **Cost:** every run gets `--max-cost-usd`. The estimate before an all-skills run is the sum of each skill's last recorded `costUsd` (scaled by case count when cases changed); skills without history are listed as "unknown" and need explicit confirmation.
+
+### Limits and risks
+
+- **Claude Code only.** There is no official Codex eval runner; Codex skill quality is measured through telemetry and snags until OpenAI ships one.
+- **Server-side gate.** The docs list "currently unavailable" as a state Anthropic can switch on; `snaglog eval` reports it clearly instead of failing obscurely.
+- **Skills-repo target.** A repository of bare `skills/<name>/SKILL.md` folders is targeted as a "skills-directory plugin" (`name@skills-dir`). The exact layout this needs ([plugin loading](https://code.claude.com/docs/en/plugins/loading.md#plugins-shared-through-a-repository)) is still to be verified before M2/M4.
+- **Not documented:** a per-case boolean pass (snaglog derives it as score ≥ threshold), token counts, and whether the JSON contains full transcripts (snaglog assumes it does and drops everything outside its allow-list).
 
 ## Agent telemetry
 

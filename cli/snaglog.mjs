@@ -13,7 +13,7 @@ export const COMMANDS = {
   connect: { module: './connect/index.mjs', summary: "Route an agent's telemetry to snaglog" },
   disconnect: { module: './connect/disconnect.mjs', summary: 'Undo `snaglog connect` for an agent' },
   collect: { module: './collect/index.mjs', summary: 'Collect snag and eval data into .snaglog/' },
-  eval: { module: './eval.mjs', summary: 'Run caliper evals for a skill and record the result' },
+  eval: { module: './eval.mjs', summary: 'Run Claude Code evals for a skill and record the result' },
   dashboard: { module: './dashboard/server.mjs', summary: 'Start the OTLP receiver and dashboard on 127.0.0.1' },
 };
 
