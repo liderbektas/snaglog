@@ -73,6 +73,7 @@ export function createReceiver({ env = process.env, now = () => Date.now() } = {
   const store = createEventStore(home);
   const connectionsFile = join(home, 'connections.json');
   const seen = {};
+  const stats = { rejected: 0, lastRejectReason: null, lastRejectAt: null };
   let lastFlush = 0;
 
   function noteSeen(agent, time) {
@@ -106,7 +107,28 @@ export function createReceiver({ env = process.env, now = () => Date.now() } = {
     return events;
   }
 
-  const server = createServer(async (req, res) => {
+  const server = createServer(async (req, rawRes) => {
+    // Count rejections so the dashboard can explain missing data.
+    const res = {
+      writeHead: (status, headers) => {
+        if (status >= 400) {
+          stats.rejected += 1;
+          stats.lastRejectAt = new Date(now()).toISOString();
+        }
+        return rawRes.writeHead(status, headers);
+      },
+      end: (body) => {
+        if (rawRes.statusCode >= 400) {
+          try {
+            stats.lastRejectReason = JSON.parse(body).error;
+          } catch {
+            stats.lastRejectReason = String(rawRes.statusCode);
+          }
+        }
+        return rawRes.end(body);
+      },
+      setHeader: (...a) => rawRes.setHeader(...a),
+    };
     try {
       const host = String(req.headers.host ?? '').replace(/:\d+$/, '');
       if (!LOOPBACK_HOSTS.has(host)) return send(res, 403, { error: 'loopback only' });
@@ -142,6 +164,7 @@ export function createReceiver({ env = process.env, now = () => Date.now() } = {
     server,
     ingest,
     sweep,
+    stats,
     listen(port = DEFAULT_PORT) {
       return new Promise((resolve, reject) => {
         server.once('error', (error) => {

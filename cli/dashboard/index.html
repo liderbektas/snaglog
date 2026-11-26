@@ -1,0 +1,469 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="snaglog-token" content="__CSRF__">
+<title>snaglog</title>
+<style nonce="__NONCE__">
+:root {
+  --bg: #f7f7f5; --panel: #ffffff; --text: #1c1b19; --muted: #5c5a55; --line: #e2e0da; --soft: #f0efeb;
+  --accent: #1d5d8a; --bad: #b42318; --warn: #8a5a00; --good: #18733a; --bar: #1d5d8a; --bar-bad: #c2410c;
+  color-scheme: light;
+}
+:root[data-theme="dark"] {
+  --bg: #131312; --panel: #1b1b19; --text: #ebeae6; --muted: #a29f98; --line: #2f2e2b; --soft: #232220;
+  --accent: #7cb8e4; --bad: #ff8b7d; --warn: #e2b54c; --good: #5fd17f; --bar: #7cb8e4; --bar-bad: #f59e6b;
+  color-scheme: dark;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #131312; --panel: #1b1b19; --text: #ebeae6; --muted: #a29f98; --line: #2f2e2b; --soft: #232220;
+    --accent: #7cb8e4; --bad: #ff8b7d; --warn: #e2b54c; --good: #5fd17f; --bar: #7cb8e4; --bar-bad: #f59e6b;
+    color-scheme: dark;
+  }
+}
+* { box-sizing: border-box; }
+body { margin: 0; background: var(--bg); color: var(--text); font: 14px/1.5 system-ui, -apple-system, "Segoe UI", sans-serif; }
+a { color: var(--accent); }
+header { display: flex; align-items: center; gap: 24px; padding: 12px 24px; border-bottom: 1px solid var(--line); background: var(--panel); flex-wrap: wrap; }
+.brand { font-weight: 650; font-size: 16px; letter-spacing: -0.01em; }
+nav { display: flex; gap: 4px; flex-wrap: wrap; }
+nav a { text-decoration: none; color: var(--muted); padding: 6px 10px; border-radius: 6px; }
+nav a.active { color: var(--text); background: var(--soft); }
+.spacer { flex: 1; }
+button, select, input, textarea { font: inherit; color: var(--text); background: var(--panel); border: 1px solid var(--line); border-radius: 6px; }
+button { padding: 6px 12px; cursor: pointer; }
+button:hover { background: var(--soft); }
+button.primary { border-color: var(--accent); color: var(--accent); }
+button.danger { border-color: var(--bad); color: var(--bad); }
+button:disabled { opacity: .5; cursor: not-allowed; }
+main { max-width: 1180px; margin: 0 auto; padding: 24px; }
+h1 { font-size: 20px; margin: 0 0 4px; font-weight: 650; }
+h2 { font-size: 15px; margin: 28px 0 10px; font-weight: 650; }
+.sub { color: var(--muted); margin: 0 0 20px; }
+.banner { border: 1px solid var(--line); background: var(--panel); border-left: 3px solid var(--warn); padding: 10px 14px; border-radius: 6px; margin: 0 0 12px; }
+.banner.demo { border-left-color: var(--accent); }
+.banner.bad { border-left-color: var(--bad); }
+.banner.good { border-left-color: var(--good); }
+table { width: 100%; border-collapse: collapse; background: var(--panel); border: 1px solid var(--line); border-radius: 8px; overflow: hidden; }
+th, td { text-align: left; padding: 8px 10px; border-bottom: 1px solid var(--line); vertical-align: top; }
+th { font-weight: 600; color: var(--muted); font-size: 12px; white-space: nowrap; background: var(--soft); }
+th.sortable { cursor: pointer; }
+th.sorted::after { content: " ↓"; }
+th.sorted.asc::after { content: " ↑"; }
+tr:last-child td { border-bottom: 0; }
+td strong { white-space: nowrap; }
+td.num, th.num { text-align: right; font-variant-numeric: tabular-nums; white-space: nowrap; }
+tr.row-link { cursor: pointer; }
+tr.row-link:hover td { background: var(--soft); }
+.reasons { margin: 0; padding: 0; list-style: none; font-size: 13px; }
+.reasons li { color: var(--bad); }
+.reasons li.info { color: var(--warn); }
+.muted { color: var(--muted); }
+.ok { color: var(--good); }
+.bad { color: var(--bad); }
+.cards { display: grid; grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); gap: 12px; }
+.card { background: var(--panel); border: 1px solid var(--line); border-radius: 8px; padding: 12px 14px; }
+.card .label { color: var(--muted); font-size: 12px; }
+.card .value { font-size: 22px; font-weight: 600; font-variant-numeric: tabular-nums; }
+.chart { background: var(--panel); border: 1px solid var(--line); border-radius: 8px; padding: 12px; }
+.chart svg { width: 100%; height: auto; display: block; }
+.chart .axis { fill: var(--muted); font-size: 11px; }
+.chart .grid { stroke: var(--line); }
+.chart .bar { fill: var(--bar); }
+.chart .bar-bad { fill: var(--bar-bad); }
+.chart .line { stroke: var(--accent); fill: none; stroke-width: 2; }
+.chart .dot { fill: var(--accent); }
+.legend { color: var(--muted); font-size: 12px; margin-top: 6px; }
+.legend span { display: inline-block; width: 10px; height: 10px; border-radius: 2px; margin: 0 4px 0 10px; vertical-align: -1px; }
+.legend .swatch { background: var(--bar); }
+.legend .swatch-bad { background: var(--bar-bad); }
+.two { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+@media (max-width: 800px) { .two { grid-template-columns: 1fr; } }
+.report { background: var(--panel); border: 1px solid var(--line); border-radius: 8px; padding: 14px; margin-bottom: 14px; }
+.report input, .report textarea { width: 100%; padding: 6px 8px; margin: 4px 0 10px; }
+.report textarea { min-height: 220px; font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: 12px; }
+.report .actions { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
+.status { font-size: 13px; }
+.pill { display: inline-block; padding: 0 8px; border-radius: 999px; border: 1px solid var(--line); font-size: 12px; color: var(--muted); margin-right: 4px; }
+.pill.good { color: var(--good); border-color: var(--good); }
+.pill.bad { color: var(--bad); border-color: var(--bad); }
+.controls { display: flex; gap: 10px; align-items: center; flex-wrap: wrap; margin-bottom: 16px; }
+.controls select { padding: 6px 8px; }
+.empty { background: var(--panel); border: 1px dashed var(--line); border-radius: 8px; padding: 20px; color: var(--muted); }
+code { font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: 12px; background: var(--soft); padding: 1px 4px; border-radius: 4px; }
+</style>
+</head>
+<body>
+<header>
+  <div class="brand">snaglog</div>
+  <nav id="nav">
+    <a href="#/overview" data-page="overview">Overview</a>
+    <a href="#/compare" data-page="compare">Before / after</a>
+    <a href="#/unsent" data-page="unsent">Unsent reports</a>
+    <a href="#/connections" data-page="connections">Connections</a>
+  </nav>
+  <div class="spacer"></div>
+  <button id="theme" type="button" title="Switch between light and dark">Theme</button>
+</header>
+<main id="app"><p class="muted">Loading…</p></main>
+<script nonce="__NONCE__">
+'use strict';
+const TOKEN = document.querySelector('meta[name="snaglog-token"]').content;
+const app = document.getElementById('app');
+const SVGNS = 'http://www.w3.org/2000/svg';
+let META = { demo: false };
+
+// ---- helpers (data is only ever inserted as text) --------------------------
+function h(tag, props, ...children) {
+  const el = document.createElement(tag);
+  for (const [k, v] of Object.entries(props || {})) {
+    if (v === undefined || v === null || v === false) continue;
+    if (k === 'class') el.className = v;
+    else if (k === 'text') el.textContent = v;
+    else if (k.startsWith('on')) el.addEventListener(k.slice(2), v);
+    else el.setAttribute(k, v === true ? '' : String(v));
+  }
+  for (const c of children.flat()) if (c !== null && c !== undefined && c !== false) el.append(c instanceof Node ? c : document.createTextNode(String(c)));
+  return el;
+}
+function s(tag, attrs, ...children) {
+  const el = document.createElementNS(SVGNS, tag);
+  for (const [k, v] of Object.entries(attrs || {})) el.setAttribute(k, String(v));
+  for (const c of children.flat()) if (c !== null && c !== undefined) el.append(c instanceof Node ? c : document.createTextNode(String(c)));
+  return el;
+}
+async function api(path, options = {}) {
+  const res = await fetch(path, { ...options, headers: { 'content-type': 'application/json', 'x-snaglog-token': TOKEN, ...(options.headers || {}) } });
+  const body = await res.json().catch(() => ({}));
+  if (!res.ok) throw new Error(body.error || `HTTP ${res.status}`);
+  return body;
+}
+const pct = (v) => (v === null || v === undefined ? '—' : `${Math.round(v * 100)}%`);
+const signedPts = (v) => (v === null || v === undefined ? '—' : `${v >= 0 ? '+' : ''}${Math.round(v * 100)} pts`);
+const num = (v, digits = 0) => (v === null || v === undefined ? '—' : Number(v).toLocaleString('en-US', { maximumFractionDigits: digits }));
+const dur = (ms) => (ms === null || ms === undefined ? '—' : ms < 1000 ? `${Math.round(ms)} ms` : `${(ms / 1000).toFixed(1)} s`);
+const usd = (v) => (v === null || v === undefined ? '—' : `$${v.toFixed(v < 1 ? 3 : 2)}`);
+const day = (iso) => (iso ? iso.slice(0, 10) : '—');
+const ago = (iso) => {
+  if (!iso) return 'never';
+  const m = Math.round((Date.now() - Date.parse(iso)) / 60000);
+  if (m < 1) return 'just now';
+  if (m < 60) return `${m} min ago`;
+  if (m < 48 * 60) return `${Math.round(m / 60)} h ago`;
+  return `${Math.round(m / 1440)} days ago`;
+};
+function page(title, sub, ...children) {
+  app.replaceChildren(h('h1', { text: title }), sub ? h('p', { class: 'sub', text: sub }) : null, ...children);
+}
+function failure(error) {
+  app.replaceChildren(h('div', { class: 'banner bad', text: `Could not load data: ${error.message}` }));
+}
+
+// ---- theme -------------------------------------------------------------------
+const themeButton = document.getElementById('theme');
+function applyTheme(theme) {
+  if (theme) document.documentElement.dataset.theme = theme;
+  else delete document.documentElement.dataset.theme;
+}
+(function initTheme() {
+  const fromUrl = new URLSearchParams(location.search).get('theme');
+  let saved = null;
+  try { saved = localStorage.getItem('snaglog-theme'); } catch { /* storage may be blocked */ }
+  applyTheme(fromUrl || saved);
+})();
+themeButton.addEventListener('click', () => {
+  const current = document.documentElement.dataset.theme || (matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+  const next = current === 'dark' ? 'light' : 'dark';
+  applyTheme(next);
+  try { localStorage.setItem('snaglog-theme', next); } catch { /* ignore */ }
+});
+
+// ---- charts ------------------------------------------------------------------
+function barChart(days) {
+  const W = 1000, H = 200, L = 34, B = 24, T = 8;
+  const max = Math.max(1, ...days.map((d) => d.invocations));
+  const bw = (W - L) / days.length;
+  const svg = s('svg', { viewBox: `0 0 ${W} ${H}`, role: 'img', 'aria-label': 'Invocations per day, last 30 days' });
+  for (const f of [0, 0.5, 1]) {
+    const y = T + (H - T - B) * (1 - f);
+    svg.append(s('line', { class: 'grid', x1: L, x2: W, y1: y, y2: y }), s('text', { class: 'axis', x: L - 6, y: y + 4, 'text-anchor': 'end' }, String(Math.round(max * f))));
+  }
+  days.forEach((d, i) => {
+    const x = L + i * bw + 1;
+    const hTotal = ((H - T - B) * d.invocations) / max;
+    const g = s('g', {}, s('title', {}, `${d.day}: ${d.invocations} runs, ${d.failedRuns} with tool errors (${d.errors} errors)`));
+    g.append(s('rect', { class: 'bar', x, y: H - B - hTotal, width: Math.max(1, bw - 2), height: hTotal }));
+    if (d.failedRuns) {
+      const he = Math.min(hTotal, ((H - T - B) * d.failedRuns) / max);
+      g.append(s('rect', { class: 'bar-bad', x, y: H - B - he, width: Math.max(1, bw - 2), height: he }));
+    }
+    svg.append(g);
+    const lastLabel = i === days.length - 1;
+    if ((i % 7 === 0 && days.length - 1 - i >= 4) || lastLabel) svg.append(s('text', { class: 'axis', x: lastLabel ? x + bw - 2 : x + bw / 2, y: H - 6, 'text-anchor': lastLabel ? 'end' : 'middle' }, d.day.slice(5)));
+  });
+  return h('div', { class: 'chart' }, svg, h('div', { class: 'legend' }, h('span', { class: 'swatch' }), 'runs', h('span', { class: 'swatch-bad' }), 'runs with tool errors'));
+}
+function lineChart(points) {
+  const W = 1000, H = 180, L = 44, B = 24, T = 10;
+  const svg = s('svg', { viewBox: `0 0 ${W} ${H}`, role: 'img', 'aria-label': 'Eval score per run' });
+  for (const f of [0, 0.5, 1]) {
+    const y = T + (H - T - B) * (1 - f);
+    svg.append(s('line', { class: 'grid', x1: L, x2: W - 10, y1: y, y2: y }), s('text', { class: 'axis', x: L - 6, y: y + 4, 'text-anchor': 'end' }, `${f * 100}%`));
+  }
+  const usable = points.filter((p) => typeof p.score === 'number');
+  const step = usable.length > 1 ? (W - L - 60) / (usable.length - 1) : 0;
+  const xy = usable.map((p, i) => [L + 30 + i * step, T + (H - T - B) * (1 - p.score)]);
+  if (xy.length > 1) svg.append(s('polyline', { class: 'line', points: xy.map((p) => p.join(',')).join(' ') }));
+  usable.forEach((p, i) => {
+    svg.append(s('circle', { class: 'dot', cx: xy[i][0], cy: xy[i][1], r: 4 }, s('title', {}, `${day(p.ranAt)}: ${pct(p.score)}${p.commit ? ` at ${p.commit.slice(0, 7)}` : ''}`)));
+    if (i === 0 || i === usable.length - 1 || usable.length <= 6) svg.append(s('text', { class: 'axis', x: xy[i][0], y: H - 6, 'text-anchor': 'middle' }, day(p.ranAt).slice(5)));
+  });
+  return h('div', { class: 'chart' }, svg);
+}
+
+// ---- tables --------------------------------------------------------------------
+function sortableTable(columns, rows, { onRow, initial } = {}) {
+  let sortKey = initial ?? null;
+  let asc = false;
+  const table = h('table');
+  const thead = h('thead');
+  const tbody = h('tbody');
+  table.append(thead, tbody);
+  function render() {
+    const sorted = sortKey === null ? rows : [...rows].sort((a, b) => {
+      const col = columns.find((c) => c.key === sortKey);
+      const va = col.sort(a);
+      const vb = col.sort(b);
+      if (va === vb) return 0;
+      if (va === null || va === undefined) return 1;
+      if (vb === null || vb === undefined) return -1;
+      return (va < vb ? -1 : 1) * (asc ? 1 : -1);
+    });
+    thead.replaceChildren(h('tr', {}, columns.map((c) => h('th', {
+      class: [c.num ? 'num' : '', c.sort ? 'sortable' : '', c.key === sortKey ? 'sorted' : '', c.key === sortKey && asc ? 'asc' : ''].join(' ').trim(),
+      text: c.label,
+      title: c.sort ? 'Sort' : undefined,
+      onclick: c.sort ? () => { asc = sortKey === c.key ? !asc : false; sortKey = c.key; render(); } : undefined,
+    }))));
+    tbody.replaceChildren(...sorted.map((row) => h('tr', { class: onRow ? 'row-link' : '', onclick: onRow ? () => onRow(row) : undefined }, columns.map((c) => h('td', { class: c.num ? 'num' : '' }, c.cell(row))))));
+  }
+  render();
+  return table;
+}
+
+// ---- pages -----------------------------------------------------------------------
+async function overviewPage() {
+  const { rows } = await api('/api/overview');
+  if (!rows.length) {
+    page('Overview', null, h('div', { class: 'empty' },
+      h('p', { text: 'No skill data yet.' }),
+      h('p', {}, 'Connect an agent with ', h('code', { text: 'snaglog connect claude-code' }), ', collect snags with ', h('code', { text: 'snaglog collect --repo owner/repo' }), ', or try ', h('code', { text: 'snaglog dashboard --demo' }), '.')));
+    return;
+  }
+  page('Overview', 'All skills, the ones that need attention first. Click a row for details.', sortableTable([
+    { key: 'skill', label: 'Skill', cell: (r) => h('strong', { text: r.skill }), sort: (r) => r.skill },
+    { key: 'attention', label: 'Needs attention', cell: (r) => r.attention.reasons.length ? h('ul', { class: 'reasons' }, r.attention.reasons.map((x) => h('li', { class: x.startsWith('every eval') ? 'info' : '', text: x }))) : h('span', { class: 'muted', text: '—' }), sort: (r) => r.attention.score },
+    { key: 'usage', label: 'Uses (30 d)', num: true, cell: (r) => num(r.usage30d), sort: (r) => r.usage30d },
+    { key: 'agents', label: 'Agents', cell: (r) => r.agents.join(', ') || '—' },
+    { key: 'errors', label: 'Tool errors', num: true, cell: (r) => pct(r.errorRate), sort: (r) => r.errorRate },
+    { key: 'retries', label: 'Avg retries', num: true, cell: (r) => num(r.avgRetries, 1), sort: (r) => r.avgRetries },
+    { key: 'duration', label: 'Avg time', num: true, cell: (r) => dur(r.avgDurationMs), sort: (r) => r.avgDurationMs },
+    { key: 'tokens', label: 'Avg tokens', num: true, cell: (r) => num(r.avgTokens), sort: (r) => r.avgTokens },
+    { key: 'snags', label: 'Open snags', num: true, cell: (r) => num(r.snags.open), sort: (r) => r.snags.open },
+    { key: 'eval', label: 'Eval', num: true, cell: (r) => pct(r.evals.lastScore), sort: (r) => r.evals.lastScore },
+    { key: 'delta', label: 'Skill effect', num: true, cell: (r) => signedPts(r.evals.ablationDelta), sort: (r) => r.evals.ablationDelta },
+  ], rows, { onRow: (r) => { location.hash = `#/skill/${encodeURIComponent(r.skill)}`; } }));
+}
+
+function card(label, value, cls) {
+  return h('div', { class: 'card' }, h('div', { class: 'label', text: label }), h('div', { class: `value ${cls || ''}`, text: value }));
+}
+
+async function skillPage(name) {
+  const d = await api(`/api/skill/${encodeURIComponent(name)}`);
+  const sm = d.summary;
+  const lastEval = d.evals.at(-1);
+  page(d.skill, 'Usage, reliability, snags, evals and SKILL.md history for this skill.',
+    ...d.warnings.map((w) => h('div', { class: 'banner', text: w })),
+    h('div', { class: 'cards' },
+      card('Invocations', num(sm.invocations)),
+      card('Tool error rate', pct(sm.errorRate), sm.errorRate > 0.2 ? 'bad' : ''),
+      card('Clean runs', pct(sm.cleanRate)),
+      card('Avg retries', num(sm.avgRetries, 1)),
+      card('Avg duration', dur(sm.avgDurationMs)),
+      card('Avg tokens', num(sm.avgTokens)),
+      card('Avg cost', usd(sm.avgCostUsd)),
+      card('Open snags', num(d.snags.open), d.snags.open ? 'bad' : ''),
+      card('Last eval', lastEval ? pct(lastEval.score) : '—'),
+    ),
+    h('h2', { text: 'Last 30 days' }), barChart(d.daily),
+    h('h2', { text: 'By agent' }),
+    d.byAgent.length ? sortableTable([
+      { key: 'agent', label: 'Agent', cell: (a) => a.agent, sort: (a) => a.agent },
+      { key: 'inv', label: 'Invocations', num: true, cell: (a) => num(a.invocations), sort: (a) => a.invocations },
+      { key: 'err', label: 'Tool errors', num: true, cell: (a) => pct(a.errorRate), sort: (a) => a.errorRate },
+      { key: 'clean', label: 'Clean runs', num: true, cell: (a) => pct(a.cleanRate), sort: (a) => a.cleanRate },
+      { key: 'ret', label: 'Avg retries', num: true, cell: (a) => num(a.avgRetries, 1), sort: (a) => a.avgRetries },
+      { key: 'dur', label: 'Avg time', num: true, cell: (a) => dur(a.avgDurationMs), sort: (a) => a.avgDurationMs },
+      { key: 'tok', label: 'Avg tokens', num: true, cell: (a) => num(a.avgTokens), sort: (a) => a.avgTokens },
+    ], d.byAgent) : h('p', { class: 'muted', text: 'No telemetry for this skill yet.' }),
+    h('h2', { text: 'Eval history' }),
+    d.evals.length ? h('div', {}, lineChart(d.evals), h('p'), sortableTable([
+      { key: 'ran', label: 'Run', cell: (e) => day(e.ranAt), sort: (e) => e.ranAt },
+      { key: 'commit', label: 'Commit', cell: (e) => e.commit ? h('code', { text: e.commit.slice(0, 7) + (e.dirty ? ' + changes' : '') }) : '—' },
+      { key: 'cases', label: 'Cases', num: true, cell: (e) => num(e.cases) },
+      { key: 'score', label: 'Score', num: true, cell: (e) => pct(e.score), sort: (e) => e.score },
+      { key: 'delta', label: 'Skill effect', num: true, cell: (e) => e.ablation ? signedPts(e.meanDelta) : '—' },
+      { key: 'cost', label: 'Cost', num: true, cell: (e) => usd(e.costUsd) },
+      { key: 'flags', label: '', cell: (e) => e.partial ? h('span', { class: 'pill bad', text: 'partial' }) : '' },
+    ], [...d.evals].reverse())) : h('p', { class: 'muted' }, 'No eval results yet. Run ', h('code', { text: `snaglog eval ${d.skill}` }), '.'),
+    h('h2', { text: `Snags (${d.snags.open} open, ${d.snags.closed} closed${d.snags.avgFixDays !== null ? `, fixed in ${num(d.snags.avgFixDays, 1)} days on average` : ''}${d.snags.unsent ? `, ${d.snags.unsent} unsent` : ''})` }),
+    d.snags.list.length ? sortableTable([
+      { key: 'num', label: '#', num: true, cell: (x) => h('a', { href: x.url, target: '_blank', rel: 'noopener noreferrer', text: `#${x.number}` }) },
+      { key: 'title', label: 'Title', cell: (x) => x.title },
+      { key: 'state', label: 'State', cell: (x) => h('span', { class: `pill ${x.state === 'open' ? 'bad' : 'good'}`, text: x.state }) },
+      { key: 'occ', label: 'Reports', num: true, cell: (x) => num(x.occurrences), sort: (x) => x.occurrences },
+      { key: 'opened', label: 'Opened', cell: (x) => day(x.createdAt), sort: (x) => x.createdAt },
+    ], d.snags.list) : h('p', { class: 'muted', text: 'No snags reported for this skill.' }),
+    h('h2', { text: 'SKILL.md changes' }),
+    d.changes.length ? sortableTable([
+      { key: 'date', label: 'Date', cell: (c) => day(c.date) },
+      { key: 'commit', label: 'Commit', cell: (c) => h('code', { text: c.commit.slice(0, 7) }) },
+      { key: 'subject', label: 'Message', cell: (c) => c.subject },
+      { key: 'cmp', label: '', cell: (c) => h('a', { href: `#/compare/${encodeURIComponent(d.skill)}/${c.commit}`, text: 'Before / after' }) },
+    ], d.changes) : h('p', { class: 'muted', text: 'No SKILL.md history (start the dashboard with --path pointing at the skills repo checkout).' }),
+  );
+}
+
+async function comparePage(skill, commit) {
+  const { rows } = await api('/api/overview');
+  const skills = rows.map((r) => r.skill).sort();
+  skill = skill || skills[0];
+  const changes = skill ? (await api(`/api/skill/${encodeURIComponent(skill)}`)).changes : [];
+  commit = commit || changes[0]?.commit;
+  const skillSelect = h('select', { 'aria-label': 'Skill', onchange: (e) => { location.hash = `#/compare/${encodeURIComponent(e.target.value)}`; } }, skills.map((x) => h('option', { value: x, selected: x === skill, text: x })));
+  const changeSelect = h('select', { 'aria-label': 'SKILL.md change', onchange: (e) => { location.hash = `#/compare/${encodeURIComponent(skill)}/${e.target.value}`; } }, changes.map((c) => h('option', { value: c.commit, selected: c.commit === commit, text: `${day(c.date)} ${c.commit.slice(0, 7)} ${c.subject}` })));
+  const controls = h('div', { class: 'controls' }, h('label', {}, 'Skill ', skillSelect), changes.length ? h('label', {}, 'Change ', changeSelect) : null);
+  if (!skill || !commit) {
+    page('Before / after', 'Pick a SKILL.md change to see whether it helped.', controls, h('div', { class: 'empty', text: 'No SKILL.md changes found. Start the dashboard with --path pointing at the skills repo checkout.' }));
+    return;
+  }
+  const c = await api(`/api/compare/${encodeURIComponent(skill)}/${commit}`);
+  const labels = { improved: ['good', 'The change helped'], worse: ['bad', 'The change made things worse'], mixed: ['', 'Mixed result'], 'no-clear-change': ['', 'No clear change'], 'not-enough-data': ['', 'Not enough data yet'] };
+  const [cls, title] = labels[c.verdict.result];
+  const rowsDef = [
+    ['Invocations', (x) => num(x.invocations)],
+    ['Tool error rate', (x) => pct(x.errorRate)],
+    ['Clean runs', (x) => pct(x.cleanRate)],
+    ['Avg retries', (x) => num(x.avgRetries, 1)],
+    ['Avg duration', (x) => dur(x.avgDurationMs)],
+    ['Avg tokens', (x) => num(x.avgTokens)],
+    ['Snags opened', (x) => num(x.snagsOpened)],
+    ['Eval score', (x) => pct(x.evalScore)],
+  ];
+  page('Before / after', 'Did this SKILL.md change help? Metrics from up to 30 days on each side.', controls,
+    h('div', { class: `banner ${cls}` }, h('strong', { text: title }), c.verdict.notes.length ? ` — ${c.verdict.notes.join('; ')}` : ''),
+    h('p', { class: 'muted' }, h('code', { text: c.change.commit.slice(0, 7) }), ` ${c.change.subject} (${day(c.change.date)})`),
+    h('table', {},
+      h('thead', {}, h('tr', {}, h('th', { text: 'Metric' }), h('th', { class: 'num', text: `Before (${day(c.before.from)} – ${day(c.before.to)})` }), h('th', { class: 'num', text: `After (${day(c.after.from)} – ${day(c.after.to)})` }))),
+      h('tbody', {}, rowsDef.map(([label, f]) => h('tr', {}, h('td', { text: label }), h('td', { class: 'num', text: f(c.before) }), h('td', { class: 'num', text: f(c.after) }))))),
+  );
+}
+
+async function unsentPage() {
+  const { reports } = await api('/api/reports');
+  const intro = 'Snag reports kept on this machine (declined, unattended, or GitHub was unavailable). Nothing is sent until you press Send and confirm.';
+  if (!reports.length) {
+    page('Unsent reports', intro, h('div', { class: 'empty', text: 'No unsent reports.' }));
+    return;
+  }
+  page('Unsent reports', intro, ...reports.map(reportCard));
+}
+
+function reportCard(r) {
+  const status = h('span', { class: 'status muted' });
+  const title = h('input', { value: r.title, 'aria-label': 'Title' });
+  const body = h('textarea', { 'aria-label': 'Body' });
+  body.value = r.body;
+  const repo = h('input', { value: r.repo || '', placeholder: 'owner/repo', 'aria-label': 'Target repo' });
+  let approval = r.approval;
+  const dirty = () => title.value !== r.title || body.value !== r.body || repo.value !== (r.repo || '');
+  const send = h('button', { class: 'primary', type: 'button', text: 'Send to GitHub', disabled: META.demo || !r.repo });
+  const save = h('button', { type: 'button', text: 'Save changes' });
+  const del = h('button', { class: 'danger', type: 'button', text: 'Delete' });
+  const refreshState = () => { send.disabled = META.demo || !repo.value || dirty(); send.title = dirty() ? 'Save your changes first' : ''; };
+  for (const el of [title, body, repo]) el.addEventListener('input', refreshState);
+  save.addEventListener('click', async () => {
+    try {
+      const { report } = await api(`/api/reports/${r.id}`, { method: 'PUT', body: JSON.stringify({ title: title.value, body: body.value, repo: repo.value }) });
+      Object.assign(r, report);
+      title.value = report.title; body.value = report.body; repo.value = report.repo || '';
+      approval = report.approval;
+      status.textContent = 'Saved (masked again).';
+      refreshState();
+    } catch (e) { status.textContent = e.message; }
+  });
+  send.addEventListener('click', async () => {
+    if (!confirm(`Send this report as a GitHub issue to ${r.repo}?\n\nIt will be visible to everyone who can see that repository.`)) return;
+    send.disabled = true;
+    status.textContent = 'Sending…';
+    try {
+      const { sent } = await api(`/api/reports/${r.id}/send`, { method: 'POST', body: JSON.stringify({ approval }) });
+      cardEl.replaceChildren(h('p', {}, sent.status === 'commented' ? 'Added to an existing issue: ' : 'Filed: ', h('a', { href: sent.url, target: '_blank', rel: 'noopener noreferrer', text: sent.url })));
+    } catch (e) { status.textContent = e.message; refreshState(); }
+  });
+  del.addEventListener('click', async () => {
+    if (!confirm('Delete this report from this machine? This cannot be undone.')) return;
+    try {
+      await api(`/api/reports/${r.id}`, { method: 'DELETE' });
+      cardEl.remove();
+    } catch (e) { status.textContent = e.message; }
+  });
+  const cardEl = h('div', { class: 'report' },
+    h('div', {}, h('span', { class: 'pill', text: r.skill }), h('span', { class: 'pill', text: r.reason }), h('span', { class: 'muted', text: ` kept ${ago(r.savedAt)}${r.agent ? ` by ${r.agent}` : ''}` })),
+    h('label', {}, 'Title', title), h('label', {}, 'Body', body), h('label', {}, 'Target repo', repo),
+    h('div', { class: 'actions' }, save, send, del, status));
+  refreshState();
+  return cardEl;
+}
+
+async function connectionsPage() {
+  const d = await api('/api/connections');
+  const recv = d.receiver;
+  page('Connections', 'Which agents send telemetry to snaglog, and when the last event arrived.',
+    recv.running
+      ? h('div', { class: 'banner good' }, `Receiver listening on 127.0.0.1:${recv.port}.`, recv.rejected ? ` ${recv.rejected} request(s) rejected; last reason: ${recv.lastRejectReason}.` : '')
+      : h('div', { class: `banner ${recv.error ? 'bad' : ''}`, text: recv.error ? `Receiver not running: ${recv.error}` : 'Receiver not running (demo mode or --no-receiver).' }),
+    sortableTable([
+      { key: 'agent', label: 'Agent', cell: (a) => h('strong', { text: a.label }) },
+      { key: 'state', label: 'Status', cell: (a) => h('span', { class: `pill ${a.connected ? 'good' : ''}`, text: a.connected ? 'connected' : 'not connected' }) },
+      { key: 'last', label: 'Last event', cell: (a) => ago(a.lastEventAt) },
+      { key: 'file', label: 'Settings file', cell: (a) => a.file ? h('code', { text: a.file }) : '—' },
+      { key: 'tips', label: 'If no data arrives', cell: (a) => h('ul', { class: 'reasons' }, a.tips.map((t) => h('li', { class: 'info', text: t }))) },
+    ], d.agents),
+    h('h2', { text: 'Not supported' }),
+    h('ul', {}, d.unsupported.map((u) => h('li', {}, h('strong', { text: u.agent }), ` — ${u.reason}`))),
+  );
+}
+
+// ---- router ----------------------------------------------------------------------
+async function route() {
+  const parts = location.hash.replace(/^#\/?/, '').split('/').map(decodeURIComponent);
+  const name = parts[0] || 'overview';
+  for (const a of document.querySelectorAll('#nav a')) a.classList.toggle('active', a.dataset.page === (name === 'skill' ? 'overview' : name));
+  try {
+    if (name === 'skill' && parts[1]) await skillPage(parts[1]);
+    else if (name === 'compare') await comparePage(parts[1], parts[2]);
+    else if (name === 'unsent') await unsentPage();
+    else if (name === 'connections') await connectionsPage();
+    else await overviewPage();
+    if (META.demo) app.prepend(h('div', { class: 'banner demo', text: 'Demo mode: generated sample data; sending to GitHub is disabled.' }));
+  } catch (e) { failure(e); }
+}
+window.addEventListener('hashchange', route);
+api('/api/meta').then((m) => { META = m; }).catch(() => {}).finally(route);
+</script>
+</body>
+</html>

@@ -105,7 +105,7 @@ export function sanitize(text, counts = {}) {
 }
 
 // Agent-written text must not ping people or break out of its code block.
-function neutralizeMentions(text) {
+export function neutralizeMentions(text) {
   return text.replace(/(^|[\s(])@([A-Za-z0-9][A-Za-z0-9-]*)/g, '$1`@$2`');
 }
 
@@ -379,6 +379,7 @@ const REASON_TEXT = {
   'no-access': 'The target repo does not exist or this account cannot access it.',
   'issues-disabled': 'Issues are disabled on the target repo.',
   'gh-error': 'gh failed while filing the issue.',
+  'invalid-target': 'The target repo or skill name is not valid.',
 };
 
 function saveLocalRecord(report, info, issue, reason, env) {
@@ -447,28 +448,41 @@ export function submit(report, token, env = process.env) {
   if (!token || token !== approvalToken(info.repo, issue.title, issue.body)) {
     throw new SnagError('approval token does not match this report; run `prepare` again and show the new text to the user', 3);
   }
-  const check = preflight(info.repo, env);
-  if (!check.ok) return saveLocalRecord(report, info, issue, check.reason, env);
+  const result = fileIssue({ repo: info.repo, skill: report.skill, title: issue.title, body: issue.body }, env);
+  if (result.status === 'failed') return saveLocalRecord(report, info, issue, result.reason, env);
+  return result;
+}
 
-  const duplicate = findDuplicate(info.repo, report.skill, issue.title, env);
+/**
+ * File an already sanitized and approved issue: preflight, comment on a
+ * similar open issue or create a new one (retrying without missing labels).
+ * Returns { status: 'filed' | 'commented', ... } or { status: 'failed', reason }.
+ * Also used by the snaglog dashboard to send locally kept reports.
+ */
+export function fileIssue({ repo, skill, title, body }, env = process.env) {
+  if (!REPO_NAME.test(repo ?? '') || !SKILL_NAME.test(skill ?? '')) return { status: 'failed', reason: 'invalid-target' };
+  const check = preflight(repo, env);
+  if (!check.ok) return { status: 'failed', reason: check.reason };
+
+  const duplicate = findDuplicate(repo, skill, title, env);
   if (duplicate) {
-    const commentBody = `Another occurrence of this snag was reported.\n\n${issue.body}`;
-    const r = runGh(env, ['issue', 'comment', String(duplicate.number), '--repo', info.repo, '--body-file', '-'], commentBody);
-    if (r.ok) return { status: 'commented', repo: info.repo, number: duplicate.number, url: r.stdout.trim() || duplicate.url };
-    return saveLocalRecord(report, info, issue, 'gh-error', env);
+    const commentBody = `Another occurrence of this snag was reported.\n\n${body}`;
+    const r = runGh(env, ['issue', 'comment', String(duplicate.number), '--repo', repo, '--body-file', '-'], commentBody);
+    if (r.ok) return { status: 'commented', repo, number: duplicate.number, url: r.stdout.trim() || duplicate.url };
+    return { status: 'failed', reason: 'gh-error' };
   }
 
-  const base = ['issue', 'create', '--repo', info.repo, '--title', issue.title, '--body-file', '-'];
-  const labels = ['--label', FRICTION_LABEL, '--label', `skill:${report.skill}`];
-  let r = runGh(env, [...base, ...labels], issue.body);
+  const base = ['issue', 'create', '--repo', repo, '--title', title, '--body-file', '-'];
+  const labels = ['--label', FRICTION_LABEL, '--label', `skill:${skill}`];
+  let r = runGh(env, [...base, ...labels], body);
   let labelsOmitted = false;
   if (!r.ok && /label/i.test(r.stderr)) {
-    r = runGh(env, base, issue.body);
+    r = runGh(env, base, body);
     labelsOmitted = true;
   }
-  if (!r.ok) return saveLocalRecord(report, info, issue, 'gh-error', env);
+  if (!r.ok) return { status: 'failed', reason: 'gh-error' };
   const url = r.stdout.trim().split(/\s+/).pop();
-  return { status: 'filed', repo: info.repo, url, ...(labelsOmitted ? { labelsOmitted: true } : {}) };
+  return { status: 'filed', repo, url, ...(labelsOmitted ? { labelsOmitted: true } : {}) };
 }
 
 /** Keep the sanitized report locally (user declined, or nobody to ask). */

@@ -14,7 +14,7 @@ import * as codex from './codex.mjs';
 export const AGENTS = { 'claude-code': claudeCode, codex };
 export const DEFAULT_ENDPOINT = 'http://127.0.0.1:4318';
 const HOOK_SOURCE = fileURLToPath(new URL('./hooks/claude-skill-hint.mjs', import.meta.url));
-const UNSUPPORTED = {
+export const UNSUPPORTED = {
   copilot: 'GitHub Copilot support is planned for a later release.',
   opencode: 'OpenCode has no official native OpenTelemetry export yet.',
   cursor: 'Cursor has no official local OpenTelemetry export.',
