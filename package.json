@@ -1,7 +1,25 @@
 {
   "name": "snaglog",
   "version": "0.0.0",
-  "description": "Measure, report, fix and verify your team's agent skills: snag reports, fix PRs, evals, OpenTelemetry and a local dashboard.",
+  "description": "Find out which of your team's agent skills are broken, get them fixed, and prove the fix worked: snag reports, fix pull requests, evals and per-skill telemetry for Claude Code and Codex, all local.",
+  "keywords": [
+    "claude-code",
+    "codex",
+    "agent-skills",
+    "skills",
+    "opentelemetry",
+    "evals",
+    "developer-tools",
+    "ai-agents"
+  ],
+  "homepage": "https://github.com/liderbektas/snaglog#readme",
+  "bugs": {
+    "url": "https://github.com/liderbektas/snaglog/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/liderbektas/snaglog.git"
+  },
   "license": "MIT",
   "private": true,
   "type": "module",
