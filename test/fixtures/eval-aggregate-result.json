@@ -1,0 +1,32 @@
+{
+  "_provenance": "RECONSTRUCTED from the documented fields of `claude plugin eval` aggregate-result.json (code.claude.com/docs/en/plugin-evals); not captured from a real run. SECRET-* values must never be stored.",
+  "schemaVersion": 1,
+  "partial": false,
+  "claudeVersion": "2.1.291",
+  "costUsd": 0.4,
+  "durationSeconds": 95,
+  "config": { "prompt": "SECRET PROMPT TEXT" },
+  "aggregates": { "overallScore": 0.75, "casesPassed": 3, "casesTotal": 4, "meanDelta": 0.3 },
+  "cases": [
+    {
+      "name": "deploy-preview-golden",
+      "aggregates": { "score": 1, "delta": 0.5 },
+      "arms": { "with": [{ "error": null, "aborted": false, "transcript": "SECRET TRANSCRIPT", "graders": [{ "explanation": "SECRET EXPLANATION" }] }] }
+    },
+    {
+      "name": "snag-42-missing-flag",
+      "aggregates": { "score": 0.5, "delta": 0.2 },
+      "arms": { "with": [{ "error": "SECRET ERROR TEXT", "aborted": false }] }
+    },
+    {
+      "name": "db-migrate-basic",
+      "aggregates": { "score": 1, "delta": 0 },
+      "arms": { "with": [{ "error": null, "aborted": false }] }
+    },
+    {
+      "name": "not-a-known-case",
+      "aggregates": { "score": 0.5, "delta": 0.5 },
+      "arms": { "with": [] }
+    }
+  ]
+}

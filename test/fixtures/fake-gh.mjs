@@ -6,6 +6,8 @@
 //   auth: false            -> `gh auth status` fails
 //   repo: { exists, visibility, hasIssuesEnabled }
 //   issues: [{ number, title, url }]   -> returned by `gh issue list`
+//   labelIssues: [...]     -> returned by `gh issue list --label ...` (defaults to issues)
+//   listFails: true        -> `gh issue list` fails
 //   labelsMissing: true    -> `gh issue create --label ...` fails like gh does
 //   createFails: true      -> every `gh issue create` fails
 //   labels: ['name', ...]  -> returned by `gh label list`
@@ -44,7 +46,9 @@ if (a === '--version') {
     JSON.stringify({ nameWithOwner: args[2], visibility: repo.visibility ?? 'PRIVATE', hasIssuesEnabled: repo.hasIssuesEnabled ?? true }),
   );
 } else if (a === 'issue' && b === 'list') {
-  process.stdout.write(JSON.stringify(scenario.issues ?? []));
+  if (scenario.listFails) fail('HTTP 404: Not Found');
+  const issues = args.includes('--label') ? (scenario.labelIssues ?? scenario.issues) : scenario.issues;
+  process.stdout.write(JSON.stringify(issues ?? []));
 } else if (a === 'issue' && b === 'create') {
   if (scenario.createFails) fail('HTTP 502: Bad Gateway');
   if (scenario.labelsMissing && args.includes('--label')) fail("could not add label: 'skill-friction' not found");
