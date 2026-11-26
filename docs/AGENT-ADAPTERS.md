@@ -271,7 +271,7 @@ Codex exports some sensitive fields **by default**, so dropping them at ingest i
 
 ## Writing a new adapter
 
-To be expanded in `CONTRIBUTING.md` (M8). In short: a module in `cli/collect/otel/adapters/<agent>.mjs` exports `agent`, `matches({ resource, attrs })` and `createAdapter({ anonymize, hints })`, which returns `{ handle(item) → SkillEvent[], sweep(now) }`; use `SkillTracker` (`cli/collect/otel/tracker.mjs`) for attribution windows and `safeSkillName` for names; read only allow-listed attributes; add anonymised fixtures under `test/fixtures/otel/` with `SECRET-*` values and a test proving none reach disk; register the module in `ADAPTERS` (`receiver.mjs`).
+The full guide is in [CONTRIBUTING.md](../CONTRIBUTING.md#writing-a-new-agent-adapter). In short: a module in `cli/collect/otel/adapters/<agent>.mjs` exports `agent`, `matches({ resource, attrs })` and `createAdapter({ anonymize, hints })`, which returns `{ handle(item) → SkillEvent[], sweep(now) }`; use `SkillTracker` (`cli/collect/otel/tracker.mjs`) for attribution windows and `safeSkillName` for names; read only allow-listed attributes; add anonymised fixtures under `test/fixtures/otel/` with `SECRET-*` values and a test proving none reach disk; register the module in `ADAPTERS` (`receiver.mjs`).
 
 ## `connect` / `disconnect` guarantees
 
