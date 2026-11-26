@@ -69,10 +69,8 @@ select { height: 32px; }
 .app { display: grid; grid-template-columns: 252px minmax(0, 1fr); gap: 8px; padding: 8px; height: 100vh; }
 .side, .main { background: var(--page); border: 1px solid var(--line); border-radius: 12px; }
 .side { display: flex; flex-direction: column; padding: 12px 10px; gap: 2px; overflow-y: auto; }
-.workspace { display: flex; align-items: center; gap: 10px; padding: 4px 6px 12px; }
-.workspace .logo { width: 28px; height: 28px; border-radius: 7px; background: var(--text); color: var(--page); display: grid; place-items: center; font-weight: 700; font-size: 14px; }
-.workspace .name { font-weight: 600; line-height: 1.2; }
-.workspace .sub { color: var(--muted); font-size: 12px; }
+.wordmark { display: block; padding: 6px 8px 14px; color: var(--text); font: 700 21px/1 ui-rounded, "SF Pro Rounded", -apple-system, BlinkMacSystemFont, "Segoe UI", system-ui, sans-serif; letter-spacing: -0.04em; text-decoration: none; }
+.wordmark:hover { text-decoration: none; }
 .search { display: flex; align-items: center; gap: 8px; height: 34px; margin: 0 0 10px; padding: 0 10px; background: var(--sunken); border: 1px solid var(--line); border-radius: 8px; color: var(--muted); }
 .search:focus-within { border-color: var(--line-strong); }
 .search input { flex: 1; min-width: 0; border: 0; background: transparent; padding: 0; outline: none; color: var(--text); }
@@ -256,7 +254,7 @@ dl.defs dd { margin: 0; color: var(--muted); }
 <body>
 <div class="app">
   <aside class="side">
-    <div class="workspace"><span class="logo">s</span><div><div class="name">snaglog</div><div class="sub" id="ws-sub">local dashboard</div></div></div>
+    <a class="wordmark" href="#/overview" aria-label="snaglog home">snaglog</a>
     <label class="search"><span data-icon="search"></span><input id="search" type="search" placeholder="Search skills" aria-label="Search skills"><kbd>/</kbd></label>
     <a class="nav-item" href="#/overview" data-page="overview"><span data-icon="layout-dashboard"></span>Skills<span class="count" data-count="skills"></span></a>
     <a class="nav-item" href="#/compare" data-page="compare"><span data-icon="git-compare-arrows"></span>Before / after</a>
@@ -452,7 +450,6 @@ async function refreshChrome() {
     el.textContent = counts[el.dataset.count];
     el.classList.toggle('live', el.dataset.count === 'live' && live > 0);
   }
-  if (META.root) document.getElementById('ws-sub').textContent = META.demo ? 'demo workspace' : META.root.split(/[\\/]/).filter(Boolean).pop();
   const recv = conn.receiver;
   const [dc, label, hint] = recv.running
     ? ['ok', `Receiving on :${recv.port}`, `Collecting telemetry on 127.0.0.1:${recv.port}`]
