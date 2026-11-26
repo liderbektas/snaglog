@@ -1,0 +1,24 @@
+{
+  "name": "snaglog",
+  "version": "0.0.0",
+  "description": "Measure, report, fix and verify your team's agent skills: snag reports, fix PRs, evals, OpenTelemetry and a local dashboard.",
+  "license": "MIT",
+  "private": true,
+  "type": "module",
+  "bin": {
+    "snaglog": "cli/snaglog.mjs"
+  },
+  "engines": {
+    "node": ">=20"
+  },
+  "scripts": {
+    "test": "node --test"
+  },
+  "files": [
+    "cli/",
+    "skills/",
+    "docs/",
+    "README.md",
+    "LICENSE"
+  ]
+}

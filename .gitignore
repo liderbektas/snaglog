@@ -1,0 +1,5 @@
+node_modules/
+.snaglog/
+.DS_Store
+*.log
+coverage/
