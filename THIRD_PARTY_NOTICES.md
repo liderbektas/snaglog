@@ -4,7 +4,7 @@ snaglog has no runtime dependencies. It embeds the following third-party materia
 
 ## Lucide icons
 
-The dashboard (`cli/dashboard/index.html`) embeds the shape data of 33 icons from [Lucide](https://lucide.dev) (package `lucide-static` 1.72.0, https://github.com/lucide-icons/lucide): `layout-dashboard`, `git-compare-arrows`, `inbox`, `plug`, `search`, `sun`, `moon`, `check`, `x`, `clock`, `triangle-alert`, `activity`, `timer`, `coins`, `bug`, `flask-conical`, `git-commit-horizontal`, `bot`, `chevron-right`, `external-link`, `send`, `trash-2`, `info`, `zap`, `circle-check`, `circle-x`, `circle-dashed`, `rotate-ccw`, `file-text`, `save`, `radio`, `layers`, `circle-alert`.
+The dashboard (`cli/dashboard/index.html`) embeds the shape data of 34 icons from [Lucide](https://lucide.dev) (package `lucide-static` 1.72.0, https://github.com/lucide-icons/lucide): `layout-dashboard`, `git-compare-arrows`, `inbox`, `plug`, `search`, `sun`, `moon`, `check`, `x`, `clock`, `triangle-alert`, `activity`, `timer`, `coins`, `bug`, `flask-conical`, `git-commit-horizontal`, `bot`, `chevron-right`, `external-link`, `send`, `trash-2`, `info`, `zap`, `circle-check`, `circle-x`, `circle-dashed`, `rotate-ccw`, `file-text`, `save`, `radio`, `layers`, `circle-alert`, `chevron-down`.
 
 Only the drawing elements (`path`, `circle`, `rect`, `line`, `polyline`, `polygon`, `ellipse`) and their geometry attributes are kept. Their license:
 
