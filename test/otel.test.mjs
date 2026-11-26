@@ -84,6 +84,48 @@ describe('claude-code adapter', () => {
   });
 });
 
+describe('claude-code adapter on a captured session', () => {
+  // test/fixtures/otel/claude-code-captured-slash.json is a real, anonymised
+  // capture: `/demo-snag` typed by the user, stopped at the first API call.
+  const captured = () => fixture('claude-code-captured-slash');
+  const withRedactedApiName = () => {
+    const doc = captured();
+    for (const rl of doc.resourceLogs) for (const sl of rl.scopeLogs) for (const lr of sl.logRecords) {
+      const name = lr.attributes.find((a) => a.key === 'skill.name');
+      if (name) name.value.stringValue = 'custom_skill';
+    }
+    return doc;
+  };
+
+  test('takes the real name from api_error when no hook hint exists', () => {
+    const { events } = createReceiver({ env }).ingest(captured());
+    assert.deepEqual(events.map((e) => [e.kind, e.skill]), [['invoked', 'demo-snag']]);
+  });
+
+  test('matches the captured hook input by prompt id', async () => {
+    const { record } = await import('../cli/connect/hooks/claude-skill-hint.mjs');
+    const hookInput = JSON.parse(readFileSync(new URL('./fixtures/claude-hook-captured-expansion.json', import.meta.url), 'utf8'));
+    assert.equal(record(hookInput, home), true);
+    const { events } = createReceiver({ env }).ingest(withRedactedApiName());
+    assert.deepEqual(events.map((e) => [e.kind, e.skill]), [['invoked', 'demo-snag']]);
+  });
+
+  test('without hint or api name the window is still counted as custom_skill', () => {
+    const receiver = createReceiver({ env, now: () => Date.parse('2030-01-01T00:00:00Z') });
+    const first = receiver.ingest(withRedactedApiName()).events;
+    assert.deepEqual(first, [], 'held back while the name may still arrive');
+    const swept = receiver.sweep();
+    assert.deepEqual(swept.map((e) => [e.kind, e.skill]), [['invoked', 'custom_skill'], ['completed', 'custom_skill']]);
+  });
+
+  test('stores no identifiers from the capture', () => {
+    createReceiver({ env }).ingest(captured());
+    const text = storedText();
+    assert.equal(/00000000-0000-4000-8000/.test(text), false);
+    assert.equal(text.includes('REDACTED'), false);
+  });
+});
+
 describe('codex adapter', () => {
   test('uses codex.skill_invocation and attributes tool results and tokens', () => {
     const { events } = createReceiver({ env }).ingest(fixture('codex-skill-session'));

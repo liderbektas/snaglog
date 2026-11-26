@@ -2,6 +2,8 @@
 //
 // Reads only these attributes: event.name, session.id, prompt.id, skill.name,
 // tool_name, success, duration_ms, model, input_tokens, output_tokens.
+// skill.name on api_request / api_error is the real name for project and user
+// skills even when skill_activated says "custom_skill" (live capture, 2.1.291).
 // Everything else on the record (prompt text, tool parameters and input, error
 // text, emails, account and host identifiers) is ignored and never stored.
 
@@ -31,8 +33,12 @@ export function createAdapter({ anonymize, hints }) {
     switch (name) {
       case 'skill_activated': {
         let skill = attrs['skill.name'];
-        if (REDACTED.has(skill)) skill = hints?.resolve(sessionId, time) ?? 'custom_skill';
-        return tracker.open(sessionId, { skill: safeSkillName(skill), time, scope });
+        if (!REDACTED.has(skill)) return tracker.open(sessionId, { skill: safeSkillName(skill), time, scope });
+        skill = hints?.resolve(sessionId, time, scope ? anonymize(scope) : undefined);
+        if (skill) return tracker.open(sessionId, { skill: safeSkillName(skill), time, scope });
+        // No hook hint: wait for an api_request / api_error in the same prompt,
+        // which carries the real name for project and user skills.
+        return tracker.open(sessionId, { skill: 'custom_skill', time, scope, pending: true });
       }
       case 'tool_result':
         if (attrs.tool_name === 'Skill') return [];
@@ -43,15 +49,24 @@ export function createAdapter({ anonymize, hints }) {
           durationMs: toNumber(attrs.duration_ms),
           tool: typeof attrs.tool_name === 'string' ? attrs.tool_name : undefined,
         });
+      case 'api_error':
+        return renameFrom(sessionId, scope, attrs);
       case 'api_request': {
+        const renamed = renameFrom(sessionId, scope, attrs);
         const tokens = (toNumber(attrs.input_tokens) ?? 0) + (toNumber(attrs.output_tokens) ?? 0);
-        return tracker.tokens(sessionId, { time, scope, tokens, model: typeof attrs.model === 'string' ? attrs.model : undefined });
+        return [...renamed, ...tracker.tokens(sessionId, { time, scope, tokens, model: typeof attrs.model === 'string' ? attrs.model : undefined })];
       }
       case 'user_prompt':
         return tracker.close(sessionId, time);
       default:
         return [];
     }
+  }
+
+  function renameFrom(sessionId, scope, attrs) {
+    const name = attrs['skill.name'];
+    if (typeof name !== 'string' || !name || REDACTED.has(name)) return [];
+    return tracker.rename(sessionId, { scope, skill: safeSkillName(name) });
   }
 
   return { agent, matches, handle, sweep: (now) => tracker.sweep(now) };

@@ -1,7 +1,9 @@
 // Resolve Claude Code's redacted "custom_skill" to a real skill name using the
 // lines the snaglog hook wrote (see cli/connect/hooks/claude-skill-hint.mjs).
-// A hint matches when it has the same hashed session id and lies within
-// WINDOW_MS of the telemetry event; each hint is used at most once.
+// A hint with the same hashed prompt id wins (the hook's session_id and
+// prompt_id equal Claude Code's OTel session.id and prompt.id, confirmed with
+// a live capture on 2.1.291); otherwise the closest hint from the same hashed
+// session within WINDOW_MS is used. Each hint is used at most once.
 
 import { existsSync, readFileSync } from 'node:fs';
 import { join } from 'node:path';
@@ -29,12 +31,16 @@ export function createHintStore(home) {
   }
 
   return {
-    resolve(sessionId, time) {
+    resolve(sessionId, time, promptId) {
       const at = Date.parse(time);
       let best;
       for (const hint of load()) {
         const key = `${hint.t}:${hint.s}:${hint.k}`;
         if (hint.s !== sessionId || used.has(key)) continue;
+        if (promptId && hint.p === promptId) {
+          best = { key, distance: -1, skill: hint.k };
+          break;
+        }
         const distance = Math.abs(hint.t - at);
         if (distance <= WINDOW_MS && (!best || distance < best.distance)) best = { key, distance, skill: hint.k };
       }

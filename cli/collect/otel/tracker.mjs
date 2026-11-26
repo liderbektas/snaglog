@@ -21,12 +21,37 @@ export class SkillTracker {
     return Object.assign(event, extra);
   }
 
-  open(sessionId, { skill, time, scope, model }) {
+  // `pending: true` holds back the `invoked` event while the skill name may
+  // still be learned (rename); any later event or the close flushes it.
+  open(sessionId, { skill, time, scope, model, pending = false }) {
     const out = this.close(sessionId, time);
-    const window = { sessionId, skill, scope, model, start: time, last: time, errors: 0, calls: 0, retries: 0, tokens: 0, lastFailedTool: undefined };
+    const window = { sessionId, skill, scope, model, start: time, last: time, errors: 0, calls: 0, retries: 0, tokens: 0, lastFailedTool: undefined, pending };
     this.windows.set(sessionId, window);
-    out.push(this.event(window, 'invoked', time));
+    out.push(...this.flush(window));
     return out;
+  }
+
+  flush(window) {
+    if (!window.started) {
+      if (window.pending) return [];
+      window.started = true;
+      return [this.event(window, 'invoked', window.start)];
+    }
+    return [];
+  }
+
+  /** Give a pending window its real name (same session and scope only). */
+  rename(sessionId, { scope, skill }) {
+    const window = this.windows.get(sessionId);
+    if (!window || window.started || (scope && window.scope && scope !== window.scope)) return [];
+    window.skill = skill;
+    window.pending = false;
+    return this.flush(window);
+  }
+
+  release(window) {
+    window.pending = false;
+    return this.flush(window);
   }
 
   current(sessionId, scope, time) {
@@ -39,6 +64,7 @@ export class SkillTracker {
   toolResult(sessionId, { time, scope, success, durationMs, tool }) {
     const { window, closed } = this.current(sessionId, scope, time);
     if (!window) return closed;
+    const out = this.release(window);
     window.last = time;
     window.calls += 1;
     if (tool && tool === window.lastFailedTool) window.retries += 1;
@@ -47,9 +73,9 @@ export class SkillTracker {
     if (durationMs !== undefined) extra.durationMs = durationMs;
     if (success === false) {
       window.errors += 1;
-      return [this.event(window, 'error', time, extra)];
+      return [...out, this.event(window, 'error', time, extra)];
     }
-    return [this.event(window, 'tool_call', time, extra)];
+    return [...out, this.event(window, 'tool_call', time, extra)];
   }
 
   tokens(sessionId, { time, scope, tokens, model }) {
@@ -65,10 +91,11 @@ export class SkillTracker {
     const window = this.windows.get(sessionId);
     if (!window) return [];
     this.windows.delete(sessionId);
+    const out = this.release(window);
     const end = Date.parse(window.last) || Date.parse(time);
     const extra = { success: window.errors === 0, durationMs: Math.max(0, end - Date.parse(window.start)), retries: window.retries };
     if (window.tokens) extra.tokens = window.tokens;
-    return [this.event(window, 'completed', window.last, extra)];
+    return [...out, this.event(window, 'completed', window.last, extra)];
   }
 
   /** Close windows that have been idle for longer than idleMs. */

@@ -1,0 +1,14 @@
+{
+ "_provenance": "CAPTURED UserPromptExpansion hook input from Claude Code 2.1.291 on 2026-11-26, anonymised (ids replaced consistently with claude-code-captured-slash.json; paths and prompt removed).",
+ "session_id": "00000000-0000-4000-8000-000000000003",
+ "transcript_path": "<removed>",
+ "cwd": "<removed>",
+ "prompt_id": "00000000-0000-4000-8000-000000000004",
+ "permission_mode": "default",
+ "hook_event_name": "UserPromptExpansion",
+ "expansion_type": "slash_command",
+ "command_name": "demo-snag",
+ "command_args": "",
+ "command_source": "projectSettings",
+ "prompt": "<removed>"
+}
